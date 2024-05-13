@@ -1,6 +1,6 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import {BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import {BrowserRouter, Routes, Route } from 'react-router-dom'
 import Signup from './Components/Signup/Signup'
 import Login from './Components/Login/Login'
 import MainPage from './Components/MainPage/MainPage'
