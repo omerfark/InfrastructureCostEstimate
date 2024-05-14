@@ -8,6 +8,12 @@ router.post("/create", (req,res) =>{
     .catch((err) => res.json(err));
 })
 
+router.get("/all", (req, res) => {
+  MaterialsModel.find({})
+    .then((material) => res.json(material))
+    .catch((err) => res.json(err));
+});
+
 router.get("/", async (req, res) => {
     const { material_name } = req.query;
   

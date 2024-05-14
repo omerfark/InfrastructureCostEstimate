@@ -15,6 +15,12 @@ const MaterialsSchema = new mongoose.Schema({
   material_m3: {
     type: Number,
     required: true,
+    default: 0
+  },
+  material_m: {
+    type:Number,
+    required: true,
+    default: 0
   },
   material_price: {
     type: Number,

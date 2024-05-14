@@ -9,7 +9,7 @@ const excavationRoutes = require('./routes/excavationRoutes.js');
 const materialsRoutes = require('./routes/materialsRoutes.js');
 const projectRoutes = require('./routes/projectRoutes.js');
 const vehicleRoutes = require('./routes/vehicleRoutes.js');
-const teamsRoutes = require('./routes/teamRoutes.js')
+const workerRoutes = require('./routes/workerRoutes.js')
 
 const app = express();
 app.use(express.json());
@@ -27,7 +27,7 @@ app.use("/excavations", excavationRoutes);
 app.use("/materials", materialsRoutes);
 app.use("/project", projectRoutes);
 app.use("/vehicles", vehicleRoutes);
-app.use("/teams", teamsRoutes);
+app.use("/worker", workerRoutes);
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/infracost_est")

@@ -1,34 +1,14 @@
 const mongoose = require("mongoose");
 
-const Material = require("./Materials"); // Material modelini içe aktar
-const Vehicles = require("./Vehicles");
-const Teams = require("./Teams");
-const Users = require("./Users");
+const Asphalt = require("./Asphalt")
 
 const ProjectSchema = new mongoose.Schema({
-  project_name: {
-    type: String,
-    required: true,
-  },
-  project_description: {
-    type: String,
-    required: true,
-  },
-  project_type: {
-    type: Number,
-    required: true,
-  },
-  project_requirements: {
-    materials: [{ type: String  },{type:Number}], // Malzemeler için referanslar ref: "materials"
-    teams: [{ type: mongoose.Schema.Types.ObjectId, ref: "teams" }],
-    vehicles: [{ type: mongoose.Schema.Types.ObjectId, ref: "vehicles" }],
-    excavation: [{
-      excavation_length: {type: Number,required: true,},
-      excavation_width: {type: Number,required: true,},
-      excavation_depth: {type: Number,required: true,},
-      excavation_volume: {type: Number,required: true,}
-    }]
-  },
+  asphalt_projects: [{type: mongoose.Schema.Types.ObjectId,ref: "Asphalt"}],
+  // concreteroad_projects: [{type: mongoose.Schema.Types.ObjectId,ref: "teams"}],
+  // sewer_projects: [{type: mongoose.Schema.Types.ObjectId,ref: "teams"}],
+  // corrugated_projects: [{type: mongoose.Schema.Types.ObjectId,ref: "teams"}],
+  // water_projects: [{type: mongoose.Schema.Types.ObjectId,ref: "teams"}],
+  // electric_projects: [{type: mongoose.Schema.Types.ObjectId,ref: "teams"}],
   user_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

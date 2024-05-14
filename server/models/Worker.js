@@ -1,17 +1,18 @@
 const mongoose = require("mongoose");
 
-const TeamSchema = new mongoose.Schema({
-  team_name: {
-    type: String,
-    required: true,
-  },
-  team_number: {
+const WorkerSchema = new mongoose.Schema({
+  worker_number: {
     type: Number,
     required: true,
   },
-  team_description: {
+  worker_name: {
     type: String,
     required: true,
+  },
+  worker_price: {
+    type: Number,
+    required: true,
+    default:0
   },
   created_at: {
     type: Date,
@@ -27,11 +28,11 @@ const TeamSchema = new mongoose.Schema({
   },
 });
 
-TeamSchema.pre("save", function (next) {
+WorkerSchema.pre("save", function (next) {
   this.updated_at = new Date();
   next();
 });
 
-const TeamsModel = mongoose.model("Team", TeamSchema);
+const WorkersModel = mongoose.model("Worker", WorkerSchema);
 
-module.exports = TeamsModel;
+module.exports = WorkersModel;

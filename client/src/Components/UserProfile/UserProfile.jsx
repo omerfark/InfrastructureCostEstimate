@@ -259,7 +259,6 @@ const UserProfile = () => {
         }
         const data = await response.json();
         setProjects(data);
-        console.log(data[1].project_requirements.materials[1])
       } catch (err) {
         console.log(err);
       }

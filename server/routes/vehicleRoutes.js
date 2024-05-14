@@ -30,7 +30,7 @@ router.get("/", async(req,res)=>{
 //yeni araç ekleme
 router.post("/create", async(req,res)=>{
     VehiclesModel.create(req.body)
-        .then((vehicle) => res.json(material))
+        .then((vehicle) => res.json(vehicle))
         .catch((err) => res.json(err))
 });
 

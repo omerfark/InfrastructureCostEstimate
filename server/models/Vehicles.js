@@ -6,10 +6,6 @@ const VehicleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  vehicle_tonnage: {
-    type: Number,
-    required: true,
-  },
   vehicle_price: {
     type: Number,
     required: true,

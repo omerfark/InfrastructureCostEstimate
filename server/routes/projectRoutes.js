@@ -3,9 +3,17 @@ const router = express.Router();
 const mongoose = require("mongoose");
 
 const ProjectModel = require('../models/Project.js');
+const AsphaltModel = require('../models/Asphalt.js');
+
+
+router.post("/asphalt", (req, res) => {
+  AsphaltModel.create(req.body)
+    .then((model) => res.json(model))
+    .catch((err) => res.json(err));
+});
 
 //project proje ekleme
-router.post("/", (req, res) => {
+router.post("/create", (req, res) => {
     ProjectModel.create(req.body)
       .then((project) => res.json(project))
       .catch((err) => res.json(err));
@@ -13,7 +21,7 @@ router.post("/", (req, res) => {
   
   
   //project update
-  router.put("/:id", (req, res) => {
+  router.patch("/:id", (req, res) => {
     const projectId = req.params.id;
     const updatedProject = req.body;
   
@@ -26,6 +34,60 @@ router.post("/", (req, res) => {
       .then((project) => res.json(project))
       .catch((err) => res.json(err));
   });
+  
+
+  //asfalt projesi ekleme
+  router.patch('/:id/asphalt', async (req, res) => {
+    try {
+        const user_id = req.params.id; // Proje kimliğini alın
+        const asphalt_projects = req.body.asphalt_projects; // Yeni asfalt projesi kimliğini alın
+
+        // Proje belgesini bulun
+        const project = await ProjectModel.findOne({user_id});
+
+        // Eğer proje bulunamazsa, uygun bir hata mesajı döndürün
+        if (!project) {
+            return res.status(404).json({ message: "Proje bulunamadı" });
+        }
+
+        // Asfalt projesini projeye ekleyin
+        project.asphalt_projects.push(asphalt_projects);
+        await project.save();
+
+        res.status(200).json({ message: "Yeni asfalt projesi başarıyla eklendi" });
+    } catch (error) {
+        console.error("Hata:", error);
+        res.status(500).json({ message: "Sunucu hatası" });
+    }
+});
+
+// asfalt projesi silme
+router.delete('/:id/asphalt/:asphaltId', async (req, res) => {
+  try {
+      const projectId = req.params.id; // Proje kimliğini alın
+      const asphaltId  = req.params.asphaltId; // Yeni asfalt projesi kimliğini alın
+
+      // Proje belgesini bulun
+      const project = await ProjectModel.findById(projectId);
+
+      // Eğer proje bulunamazsa, uygun bir hata mesajı döndürün
+      if (!project) {
+          return res.status(404).json({ message: "Proje bulunamadı" });
+      }
+
+      // Asfalt projesini projeye ekleyin
+      project.asphalt_projects.pull(asphaltId );
+      await project.save();
+
+      res.status(200).json({ message: "Asfalt projesi başarıyla silindi" });
+  } catch (error) {
+      console.error("Hata:", error);
+      res.status(500).json({ message: "Sunucu hatası" });
+  }
+});
+
+
+
 
   //project id ye göre getirme
   router.get("/:id", (req, res) => {
@@ -44,6 +106,7 @@ router.post("/", (req, res) => {
   });
   
   
+
   router.get("/", async(req,res) =>{
     const {user_id} = req.query;
     if (!mongoose.Types.ObjectId.isValid(user_id)) {
