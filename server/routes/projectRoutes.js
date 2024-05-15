@@ -31,7 +31,7 @@ router.post("/create", (req, res) => {
       .catch((err) => res.json(err));
   });
   
-
+//#region about asphalt 
   //asfalt projesi ekleme
   router.patch('/:id/asphalt', async (req, res) => {
     try {
@@ -84,9 +84,62 @@ router.delete('/:id/asphalt/:asphaltId', async (req, res) => {
       res.status(500).json({ message: "Sunucu hatası" });
   }
 });
+//#endregion
 
+//#region about Concrete Road
+//asfalt projesi ekleme
+router.patch('/:id/concreteRoad', async (req, res) => {
+  try {
+      const user_id = req.params.id; // Proje kimliğini alın
+      const concreteroad_projects = req.body.concreteroad_projects; // Yeni asfalt projesi kimliğini alın
 
+      // Proje belgesini bulun
+      const project = await ProjectModel.findOne({user_id});
 
+      // Eğer proje bulunamazsa, uygun bir hata mesajı döndürün
+      if (!project) {
+          return res.status(404).json({ message: "Proje bulunamadı" });
+      }
+
+      if (project.concreteroad_projects.includes(concreteroad_projects)) {
+        return res.status(400).json({ message: "Bu Beton yol projesi zaten projeye eklenmiş" });
+    } else {
+        project.concreteroad_projects.push(concreteroad_projects);
+        await project.save();
+        res.status(200).json({ message: "Yeni Beton yol projesi başarıyla eklendi" });
+    }
+      
+  } catch (error) {
+      console.error("Hata:", error);
+      res.status(500).json({ message: "Sunucu hatası" });
+  }
+});
+
+// asfalt projesi silme
+router.delete('/:id/asphalt/:concreteRoadId', async (req, res) => {
+try {
+    const projectId = req.params.id; // Proje kimliğini alın
+    const concreteRoadId  = req.params.concreteRoadId; // Yeni asfalt projesi kimliğini alın
+
+    // Proje belgesini bulun
+    const project = await ProjectModel.findById(projectId);
+
+    // Eğer proje bulunamazsa, uygun bir hata mesajı döndürün
+    if (!project) {
+        return res.status(404).json({ message: "Proje bulunamadı" });
+    }
+
+    // Asfalt projesini projeye ekleyin
+    project.concreteroad_projects.pull(concreteRoadId );
+    await project.save();
+
+    res.status(200).json({ message: "Beton yol projesi başarıyla silindi" });
+} catch (error) {
+    console.error("Hata:", error);
+    res.status(500).json({ message: "Sunucu hatası" });
+}
+});
+//#endregion
 
   //project id ye göre getirme
   router.get("/:id", (req, res) => {

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./AsphaltCalculator.css";
+import axios from "axios";
+import "./ConcreteRoad.css";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import asphalt_1 from "../../assets/asphalt-1.png";
 
-const AsphaltCalculator = () => {
+const ConcreteRoad = () => {
+
   const [holdUserId, setHoldUserId] = useState("");
 
   //Doğrulama anahtarı
@@ -27,74 +27,70 @@ const AsphaltCalculator = () => {
   }, []);
 
   const [excavation_length, setLength] = useState(""); // Kazı boyu
-  const [excavation_width, setWidth] = useState(""); // Genişlik
+  const [excavation_width, setWidth] = useState(4.5); // Genişlik
   const [excavation_depth, setDepth] = useState(0.2); // Derinlik
   const [excavation_volume, setVolume] = useState(""); // Hacim
-  const [asphaltAmount, setAmount] = useState("");
+
 
   //Vehicles
   const [numberOfExcavator, setNumberOfExcavator] = useState("");
   const [numberOfTruck, setNumberOfTruck] = useState("");
   const [numberOfRoller, setNumberOfRoller] = useState("");
   const [numberOfGreyder, setNumberOfGreyder] = useState("");
-  const [numberOfFinisher, setNumberOfFinisher] = useState("");
   //materials
-  const [valueOfPmt, setValuOfPmt] = useState("");
-  const [valueOfAsphalt_1, setValuOfAsphlt_1] = useState("");
-  const [valueOfAsphalt_2, setValuOfAsphlt_2] = useState("");
-  const [valueOfExcavation, setValuOfExcavation] = useState("");
+  const [valueOfPmt, setValueOfPmt] = useState("");
+  const [valueOfCesan, setValueOfCesan] = useState(""); // cesan demir 7cm
+  const [valueOfExcavation, setValueOfExcavation] = useState("");
+  const [valueOfConcrete, setValueOfConcrete] = useState("");
   //Workers
   const [numberOfWorkers, setNumberOfWorkers] = useState("");
 
-  //Price All
+  //price All
   const [priceExcavator, setPriceExcavator] = useState("");
   const [priceTruck, setPriceTruck] = useState("");
   const [priceRoller, setPriceRoller] = useState("");
   const [priceGreyder, setPriceGreyder] = useState("");
-  const [priceFinisher, setPriceFinisher] = useState("");
   const [pricePmt, setPricePmt] = useState("");
-  const [priceAsphalt_1, setPriceAsphalt_1] = useState("");
-  const [priceAsphalt_2, setPriceAsphalt_2] = useState("");
+  const [priceCesan, setPriceCesan] = useState("");
+  const [priceConcrete, setPriceConcrete]  = useState("");
   const [priceExcavation, setPriceExcavation] = useState("");
   const [priceWorkers, setPriceWorkers] = useState("");
-  const [totalProjectPrice, setTotalProjectPrice] = useState("");
   const [calProjectTime, setCalProjectTime] = useState("");
+  const [totalProjectPrice, setTotalProjectPrice] = useState("");
 
-  //asphalt project id
-  const [idAsphaltProject, setIdAsphaltProject] = useState("");
+  //concrete project id
+  const [idConcreteRoadProject, setIdConcreteRoadProject] = useState("");
 
-  const CalculateEssential_1 = () => {
-    //asfalt sökümü yok
+  const calculateEssential = () => {
     setDepth(0.2);
+    setWidth(4.5);
     const calculatedVolume =
       excavation_length * excavation_width * excavation_depth;
     setVolume(calculatedVolume);
-    const asphaltCalculate = (calculatedVolume * 2.4).toFixed(2); // Maksimum 2 ondalık hane
-    setAmount(asphaltCalculate);
 
     const essentialNumberOfEquipment = Math.ceil(excavation_length / 3000);
     const numberOfTwo = 2 * essentialNumberOfEquipment;
     const numberOfOne = essentialNumberOfEquipment;
-    const numberOfWorkers = 4 * essentialNumberOfEquipment;
+    const numberOfWorkers = 8 * essentialNumberOfEquipment; // beton yol icin 1 ekip icinde 8 kişi bulunur
 
     setNumberOfExcavator(numberOfTwo);
     setNumberOfTruck(numberOfTwo);
     setNumberOfRoller(numberOfOne);
     setNumberOfGreyder(numberOfOne);
-    setNumberOfFinisher(1);
-    setNumberOfWorkers(numberOfWorkers);
+    setNumberOfWorkers(numberOfWorkers ); // beton yol için ayrıca
 
-    const totalValueAsphalt_1 = 2.4 * (0.15 * excavation_length * excavation_width); // alt tabaka 15 cm
-    const totalValueAsphalt_2 = 2.4 * (0.05 * excavation_length * excavation_width); // üst tabaka 5 cm
-    const totalValuePmt = 0.1 * excavation_length * excavation_width; // pmt tabakası 10 cm
+    const cesanValue = (excavation_length / 5) * 2; // 1 tanesi 5m x 2.15 m, 7cm şeklinde --> adet 100 adet 10 bin tl
+    const totalValuePmt = 0.1 * excavation_length * excavation_width;
+    const totalValueConcrete =
+      2.5 * (excavation_width * excavation_length * 0.15); // 1 m3 beton 2.5 ton ediyor
 
-    setValuOfExcavation(calculatedVolume);
-    setValuOfAsphlt_1(totalValueAsphalt_1);
-    setValuOfAsphlt_2(totalValueAsphalt_2);
-    setValuOfPmt(totalValuePmt);
+    setValueOfExcavation(calculatedVolume);
+    setValueOfCesan(cesanValue);
+    setValueOfPmt(totalValuePmt);
+    setValueOfConcrete(totalValueConcrete);
   };
 
-  //#region materials price
+  //#region Material Price
   useEffect(() => {
     const fetchMaterialPrice = async () => {
       try {
@@ -113,15 +109,15 @@ const AsphaltCalculator = () => {
           if (material.material_name === "pmt") {
             const pmtPrice = valueOfPmt * material.material_price;
             setPricePmt(pmtPrice);
-          } else if (material.material_name === "asphalt_1") {
-            const asphalt1Price = valueOfAsphalt_1 * material.material_price;
-            setPriceAsphalt_1(asphalt1Price);
-          } else if (material.material_name === "asphalt_2") {
-            const asphalt2Price = valueOfAsphalt_2 * material.material_price;
-            setPriceAsphalt_2(asphalt2Price);
+          } else if (material.material_name === "cesan") {
+            const cesanPrice = valueOfCesan * material.material_price;
+            setPriceCesan(cesanPrice);
           } else if (material.material_name === "excavation") {
             const excavationPrice = valueOfExcavation * material.material_price;
             setPriceExcavation(excavationPrice);
+          } else if (material.material_name === "concrete") {
+            const concretePrice = valueOfConcrete * material.material_price;
+            setPriceConcrete(concretePrice);
           }
         });
       } catch (err) {
@@ -129,7 +125,7 @@ const AsphaltCalculator = () => {
       }
     };
     fetchMaterialPrice();
-  }, [valueOfPmt, valueOfAsphalt_1, valueOfAsphalt_2, valueOfExcavation]);
+  }, [valueOfPmt, valueOfCesan, valueOfExcavation,valueOfConcrete]);
   //#endregion
 
   //#region Vehicle price
@@ -167,17 +163,14 @@ const AsphaltCalculator = () => {
             const greyderPrice =
               numberOfGreyder * vehicle.vehicle_price * calProjectTime;
             setPriceGreyder(greyderPrice);
-          } else if (vehicle.vehicle_type === "finisher") {
-            const finisherPrice =
-              numberOfFinisher * vehicle.vehicle_price * calProjectTime;
-            setPriceFinisher(finisherPrice);
           }
         });
 
         //worker Price
         const workerPrice =
-          numberOfWorkers * workerGet[0].worker_price * calProjectTime;
+          numberOfWorkers * workerGet[0].worker_price * (calProjectTime + 1);
         setPriceWorkers(workerPrice);
+
       } catch (err) {
         console.error(err);
       }
@@ -188,7 +181,6 @@ const AsphaltCalculator = () => {
     numberOfExcavator,
     numberOfRoller,
     numberOfGreyder,
-    numberOfFinisher,
     numberOfWorkers,
     calProjectTime,
   ]);
@@ -197,14 +189,15 @@ const AsphaltCalculator = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const calTimeofProject = Math.ceil(excavation_volume / 3200);
+    const calTimeofProject = Math.ceil(excavation_length / 1500);
+    console.log(calTimeofProject);
     setCalProjectTime(calTimeofProject);
 
-    CalculateEssential_1(); //hesaplamaların yapıldığı fonksiyon
+    calculateEssential();
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/asphalt/create",
+        "http://localhost:3000/concreteRoad/create",
         {
           equipments: [
             { type: "equipment Type", quantity: 10, price: 100 }, // Örnek değerler
@@ -218,23 +211,18 @@ const AsphaltCalculator = () => {
             { type: "truck", quantity: numberOfTruck, price: priceTruck },
             { type: "roller", quantity: numberOfRoller, price: priceRoller },
             { type: "greyder", quantity: numberOfGreyder, price: priceGreyder },
-            {
-              type: "finisher",
-              quantity: numberOfFinisher,
-              price: priceFinisher,
-            },
           ],
           materials: [
             { type: "pmt", quantity: valueOfPmt, price: pricePmt },
             {
-              type: "asphalt_1",
-              quantity: valueOfAsphalt_1,
-              price: priceAsphalt_1,
+              type: "cesan",
+              quantity: valueOfCesan,
+              price: priceCesan,
             },
             {
               type: "asphalt_2",
-              quantity: valueOfAsphalt_2,
-              price: priceAsphalt_2,
+              quantity: valueOfConcrete,
+              price: priceConcrete,
             },
             {
               type: "excavation",
@@ -250,35 +238,37 @@ const AsphaltCalculator = () => {
       );
 
       const data_id = response.data._id;
-      setIdAsphaltProject(data_id);
+      setIdConcreteRoadProject(data_id);
 
       console.log("Backend'den gelen yanıt:", response.data);
-    } catch (error) {
-      console.error("Hata:", error);
+    
+    } catch (err) {
+      console.log(err)
     }
 
     const totalMPrice =
-      priceExcavator + priceTruck + priceRoller + priceGreyder + priceFinisher;
+      priceExcavator + priceTruck + priceRoller + priceGreyder ;
     const totalVPRice =
       pricePmt +
-      priceAsphalt_1 +
-      priceAsphalt_2 +
+      priceCesan +
+      priceConcrete +
       priceExcavation +
       priceWorkers;
     const totalAllPrice = totalMPrice + totalVPRice;
     setTotalProjectPrice(totalAllPrice);
     console.log("deneme price: " + totalProjectPrice.toLocaleString("tr-TR"));
+    
   };
 
-  //Add asphalt project to user project list
+  //Add Concrede Road project to user project list
   useEffect(() => {
     const postProjectId = async () => {
       await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 saniye bekle
       try {
         const response = await axios.patch(
-          `http://localhost:3000/project/${holdUserId}/asphalt`,
+          `http://localhost:3000/project/${holdUserId}/concreteRoad`,
           {
-            asphalt_projects: idAsphaltProject,
+            concreteroad_projects: idConcreteRoadProject,
           }
         );
         console.log(response.data);
@@ -287,15 +277,15 @@ const AsphaltCalculator = () => {
       }
     };
     postProjectId();
-  }, [idAsphaltProject, holdUserId]);
+  }, [idConcreteRoadProject, holdUserId]);
 
   return (
-    <div className="asphalt">
+    <div className="concrete">
       <Col>
         <Row>
           <Col xs={6}>
             <div className="excavation-col">
-              <h2>Excavation Volume Calculating</h2>
+              <h2>Concrete Volume Calculating</h2>
               <form onSubmit={handleSubmit}>
                 <label>
                   Length (m):
@@ -313,7 +303,8 @@ const AsphaltCalculator = () => {
                   <input
                     className="m-2"
                     type="number"
-                    value={excavation_width}
+                    placeholder="Not needed"
+                    value={excavation_width} //width yani genişlik 4,50 sabit
                     onChange={(e) => setWidth(e.target.value)}
                     onFocus={(e) => e.target.select()} // Girdiye odaklandığında içeriği seç
                   />
@@ -343,9 +334,9 @@ const AsphaltCalculator = () => {
               </div>
             </div>
           </Col>
-          <Col xs={6} className="mt-4">
+          <Col>
             <div className="excavation-col">
-              <h2> Asphalt Calculator </h2>
+              <h2> Concrete Road Calculator </h2>
 
               <ul>
                 <li>Total Volume = Length X Width X Depth</li>
@@ -360,75 +351,13 @@ const AsphaltCalculator = () => {
                     <span> {excavation_volume} m³ X 2.4</span>
                   )}
                 </li>
-                <li>
-                  Total Quantity ={" "}
-                  {asphaltAmount && (
-                    <span>
-                      {""}
-                      {asphaltAmount} m³
-                    </span>
-                  )}
-                </li>
               </ul>
             </div>
           </Col>
-        </Row>
-        <Row className="mt-5">
-          <div className="col-md-8 ">
-            <div className="asphalt-info">
-              <h2>What is Asphalt and Asphalt Calculation?</h2>
-              <h3>Asphalt</h3>
-              <p>
-                Asphalt, also known as bitumen, is a sticky, black, and highly
-                viscous liquid or semi-solid form of petroleum. It is commonly
-                used in road construction as a binding agent for aggregate
-                materials like gravel, sand, and crushed stone to create asphalt
-                concrete. Asphalt provides durability, weather resistance, and
-                smoothness to road surfaces, making it a popular choice for
-                paving roads, highways, and airport runways.
-              </p>
-
-              <h3>Asphalt Calculation</h3>
-              <p>
-                When calculating the quantity of asphalt needed for a project,
-                it's essential to consider the volume of the area to be paved
-                and the density of the asphalt. The formula for calculating the
-                asphalt quantity is:
-              </p>
-
-              <ul>
-                <li>
-                  <strong>Volume:</strong> The volume represents the space to be
-                  filled with asphalt. It is typically calculated by multiplying
-                  the length, width, and depth of the area to be paved. For
-                  example, if you have a rectangular area, the volume (V) can be
-                  calculated as V = Length × Width × Depth.
-                </li>
-                <li>
-                  <strong>Density of Asphalt:</strong> The density of asphalt,
-                  usually measured in kilograms per cubic meter (kg/m³) or
-                  pounds per cubic yard (lb/yd³), represents the mass per unit
-                  volume of asphalt. It can vary depending on the type of
-                  asphalt mix and its composition.
-                </li>
-              </ul>
-
-              <p>
-                By multiplying the volume of the area to be paved by the density
-                of the asphalt, you can determine the total quantity of asphalt
-                needed for your project. This calculation ensures that you have
-                sufficient asphalt to cover the specified area at the desired
-                thickness.
-              </p>
-            </div>
-          </div>
-          <div className="col-md-4">
-            <img src={asphalt_1} alt="Asphalt" className="img-fluid" />
-          </div>
         </Row>
       </Col>
     </div>
   );
 };
 
-export default AsphaltCalculator;
+export default ConcreteRoad;
