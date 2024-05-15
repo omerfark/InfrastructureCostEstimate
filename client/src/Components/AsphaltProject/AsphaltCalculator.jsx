@@ -195,7 +195,7 @@ useEffect(() => {
     CalculateEssential_1(); //hesaplamaların yapıldığı fonksiyon
 
     try {
-      const response = await axios.post('http://localhost:3000/project/asphalt', {
+      const response = await axios.post('http://localhost:3000/asphalt/create', {
         equipments: [
           { type: "equipment Type", quantity: 10, price: 100 }, // Örnek değerler
         ],

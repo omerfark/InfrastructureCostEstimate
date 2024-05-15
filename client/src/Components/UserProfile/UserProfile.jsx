@@ -198,17 +198,17 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
+  const [selectedId, setSelectedId] = useState(null);
   const [userToken, setUserToken] = useState("");
   const [userInfo, setUserInfo] = useState("");
   const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
+  const [selectedProject, setSelectedProject] = useState("null");
 
-  //Project Post
+  //Project get
   const [projectName, setProjectName] = useState("");
   const [projectDescription, setProjectDescription] = useState("");
   const [projectType, setProjectType] = useState("");
   const [projectUser, setProjectUser] = useState("");
-  
 
   const navigate = useNavigate();
   axios.defaults.withCredentials = true; //cookie özelliği eklemek için
@@ -226,7 +226,7 @@ const UserProfile = () => {
     });
   }, []);
 
-  //user info
+  //#region //user info
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -246,8 +246,9 @@ const UserProfile = () => {
       fetchUserInfo();
     }
   }, [userToken]);
+  //#endregion
 
-  // get all project info
+  //#region  get project info for project
   useEffect(() => {
     const fetchUserProjects = async () => {
       try {
@@ -267,8 +268,24 @@ const UserProfile = () => {
       fetchUserProjects();
     }
   }, [userToken]);
+  //#endregion
 
-
+  useEffect(() => {
+    console.log("id: " + selectedId);
+    const fetchUserProjects = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/asphalt/${selectedId}`
+        );
+        const dataOfAsphaltP = await response.json();
+        console.log("ress: " + dataOfAsphaltP);
+        setSelectedProject(dataOfAsphaltP);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchUserProjects();
+  }, [selectedId]);
 
   const handleLogout = () => {
     axios
@@ -284,16 +301,10 @@ const UserProfile = () => {
       });
   };
 
-  const handleProjectClick = (project) => {
-    setSelectedProject(project);
+  const handleButtonClick = (id) => {
+    setSelectedId(id);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setProjectUser(userInfo._id)
-
-
-  }
   return (
     <div className="asphalt">
       <Col>
@@ -305,52 +316,140 @@ const UserProfile = () => {
           </div>
         </Row>
         <Row>
+          <h2>Project List</h2>
           <Col>
-            <div>
-              <h1>Projects</h1>
+            <div className="excavation-col">
+              <h2>Asphalt Projects</h2>
               <ul>
                 {projects.map((project) => (
-                  <li
-                    key={project._id}
-                    onClick={() => handleProjectClick(project)}
-                  >
-                    <button className="btn">{project.project_name}</button>
+                  <li key={project._id}>
+                    {project.asphalt_projects.map((asphaltProject) => (
+                      <button
+                        key={asphaltProject._id}
+                        onClick={() => handleButtonClick(asphaltProject)}
+                      >
+                        id: {asphaltProject}
+                      </button>
+                    ))}
                   </li>
                 ))}
               </ul>
             </div>
           </Col>
-          <Col className="">
+          <Col>
             <div className="excavation-col">
-              {selectedProject && (
-                <div>
-                  <h2>Selected Project Details</h2>
-                  <p>Project Name: {selectedProject.project_name}</p>
-                  <p>Project Type: {selectedProject.project_type}</p>
-                  <p>
-                    Project Description: {selectedProject.project_description}
-                  </p>
-                  <p>
-                    Project Materials:{" "}
-                    {selectedProject.project_requirements.materials[0]}
-                  </p>
-                    <ul>
-                      {selectedProject.project_requirements.materials.map(
-                        (material, index) => (
-                          <li key={index}>
-                            Name: {material}
-                          </li>
-                        )
-                      )}
-                    </ul>
-                  {/* Diğer proje detaylarını buraya ekleyebilirsiniz */}
-                </div>
-              )}
+              <h2>Project List</h2>
+              <ul>
+                {projects.map((project) => (
+                  <li key={project._id}>
+                    {project.asphalt_projects.map((asphaltProject) => (
+                      <button
+                        key={asphaltProject._id}
+                        onClick={() => handleButtonClick(asphaltProject)}
+                      >
+                        id: {asphaltProject}
+                      </button>
+                    ))}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Col>
+          <Col>
+            <div className="excavation-col">
+              <h2>Project List</h2>
+              <ul>
+                {projects.map((project) => (
+                  <li key={project._id}>
+                    {project.asphalt_projects.map((asphaltProject) => (
+                      <button
+                        key={asphaltProject._id}
+                        onClick={() => handleButtonClick(asphaltProject)}
+                      >
+                        id: {asphaltProject}
+                      </button>
+                    ))}
+                  </li>
+                ))}
+              </ul>
             </div>
           </Col>
         </Row>
         <Row>
-          
+          <Col>
+            {selectedProject && (
+              <div className="excavation-col">
+                <ul>
+                  {selectedProject.vehicles &&
+                    selectedProject.vehicles.map((vehicle) => (
+                      <li key={vehicle._id}>
+                        Vehicle Name: {vehicle.type}
+                        <br />
+                        Vehicle Quantity: {vehicle.quantity}
+                        <br />
+                        Vehicle Price: {vehicle.price}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
+          </Col>
+          <Col>
+            {selectedProject && (
+              <div className="excavation-col">
+                <ul>
+                  {selectedProject.materials &&
+                    selectedProject.materials.map((material) => (
+                      <li key={material._id}>
+                        Material Type: {material.type}
+                        <br />
+                        Material Quantity: {material.quantity}
+                        <br />
+                        Material Price: {material.price}
+                      </li>
+                    ))}
+                </ul>
+              </div>
+            )}
+          </Col>
+          <Col>
+            <Row>
+              {selectedProject && (
+                <div className="excavation-col">
+                  <ul>
+                    {selectedProject.equipments &&
+                      selectedProject.equipments.map((equipment) => (
+                        <li key={equipment._id}>
+                          Equipment Type: {equipment.type}
+                          <br />
+                          Equipment Quantity: {equipment.quantity}
+                          <br />
+                          Equipment Price: {equipment.price}
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              )}
+            </Row>
+            <Row>
+              {selectedProject && (
+                <div className="excavation-col">
+                  <ul>
+                    {selectedProject.worker &&
+                      selectedProject.worker.map((worker) => (
+                        <li key={worker._id}>
+                          Worker Type: {worker.type}
+                          <br />
+                          Worker Quantity: {worker.quantity}
+                          <br />
+                          Worker Price: {worker.price}
+                        </li>
+                      ))}
+                  </ul>
+                </div>
+              )}
+            </Row>
+          </Col>
         </Row>
       </Col>
     </div>

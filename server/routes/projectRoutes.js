@@ -6,11 +6,7 @@ const ProjectModel = require('../models/Project.js');
 const AsphaltModel = require('../models/Asphalt.js');
 
 
-router.post("/asphalt", (req, res) => {
-  AsphaltModel.create(req.body)
-    .then((model) => res.json(model))
-    .catch((err) => res.json(err));
-});
+
 
 //project proje ekleme
 router.post("/create", (req, res) => {
@@ -50,11 +46,14 @@ router.post("/create", (req, res) => {
             return res.status(404).json({ message: "Proje bulunamadı" });
         }
 
-        // Asfalt projesini projeye ekleyin
-        project.asphalt_projects.push(asphalt_projects);
-        await project.save();
-
-        res.status(200).json({ message: "Yeni asfalt projesi başarıyla eklendi" });
+        if (project.asphalt_projects.includes(asphalt_projects)) {
+          return res.status(400).json({ message: "Bu asfalt projesi zaten projeye eklenmiş" });
+      } else {
+          project.asphalt_projects.push(asphalt_projects);
+          await project.save();
+          res.status(200).json({ message: "Yeni asfalt projesi başarıyla eklendi" });
+      }
+        
     } catch (error) {
         console.error("Hata:", error);
         res.status(500).json({ message: "Sunucu hatası" });
