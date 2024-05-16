@@ -16,6 +16,7 @@ import UserProfile from './Components/UserProfile/UserProfile'
 import ForgotPassword from './Components/ForgotPassword/ForgotPassword'
 import ResetPassword from './Components/ResetPassword/ResetPassword'
 import ConcreteRoad from './Components/ConcreteRoad/ConcreteRoad'
+import ElectricProject from './Components/ElectricProject/ElectricProject'
 
 
 
@@ -36,6 +37,7 @@ function App() {
         <Route path='/asphaltcalculator' element={<AsphaltCalculator/>}></Route>
         <Route path='/pipeinfrastructure' element={<PictureInPictureEvent/>}></Route>
         <Route path='/concreteRoad' element={<ConcreteRoad/>}></Route>
+        <Route path='/electric' element={<ElectricProject/>}></Route>
         <Route path='/userprofile' element={<UserProfile/>}></Route>
         <Route path='/forgotPassword' element={<ForgotPassword/>}></Route>
         <Route path='/resetPassword/:token' element={<ResetPassword/>}></Route>

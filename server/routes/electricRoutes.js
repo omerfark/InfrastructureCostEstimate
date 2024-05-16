@@ -1,22 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require("mongoose");
-const ConcreteRoadModel = require('../models/ConcreteRoad.js');
+const ElectricModel = require('../models/Electric.js');
 const ExcelJS = require('exceljs');
-
 
 router.get("/:id/export/excel", async (req, res) => {
   const projectId = req.params.id;
 
   try {
-      const concreteRoadProject = await ConcreteRoadModel.findById(projectId);
+      const electricProject = await ElectricModel.findById(projectId);
 
-      if (!concreteRoadProject) {
-          return res.status(404).json({ message: "Concrete Road project not found" });
+      if (!electricProject) {
+          return res.status(404).json({ message: "Electric project not found" });
       }
 
       const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Concrete Road Projects');
+      const worksheet = workbook.addWorksheet('Electric Projects');
 
       // Sütunu tanımlayın
       worksheet.columns = [
@@ -28,7 +27,7 @@ router.get("/:id/export/excel", async (req, res) => {
       ];
 
       // Ekipmanları ekle
-      concreteRoadProject.equipments.forEach(equipment => {
+      electricProject.equipments.forEach(equipment => {
           worksheet.addRow({
               product: equipment.type,
               quantity: equipment.quantity,
@@ -39,7 +38,7 @@ router.get("/:id/export/excel", async (req, res) => {
       });
 
       // Araçları ekle
-      concreteRoadProject.vehicles.forEach(vehicle => {
+      electricProject.vehicles.forEach(vehicle => {
           worksheet.addRow({
               product: vehicle.type,
               quantity: vehicle.quantity,
@@ -50,7 +49,7 @@ router.get("/:id/export/excel", async (req, res) => {
       });
 
       // Malzemeleri ekle
-      concreteRoadProject.materials.forEach(material => {
+      electricProject.materials.forEach(material => {
           worksheet.addRow({
               product: material.type,
               quantity: material.quantity, 
@@ -60,7 +59,7 @@ router.get("/:id/export/excel", async (req, res) => {
           });
       });
 
-      concreteRoadProject.worker.forEach(worker => {
+      electricProject.worker.forEach(worker => {
         worksheet.addRow({
             product: worker.type,
             quantity:worker.quantity,
@@ -71,7 +70,7 @@ router.get("/:id/export/excel", async (req, res) => {
     });
       // Excel dosyasını oluşturun ve yanıt olarak gönderin
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', 'attachment; filename=' + 'concrete_road_projects.xlsx');
+      res.setHeader('Content-Disposition', 'attachment; filename=' + 'electric_projects.xlsx');
       await workbook.xlsx.write(res);
       res.end();
 
@@ -81,8 +80,9 @@ router.get("/:id/export/excel", async (req, res) => {
   }
 });
 
+
 router.post("/create", (req, res) => {
-    ConcreteRoadModel.create(req.body)
+    ElectricModel.create(req.body)
       .then((model) => res.json(model))
       .catch((err) => res.json(err));
   });
@@ -92,14 +92,13 @@ router.post("/create", (req, res) => {
     const projectId = req.params.id;
 
     try{
-        const concreteProject = await ConcreteRoadModel.findById(projectId)
+        const electricProject = await ElectricModel.findById(projectId)
 
-        res.json(concreteProject);
+        res.json(electricProject);
         
     }catch(err){
         console.log(err)
     }
   });
-
 
 module.exports = router;

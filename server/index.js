@@ -11,7 +11,8 @@ const projectRoutes = require('./routes/projectRoutes.js');
 const vehicleRoutes = require('./routes/vehicleRoutes.js');
 const workerRoutes = require('./routes/workerRoutes.js')
 const asphaltRoutes =require('./routes/asphaltRoutes.js')
-const concreteRoutes =require('./routes/concreteRoutes.js')
+const concreteRoutes =require('./routes/ConcreteRoutes.js')
+const electricRoutes =require('./routes/electricRoutes.js')
 
 const app = express();
 app.use(express.json());
@@ -32,6 +33,7 @@ app.use("/vehicles", vehicleRoutes);
 app.use("/worker", workerRoutes);
 app.use("/asphalt", asphaltRoutes);
 app.use("/concreteRoad", concreteRoutes);
+app.use("/electric", electricRoutes);
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/infracost_est")
