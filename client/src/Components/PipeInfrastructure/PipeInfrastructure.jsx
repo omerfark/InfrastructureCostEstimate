@@ -58,6 +58,8 @@ const PipeInfrastructure = () => {
 
 
 
+
+  
   const excavator1= "excavator";
   const truck1="truck";
   const teamName= "team1"
@@ -106,6 +108,7 @@ const PipeInfrastructure = () => {
   const excavationMaterial = "excavation"; 
   const aggregateMaterial = "aggregate";
   const concretePipe = pipeSelected.name;
+
   //material price
   useEffect(() => {
     const fetchMaterialPrice = async () => {

@@ -11,12 +11,13 @@ import Footer from "./Components/Footer/Footer";
 import Navbar from './Components/Navbar/Navbar';
 import Excavation from './Components/Excavation/Excavation'
 import AsphaltCalculator from './Components/AsphaltProject/AsphaltCalculator'
-import PictureInPictureEvent from './Components/PipeInfrastructure/PipeInfrastructure'
+// import PictureInPictureEvent from './Components/PipeInfrastructure/PipeInfrastructure'
 import UserProfile from './Components/UserProfile/UserProfile'
 import ForgotPassword from './Components/ForgotPassword/ForgotPassword'
 import ResetPassword from './Components/ResetPassword/ResetPassword'
 import ConcreteRoad from './Components/ConcreteRoad/ConcreteRoad'
 import ElectricProject from './Components/ElectricProject/ElectricProject'
+import PipeConcrete from './Components/PipeConcrete/PipeConcrete'
 
 
 
@@ -35,7 +36,7 @@ function App() {
         <Route path='/contact' element={<Contact/>}></Route>
         <Route path='/excavation' element={<Excavation/>}></Route>
         <Route path='/asphaltcalculator' element={<AsphaltCalculator/>}></Route>
-        <Route path='/pipeinfrastructure' element={<PictureInPictureEvent/>}></Route>
+        <Route path='/pipeconcrete' element={<PipeConcrete/>}></Route>
         <Route path='/concreteRoad' element={<ConcreteRoad/>}></Route>
         <Route path='/electric' element={<ElectricProject/>}></Route>
         <Route path='/userprofile' element={<UserProfile/>}></Route>

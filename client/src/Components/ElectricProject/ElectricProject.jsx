@@ -70,15 +70,15 @@ const ElectricProject = () => {
       const widthDuct = widthCable * 2;
       setWidth(widthDuct);
 
-      const calculatedVolume = excavation_length * excavation_width * depth;
+      const calculatedVolume = (excavation_length * excavation_width * depth).toFixed(2);
       setVolume(calculatedVolume);
 
       const essentialNumberOfEquipment = Math.ceil(excavation_length / 4000);
       const numberOfOne = 1 * essentialNumberOfEquipment;
       const numberOfWorkers = 4 * essentialNumberOfEquipment;
 
-      const sandValue = 0.2 * (excavation_length * excavation_width);
-      const aggregateValue = 0.3 * (excavation_length * excavation_width);
+      const sandValue = 0.2 * (excavation_length * excavation_width).toFixed(2);
+      const aggregateValue = (0.3 * (excavation_length * excavation_width)).toFixed(2);
       const concreteSlabValue = Math.round(excavation_length / 0.4);
       const concreteSlabWidth = Math.round(excavation_width / 0.2);
       const concreteSlab = concreteSlabValue * concreteSlabWidth;
@@ -117,7 +117,7 @@ const ElectricProject = () => {
             } else if (material.material_name === "excavation") {
               const excavationPrice = valueOfExcavation * material.material_price;
               setPriceExcavation(excavationPrice);
-            } else if (material.material_name === "concrete") {
+            } else if (material.material_name === "concret slab") {
               const concreteSlab = valueOfConcreteSlab * material.material_price;
               setPriceConcreteSlab(concreteSlab);
             }
@@ -259,7 +259,7 @@ const ElectricProject = () => {
   
   useEffect(() => {
     const postProjectId = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 3000)); // 1 saniye bekle
+      await new Promise((resolve) => setTimeout(resolve, 3000)); // 3 saniye bekle
       try {
         const response = await axios.patch(
           `http://localhost:3000/project/${holdUserId}/electric`,

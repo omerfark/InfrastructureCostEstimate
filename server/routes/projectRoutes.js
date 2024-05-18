@@ -200,6 +200,65 @@ try {
 });
 //#endregion
 
+//#region about PipeConcrete
+//PipeConcrete projesi ekleme
+router.patch('/:id/pipeConcrete', async (req, res) => {
+  try {
+      const user_id = req.params.id; // Proje kimliğini alın
+      const pipeconcrete_projects = req.body.pipeconcrete_projects; // Yeni asfalt projesi kimliğini alın
+
+      if (pipeconcrete_projects == null) {
+        return res.status(400).json({ message: "Geçersiz pipeconcrete projesi verisi" });
+    }
+
+      // Proje belgesini bulun
+      const project = await ProjectModel.findOne({user_id});
+
+      // Eğer proje bulunamazsa, uygun bir hata mesajı döndürün
+      if (!project) {
+          return res.status(404).json({ message: "Proje bulunamadı" });
+      }
+
+      if (project.pipeconcrete_projects.includes(pipeconcrete_projects)) {
+        return res.status(400).json({ message: "Bu pipeconcrete projesi zaten projeye eklenmiş" });
+    } else {
+        project.pipeconcrete_projects.push(pipeconcrete_projects);
+        await project.save();
+        res.status(200).json({ message: "Yeni pipeconcrete projesi başarıyla eklendi" });
+    }
+      
+  } catch (error) {
+      console.error("Hata:", error);
+      res.status(500).json({ message: "Sunucu hatası" });
+  }
+});
+
+// PipeConcrete projesi silme
+router.delete('/:id/pipeConcrete/:pipeConcreteId', async (req, res) => {
+try {
+    const projectId = req.params.id; // Proje kimliğini alın
+    const pipeConcreteId  = req.params.pipeConcreteId; // Yeni asfalt projesi kimliğini alın
+
+    // Proje belgesini bulun
+    const project = await ProjectModel.findById(projectId);
+
+    // Eğer proje bulunamazsa, uygun bir hata mesajı döndürün
+    if (!project) {
+        return res.status(404).json({ message: "Proje bulunamadı" });
+    }
+
+    // PipeConcrete  projesini projeden silin
+    project.pipeconcrete_projects.pull(pipeConcreteId );
+    await project.save();
+
+    res.status(200).json({ message: "PipeConcrete projesi başarıyla silindi" });
+} catch (error) {
+    console.error("Hata:", error);
+    res.status(500).json({ message: "Sunucu hatası" });
+}
+});
+//#endregion
+
 
   //project id ye göre getirme
   router.get("/:id", (req, res) => {

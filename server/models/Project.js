@@ -3,11 +3,12 @@ const mongoose = require("mongoose");
 const Asphalt = require("./Asphalt")
 const concreteRoad = require("./ConcreteRoad")
 const electric = require("./Electric")
+const pipeConcrete = require("./Electric")
 
 const ProjectSchema = new mongoose.Schema({
   asphalt_projects: [{type: mongoose.Schema.Types.ObjectId,ref: "Asphalt"}],
   concreteroad_projects: [{type: mongoose.Schema.Types.ObjectId,ref: "concreteRoad"}],
-  // sewer_projects: [{type: mongoose.Schema.Types.ObjectId,ref: "teams"}],
+  pipeconcrete_projects: [{type: mongoose.Schema.Types.ObjectId,ref: "pipeConcrete"}],
   // corrugated_projects: [{type: mongoose.Schema.Types.ObjectId,ref: "teams"}],
   // water_projects: [{type: mongoose.Schema.Types.ObjectId,ref: "teams"}],
   electric_projects: [{type: mongoose.Schema.Types.ObjectId,ref: "electric"}],

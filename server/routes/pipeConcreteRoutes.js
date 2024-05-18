@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require("mongoose");
-const AsphaltModel = require('../models/Asphalt.js');
+const PipeConcreteModel = require('../models/PipeConcrete.js');
 const ExcelJS = require('exceljs');
 
 
@@ -9,14 +9,14 @@ router.get("/:id/export/excel", async (req, res) => {
   const projectId = req.params.id;
 
   try {
-      const asphaltProject = await AsphaltModel.findById(projectId);
+      const pipeconcreteProject = await PipeConcreteModel.findById(projectId);
 
-      if (!asphaltProject) {
-          return res.status(404).json({ message: "Asphalt project not found" });
+      if (!pipeconcreteProject) {
+          return res.status(404).json({ message: "Pipe Concrete project not found" });
       }
 
       const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Asphalt Projects');
+      const worksheet = workbook.addWorksheet('Pipe Concrete  Projects');
 
       // Sütunu tanımlayın
       worksheet.columns = [
@@ -28,7 +28,7 @@ router.get("/:id/export/excel", async (req, res) => {
       ];
 
       // Ekipmanları ekle
-      asphaltProject.equipments.forEach(equipment => {
+      pipeconcreteProject.equipments.forEach(equipment => {
           worksheet.addRow({
               product: equipment.type,
               quantity: equipment.quantity,
@@ -39,7 +39,7 @@ router.get("/:id/export/excel", async (req, res) => {
       });
 
       // Araçları ekle
-      asphaltProject.vehicles.forEach(vehicle => {
+      pipeconcreteProject.vehicles.forEach(vehicle => {
           worksheet.addRow({
               product: vehicle.type,
               quantity: vehicle.quantity,
@@ -50,7 +50,7 @@ router.get("/:id/export/excel", async (req, res) => {
       });
 
       // Malzemeleri ekle
-      asphaltProject.materials.forEach(material => {
+      pipeconcreteProject.materials.forEach(material => {
           worksheet.addRow({
               product: material.type,
               quantity: material.quantity, 
@@ -60,7 +60,7 @@ router.get("/:id/export/excel", async (req, res) => {
           });
       });
 
-      asphaltProject.worker.forEach(worker => {
+      pipeconcreteProject.worker.forEach(worker => {
         worksheet.addRow({
             product: worker.type,
             quantity:worker.quantity,
@@ -71,7 +71,7 @@ router.get("/:id/export/excel", async (req, res) => {
     });
       // Excel dosyasını oluşturun ve yanıt olarak gönderin
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-      res.setHeader('Content-Disposition', 'attachment; filename=' + 'asphalt_projects.xlsx');
+      res.setHeader('Content-Disposition', 'attachment; filename=' + 'pipeConcrete_Project.xlsx');
       await workbook.xlsx.write(res);
       res.end();
 
@@ -83,7 +83,7 @@ router.get("/:id/export/excel", async (req, res) => {
 
 
 router.post("/create", (req, res) => {
-    AsphaltModel.create(req.body)
+    PipeConcreteModel.create(req.body)
       .then((model) => res.json(model))
       .catch((err) => res.json(err));
   });
@@ -96,9 +96,9 @@ router.post("/create", (req, res) => {
         return res.status(400).json({ error: "Invalid projectId" });
       }
     try{
-        const asphaltProject = await AsphaltModel.findById(projectId)
+        const pipeconcreteProject = await PipeConcreteModel.findById(projectId)
 
-        res.json(asphaltProject);
+        res.json(pipeconcreteProject);
         
     }catch(err){
         console.log(err)
