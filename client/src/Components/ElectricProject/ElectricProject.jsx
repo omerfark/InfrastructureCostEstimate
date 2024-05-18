@@ -6,6 +6,26 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 
 const ElectricProject = () => {
+
+  const [holdUserId, setHoldUserId] = useState("");
+
+  //Doğrulama anahtarı
+  const navigate = useNavigate();
+  axios.defaults.withCredentials = true; //cookie özelliği eklemek için
+
+  useEffect(() => {
+    axios.get("http://localhost:3000/auth/verify").then((res) => {
+      if (res.data.status) {
+        console.log(res.data);
+        const tokenValue = res.data.token;
+        const sbtUser = tokenValue.userId;
+        setHoldUserId(sbtUser);
+      } else {
+        navigate("/login");
+      }
+    });
+  }, []);
+
   const [excavation_length, setLength] = useState(""); // Kazı boyu
   const [excavation_width, setWidth] = useState(""); // Genişlik
   const [excavation_depth, setDepth] = useState(0.8); // Derinlik
@@ -24,9 +44,10 @@ const ElectricProject = () => {
   const [valueOfConcreteSlab, setValueOfConcreteSlab] = useState("");
   const [valueOfExcavation, setValueOfExcavation] = useState("");
   //workers
-  const [ numberOfWorkers, setNumberOfWorkers ]= useState("");
+  const [numberOfWorkers, setNumberOfWorkers] = useState("");
 
   //price All
+  const [priceCompactor, setPriceCompactor] = useState("");
   const [priceExcavator, setPriceExcavator] = useState("");
   const [priceTruck, setPriceTruck] = useState("");
   const [priceJCB, setPriceJCB] = useState("");
@@ -42,131 +63,217 @@ const ElectricProject = () => {
   const [idElectricProject, setIdElectricProject] = useState("");
 
   const calculateEssential = () => {
-    setDepth(0.8);
-    const widthDuct = widthCable * 2;
-    setWidth(widthDuct);
-    const calculatedVolume =
-      excavation_length * excavation_width * excavation_depth;
-    setVolume(calculatedVolume);
+    return new Promise((resolve) => {
+      const depth = 0.8;
+      setDepth(depth);
 
-    const essentialNumberOfEquipment = Math.ceil(excavation_length / 4000);
-    const numberOfOne = essentialNumberOfEquipment;
-    const numberOfWorkers = 4 * essentialNumberOfEquipment; // beton yol icin 1 ekip icinde 8 kişi bulunur
+      const widthDuct = widthCable * 2;
+      setWidth(widthDuct);
 
-    setNumberOfCompactor(numberOfOne);
-    setNumberOfExcavator(numberOfOne);
-    setNumberOfTruck(numberOfOne);
-    setNumberOfJCB(numberOfOne);
-    setNumberOfWorkers(numberOfWorkers); // beton yol için ayrıca
+      const calculatedVolume = excavation_length * excavation_width * depth;
+      setVolume(calculatedVolume);
 
-    const sandValue = 0.2 * excavation_length * excavation_width;
-    const aggregateValue = 0.3 * excavation_length * excavation_width;
-    const concreteSlabValue = Math.round(excavation_length / 0.4); // 20x40 6 cm
-    const concreteSlabWidt = Math.round(excavation_width / 0.2); // 20x40 6 cm
-    const concreteSlab = concreteSlabValue * concreteSlabWidt;
+      const essentialNumberOfEquipment = Math.ceil(excavation_length / 4000);
+      const numberOfOne = 1 * essentialNumberOfEquipment;
+      const numberOfWorkers = 4 * essentialNumberOfEquipment;
 
-    setValueOfExcavation(calculatedVolume);
-    setValueOfSand(sandValue);
-    setValueOfAggregate(aggregateValue);
-    setValueOfConcreteSlab(concreteSlab);
+      const sandValue = 0.2 * (excavation_length * excavation_width);
+      const aggregateValue = 0.3 * (excavation_length * excavation_width);
+      const concreteSlabValue = Math.round(excavation_length / 0.4);
+      const concreteSlabWidth = Math.round(excavation_width / 0.2);
+      const concreteSlab = concreteSlabValue * concreteSlabWidth;
+
+      setNumberOfCompactor(numberOfOne);
+      setNumberOfExcavator(numberOfOne);
+      setNumberOfTruck(numberOfOne);
+      setNumberOfJCB(numberOfOne);
+      setNumberOfWorkers(numberOfWorkers);
+
+      setValueOfExcavation(calculatedVolume);
+      setValueOfSand(sandValue);
+      setValueOfAggregate(aggregateValue);
+      setValueOfConcreteSlab(concreteSlab);
+
+      resolve();
+    });
   };
-
-  //#region Material Price
+  
   useEffect(() => {
-    const fetchMaterialPrice = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/materials/all`);
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            throw new Error("Material not found");
-          } else {
+    if (valueOfSand && valueOfAggregate && valueOfConcreteSlab && valueOfExcavation) {
+      const fetchMaterialPrice = async () => {
+        try {
+          const response = await fetch(`http://localhost:3000/materials/all`);
+          if (!response.ok) {
             throw new Error("Unexpected error");
           }
+          const allMaterial = await response.json();
+          allMaterial.forEach((material) => {
+            if (material.material_name === "sand") {
+              const sandPRice = valueOfSand * material.material_price;
+              setPriceSand(sandPRice);
+            } else if (material.material_name === "aggregate") {
+              const aggregatePrice = valueOfAggregate * material.material_price;
+              SetPriceAggregate(aggregatePrice);
+            } else if (material.material_name === "excavation") {
+              const excavationPrice = valueOfExcavation * material.material_price;
+              setPriceExcavation(excavationPrice);
+            } else if (material.material_name === "concrete") {
+              const concreteSlab = valueOfConcreteSlab * material.material_price;
+              setPriceConcreteSlab(concreteSlab);
+            }
+          });
+        } catch (err) {
+          console.error(err);
         }
-        const allMaterial = await response.json();
-        //Set Material Price
-        allMaterial.map((material) => {
-          if (material.material_name === "sand") {
-            const sandPRice = valueOfSand * material.material_price;
-            setPriceSand(sandPRice);
-          } else if (material.material_name === "aggregate") {
-            const aggregatePrice = valueOfAggregate * material.material_price;
-            SetPriceAggregate(aggregatePrice);
-          } else if (material.material_name === "excavation") {
-            const excavationPrice = valueOfExcavation * material.material_price;
-            setPriceExcavation(excavationPrice);
-          } else if (material.material_name === "concrete") {
-            const concreteSlab = valueOfConcreteSlab * material.material_price;
-            setPriceConcreteSlab(concreteSlab);
-          }
-        });
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchMaterialPrice();
+      };
+      fetchMaterialPrice();
+    }
   }, [valueOfSand, valueOfAggregate, valueOfConcreteSlab, valueOfExcavation]);
-  //#endregion
-
-  //#region Vehicle price
+  
   useEffect(() => {
-    const fetchVehiclePrice = async () => {
-      try {
-        const response = await fetch(`http://localhost:3000/vehicles/all`);
-        const response2 = await fetch("http://localhost:3000/worker/all");
-        if (!response.ok && response2.ok) {
-          if (response.status === 404 && response.status === 404) {
-            throw new Error("Vehicles not found");
-          } else {
+    if (numberOfTruck && numberOfExcavator && numberOfJCB && numberOfWorkers) {
+      const fetchVehiclePrice = async () => {
+        try {
+          const response = await fetch(`http://localhost:3000/vehicles/all`);
+          const response2 = await fetch("http://localhost:3000/worker/all");
+          if (!response.ok && response2.ok) {
             throw new Error("Unexpected error");
           }
-        }
-        const allVehicles = await response.json();
-        const workerGet = await response2.json();
-
-        //Set Material Price
-        allVehicles.map((vehicle) => {
-          if (vehicle.vehicle_type === "truck") {
-            console.log("cal proje time: " + calProjectTime);
-            const truckPrice =
-              numberOfTruck * vehicle.vehicle_price * calProjectTime;
-            setPriceTruck(truckPrice);
-          } else if (vehicle.vehicle_type === "excavator") {
-            const excavatorPrice =
-              numberOfExcavator * vehicle.vehicle_price * calProjectTime;
-            setPriceExcavator(excavatorPrice);
-          } else if (vehicle.vehicle_type === "JCB") {
-            const JCBPrice =
-            numberOfJCB * vehicle.vehicle_price * calProjectTime;
+          const allVehicles = await response.json();
+          const workerGet = await response2.json();
+  
+          allVehicles.forEach((vehicle) => {
+            if (vehicle.vehicle_type === "truck") {
+              const truckPrice = numberOfTruck * vehicle.vehicle_price * calProjectTime;
+              setPriceTruck(truckPrice);
+            } else if (vehicle.vehicle_type === "excavator") {
+              const excavatorPrice = numberOfExcavator * vehicle.vehicle_price * calProjectTime;
+              setPriceExcavator(excavatorPrice);
+            } else if (vehicle.vehicle_type === "JCB") {
+              const JCBPrice = numberOfJCB * vehicle.vehicle_price * calProjectTime;
               setPriceJCB(JCBPrice);
-          } 
-        });
-
-        //worker Price
-        const workerPrice =
-          numberOfWorkers * workerGet[0].worker_price * (calProjectTime + 1);
-        setPriceWorkers(workerPrice);
-
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchVehiclePrice();
-  }, [
-    numberOfTruck,
-    numberOfExcavator,
-    numberOfJCB,
-    numberOfWorkers,
-    calProjectTime,
-  ]);
-  //#endregion
+            }
+          });
+  
+          const workerPrice = numberOfWorkers * workerGet[0].worker_price * (calProjectTime + 1);
+          setPriceWorkers(workerPrice);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchVehiclePrice();
+    }
+  }, [numberOfTruck, numberOfExcavator, numberOfJCB, numberOfWorkers, calProjectTime]);
+  
+  useEffect(() => {
+    if (numberOfCompactor) {
+      const fetchEquipmentPrice = async () => {
+        try {
+          const response = await fetch("http://localhost:3000/equipment/all");
+          if (!response.ok) {
+            throw new Error("Unexpected error");
+          }
+          const allEquipment = await response.json();
+          allEquipment.forEach((equipment) => {
+            if (equipment.equipment_name === "compactor") {
+              const compactorPrice = numberOfCompactor * equipment.equipment_price * calProjectTime;
+              setPriceCompactor(compactorPrice);
+            }
+          });
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      fetchEquipmentPrice();
+    }
+  }, [numberOfCompactor, calProjectTime]);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const calTimeofProject = Math.ceil(excavation_length / 2500);
+    setCalProjectTime(calTimeofProject);
+  
+      await calculateEssential();
 
-    calculateEssential();
+      
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/electric/create",
+        {
+          equipments: [
+            {
+              type: "compactor",
+              quantity: numberOfCompactor,
+              price: priceCompactor,
+            },
+          ],
+          vehicles: [
+            {
+              type: "excavator",
+              quantity: numberOfExcavator,
+              price: priceExcavator,
+            },
+            { type: "truck", quantity: numberOfTruck, price: priceTruck },
+            { type: "JCB", quantity: numberOfJCB, price: priceJCB },
+          ],
+          materials: [
+            { type: "sand", quantity: valueOfSand, price: priceSand },
+            {
+              type: "aggregate",
+              quantity: valueOfAggregate,
+              price: priceAggregate,
+            },
+            {
+              type: "concrete slab",
+              quantity: valueOfConcreteSlab,
+              price: priceConcreteSlab,
+            },
+            {
+              type: "excavation",
+              quantity: valueOfExcavation,
+              price: priceExcavation,
+            },
+          ],
+          worker: [
+            { type: "worker", quantity: numberOfWorkers, price: priceWorkers },
+          ],
+          project_time: calProjectTime,
+        }
+      );
+  
+      const data_id = response.data._id;
+      setIdElectricProject(data_id);
+      console.log("Backend'den gelen yanıt:", response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  
+    const totalMPrice = priceExcavator + priceTruck + priceJCB;
+    const totalVPRice =
+      priceAggregate + priceConcreteSlab + priceExcavation + priceWorkers;
+    const totalAllPrice = totalMPrice + totalVPRice;
+    setTotalProjectPrice(totalAllPrice);
+    console.log("deneme price: " + totalProjectPrice.toLocaleString("tr-TR"));
   };
+  
+  useEffect(() => {
+    const postProjectId = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 3000)); // 1 saniye bekle
+      try {
+        const response = await axios.patch(
+          `http://localhost:3000/project/${holdUserId}/electric`,
+          {
+            electric_projects: idElectricProject,
+          }
+        );
+        console.log(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    postProjectId();
+  }, [idElectricProject, holdUserId]);
 
   return (
     <div className="concrete">
@@ -242,6 +349,36 @@ const ElectricProject = () => {
                 </li>
               </ul>
             </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <table>
+              <thead>
+                <tr>
+                  <th>Sr.</th>
+                  <th>Material</th>
+                  <th>Quantity</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Tiles</td>
+                  <td>{priceExcavator} No. of Tiles</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Cement</td>
+                  <td>{priceTruck} Bags</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Sand</td>
+                  <td>{priceJCB} Ton</td>
+                </tr>
+              </tbody>
+            </table>
           </Col>
         </Row>
       </Col>

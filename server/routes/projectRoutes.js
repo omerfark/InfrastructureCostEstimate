@@ -87,7 +87,7 @@ router.delete('/:id/asphalt/:asphaltId', async (req, res) => {
 //#endregion
 
 //#region about Concrete Road
-//asfalt projesi ekleme
+//Concrete projesi ekleme
 router.patch('/:id/concreteRoad', async (req, res) => {
   try {
       const user_id = req.params.id; // Proje kimliğini alın
@@ -115,8 +115,8 @@ router.patch('/:id/concreteRoad', async (req, res) => {
   }
 });
 
-// asfalt projesi silme
-router.delete('/:id/asphalt/:concreteRoadId', async (req, res) => {
+// Concrete projesi silme
+router.delete('/:id/concreteRoad/:concreteRoadId', async (req, res) => {
 try {
     const projectId = req.params.id; // Proje kimliğini alın
     const concreteRoadId  = req.params.concreteRoadId; // Yeni asfalt projesi kimliğini alın
@@ -140,6 +140,66 @@ try {
 }
 });
 //#endregion
+
+//#region about Electric
+//Electric projesi ekleme
+router.patch('/:id/electric', async (req, res) => {
+  try {
+      const user_id = req.params.id; // Proje kimliğini alın
+      const electric_projects = req.body.electric_projects; // Yeni asfalt projesi kimliğini alın
+
+      if (electric_projects == null) {
+        return res.status(400).json({ message: "Geçersiz elektrik projesi verisi" });
+    }
+
+      // Proje belgesini bulun
+      const project = await ProjectModel.findOne({user_id});
+
+      // Eğer proje bulunamazsa, uygun bir hata mesajı döndürün
+      if (!project) {
+          return res.status(404).json({ message: "Proje bulunamadı" });
+      }
+
+      if (project.electric_projects.includes(electric_projects)) {
+        return res.status(400).json({ message: "Bu elektrik projesi zaten projeye eklenmiş" });
+    } else {
+        project.electric_projects.push(electric_projects);
+        await project.save();
+        res.status(200).json({ message: "Yeni elektrik projesi başarıyla eklendi" });
+    }
+      
+  } catch (error) {
+      console.error("Hata:", error);
+      res.status(500).json({ message: "Sunucu hatası" });
+  }
+});
+
+// Electric projesi silme
+router.delete('/:id/electric/:electricId', async (req, res) => {
+try {
+    const projectId = req.params.id; // Proje kimliğini alın
+    const electricId  = req.params.electricId; // Yeni asfalt projesi kimliğini alın
+
+    // Proje belgesini bulun
+    const project = await ProjectModel.findById(projectId);
+
+    // Eğer proje bulunamazsa, uygun bir hata mesajı döndürün
+    if (!project) {
+        return res.status(404).json({ message: "Proje bulunamadı" });
+    }
+
+    // Asfalt projesini projeye ekleyin
+    project.electric_projects.pull(electricId );
+    await project.save();
+
+    res.status(200).json({ message: "electrik projesi başarıyla silindi" });
+} catch (error) {
+    console.error("Hata:", error);
+    res.status(500).json({ message: "Sunucu hatası" });
+}
+});
+//#endregion
+
 
   //project id ye göre getirme
   router.get("/:id", (req, res) => {

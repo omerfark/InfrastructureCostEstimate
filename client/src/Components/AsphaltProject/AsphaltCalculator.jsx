@@ -8,23 +8,8 @@ import asphalt_1 from "../../assets/asphalt-1.png";
 
 const AsphaltCalculator = () => {
   const [holdUserId, setHoldUserId] = useState("");
-
-  //Doğrulama anahtarı
   const navigate = useNavigate();
-  axios.defaults.withCredentials = true; //cookie özelliği eklemek için
-
-  useEffect(() => {
-    axios.get("http://localhost:3000/auth/verify").then((res) => {
-      if (res.data.status) {
-        console.log(res.data);
-        const tokenValue = res.data.token;
-        const sbtUser = tokenValue.userId;
-        setHoldUserId(sbtUser);
-      } else {
-        navigate("/login");
-      }
-    });
-  }, []);
+  axios.defaults.withCredentials = true; // cookie özelliği eklemek için
 
   const [excavation_length, setLength] = useState(""); // Kazı boyu
   const [excavation_width, setWidth] = useState(""); // Genişlik
@@ -32,21 +17,23 @@ const AsphaltCalculator = () => {
   const [excavation_volume, setVolume] = useState(""); // Hacim
   const [asphaltAmount, setAmount] = useState("");
 
-  //Vehicles
+  // Vehicles
   const [numberOfExcavator, setNumberOfExcavator] = useState("");
   const [numberOfTruck, setNumberOfTruck] = useState("");
   const [numberOfRoller, setNumberOfRoller] = useState("");
   const [numberOfGreyder, setNumberOfGreyder] = useState("");
   const [numberOfFinisher, setNumberOfFinisher] = useState("");
-  //materials
+
+  // Materials
   const [valueOfPmt, setValuOfPmt] = useState("");
   const [valueOfAsphalt_1, setValuOfAsphlt_1] = useState("");
   const [valueOfAsphalt_2, setValuOfAsphlt_2] = useState("");
   const [valueOfExcavation, setValuOfExcavation] = useState("");
-  //Workers
+
+  // Workers
   const [numberOfWorkers, setNumberOfWorkers] = useState("");
 
-  //Price All
+  // Prices
   const [priceExcavator, setPriceExcavator] = useState("");
   const [priceTruck, setPriceTruck] = useState("");
   const [priceRoller, setPriceRoller] = useState("");
@@ -60,11 +47,21 @@ const AsphaltCalculator = () => {
   const [totalProjectPrice, setTotalProjectPrice] = useState("");
   const [calProjectTime, setCalProjectTime] = useState("");
 
-  //asphalt project id
+  // Asphalt project id
   const [idAsphaltProject, setIdAsphaltProject] = useState("");
 
+  // Doğrulama
+  useEffect(() => {
+    axios.get("http://localhost:3000/auth/verify").then((res) => {
+      if (res.data.status) {
+        setHoldUserId(res.data.token.userId);
+      } else {
+        navigate("/login");
+      }
+    });
+  }, [navigate]);
+
   const CalculateEssential_1 = () => {
-    //asfalt sökümü yok
     setDepth(0.2);
     const calculatedVolume =
       excavation_length * excavation_width * excavation_depth;
@@ -84,8 +81,10 @@ const AsphaltCalculator = () => {
     setNumberOfFinisher(1);
     setNumberOfWorkers(numberOfWorkers);
 
-    const totalValueAsphalt_1 = 2.4 * (0.15 * excavation_length * excavation_width); // alt tabaka 15 cm
-    const totalValueAsphalt_2 = 2.4 * (0.05 * excavation_length * excavation_width); // üst tabaka 5 cm
+    const totalValueAsphalt_1 =
+      2.4 * (0.15 * excavation_length * excavation_width); // alt tabaka 15 cm
+    const totalValueAsphalt_2 =
+      2.4 * (0.05 * excavation_length * excavation_width); // üst tabaka 5 cm
     const totalValuePmt = 0.1 * excavation_length * excavation_width; // pmt tabakası 10 cm
 
     setValuOfExcavation(calculatedVolume);
@@ -99,29 +98,26 @@ const AsphaltCalculator = () => {
     const fetchMaterialPrice = async () => {
       try {
         const response = await fetch(`http://localhost:3000/materials/all`);
-
         if (!response.ok) {
-          if (response.status === 404) {
-            throw new Error("Material not found");
-          } else {
-            throw new Error("Unexpected error");
-          }
+          throw new Error("Failed to fetch material prices");
         }
         const allMaterial = await response.json();
-        //Set Material Price
-        allMaterial.map((material) => {
-          if (material.material_name === "pmt") {
-            const pmtPrice = valueOfPmt * material.material_price;
-            setPricePmt(pmtPrice);
-          } else if (material.material_name === "asphalt_1") {
-            const asphalt1Price = valueOfAsphalt_1 * material.material_price;
-            setPriceAsphalt_1(asphalt1Price);
-          } else if (material.material_name === "asphalt_2") {
-            const asphalt2Price = valueOfAsphalt_2 * material.material_price;
-            setPriceAsphalt_2(asphalt2Price);
-          } else if (material.material_name === "excavation") {
-            const excavationPrice = valueOfExcavation * material.material_price;
-            setPriceExcavation(excavationPrice);
+        allMaterial.forEach((material) => {
+          switch (material.material_name) {
+            case "pmt":
+              setPricePmt(valueOfPmt * material.material_price);
+              break;
+            case "asphalt_1":
+              setPriceAsphalt_1(valueOfAsphalt_1 * material.material_price);
+              break;
+            case "asphalt_2":
+              setPriceAsphalt_2(valueOfAsphalt_2 * material.material_price);
+              break;
+            case "excavation":
+              setPriceExcavation(valueOfExcavation * material.material_price);
+              break;
+            default:
+              break;
           }
         });
       } catch (err) {
@@ -138,46 +134,48 @@ const AsphaltCalculator = () => {
       try {
         const response = await fetch(`http://localhost:3000/vehicles/all`);
         const response2 = await fetch("http://localhost:3000/worker/all");
-        if (!response.ok && response2.ok) {
-          if (response.status === 404 && response.status === 404) {
-            throw new Error("Vehicles not found");
-          } else {
-            throw new Error("Unexpected error");
-          }
+        if (!response.ok || !response2.ok) {
+          throw new Error("Failed to fetch vehicle or worker prices");
         }
         const allVehicles = await response.json();
         const workerGet = await response2.json();
 
-        //Set Material Price
-        allVehicles.map((vehicle) => {
-          if (vehicle.vehicle_type === "truck") {
-            console.log("cal proje time: " + calProjectTime);
-            const truckPrice =
-              numberOfTruck * vehicle.vehicle_price * calProjectTime;
-            setPriceTruck(truckPrice);
-          } else if (vehicle.vehicle_type === "excavator") {
-            const excavatorPrice =
-              numberOfExcavator * vehicle.vehicle_price * calProjectTime;
-            setPriceExcavator(excavatorPrice);
-          } else if (vehicle.vehicle_type === "roller") {
-            const rollerPrice =
-              numberOfRoller * vehicle.vehicle_price * calProjectTime;
-            setPriceRoller(rollerPrice);
-          } else if (vehicle.vehicle_type === "greyder") {
-            const greyderPrice =
-              numberOfGreyder * vehicle.vehicle_price * calProjectTime;
-            setPriceGreyder(greyderPrice);
-          } else if (vehicle.vehicle_type === "finisher") {
-            const finisherPrice =
-              numberOfFinisher * vehicle.vehicle_price * calProjectTime;
-            setPriceFinisher(finisherPrice);
+        allVehicles.forEach((vehicle) => {
+          switch (vehicle.vehicle_type) {
+            case "truck":
+              setPriceTruck(
+                numberOfTruck * vehicle.vehicle_price * calProjectTime
+              );
+              break;
+            case "excavator":
+              setPriceExcavator(
+                numberOfExcavator * vehicle.vehicle_price * calProjectTime
+              );
+              break;
+            case "roller":
+              setPriceRoller(
+                numberOfRoller * vehicle.vehicle_price * calProjectTime
+              );
+              break;
+            case "greyder":
+              setPriceGreyder(
+                numberOfGreyder * vehicle.vehicle_price * calProjectTime
+              );
+              break;
+            case "finisher":
+              setPriceFinisher(
+                numberOfFinisher * vehicle.vehicle_price * calProjectTime
+              );
+              break;
+            default:
+              break;
           }
         });
 
-        //worker Price
-        const workerPrice =
-          numberOfWorkers * workerGet[0].worker_price * calProjectTime;
-        setPriceWorkers(workerPrice);
+        // Worker Price
+        setPriceWorkers(
+          numberOfWorkers * workerGet[0].worker_price * calProjectTime
+        );
       } catch (err) {
         console.error(err);
       }

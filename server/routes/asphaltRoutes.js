@@ -178,6 +178,9 @@ router.post("/create", (req, res) => {
   router.get("/:id", async(req,res) =>{
     const projectId = req.params.id;
 
+    if (!mongoose.Types.ObjectId.isValid(projectId)) {
+        return res.status(400).json({ error: "Invalid projectId" });
+      }
     try{
         const asphaltProject = await AsphaltModel.findById(projectId)
 

@@ -135,7 +135,7 @@ const ConcreteRoad = () => {
         const response = await fetch(`http://localhost:3000/vehicles/all`);
         const response2 = await fetch("http://localhost:3000/worker/all");
         if (!response.ok && response2.ok) {
-          if (response.status === 404 && response.status === 404) {
+          if (response.status === 404 && response2.status === 404) {
             throw new Error("Vehicles not found");
           } else {
             throw new Error("Unexpected error");

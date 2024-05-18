@@ -1,10 +1,3 @@
-// {
-//     "material_name": "aggregate",
-//     "material_m3": 1,
-//     "material_price": 400,
-//     "material_description": "type number 1"
-//   }
-
 const mongoose = require("mongoose");
 
 const MaterialsSchema = new mongoose.Schema({
