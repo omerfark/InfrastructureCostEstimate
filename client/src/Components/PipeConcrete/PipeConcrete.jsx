@@ -7,14 +7,34 @@ import Row from "react-bootstrap/Row";
 import büzz_pipe from "../../assets/büzz-pipe.png";
 import koruge_pipe from "../../assets/koruge-pipe.png";
 
-
 const PipeConcrete = () => {
+  const [holdUserId, setHoldUserId] = useState("");
+
+  //Doğrulama anahtarı
+  // const navigate = useNavigate();
+  // axios.defaults.withCredentials = true; //cookie özelliği eklemek için
+
+  // useEffect(() => {
+  //   axios.get("http://localhost:3000/auth/verify").then((res) => {
+  //     if (res.data.status) {
+  //       console.log(res.data);
+  //       const tokenValue = res.data.token;
+  //       const sbtUser = tokenValue.userId;
+  //       setHoldUserId(sbtUser);
+  //     } else {
+  //       navigate("/login");
+  //     }
+  //   });
+  // }, []);
+
   const [excavation_length, setLength] = useState(""); // Kazı boyu
   const [excavation_width, setWidth] = useState(""); // Genişlik
   const [excavation_depth, setDepth] = useState(""); // Derinlik
   const [excavation_volume, setVolume] = useState(""); // Hacim
   const [homePiece, setHomePiece] = useState(""); // kaç adet ev olduğu
 
+  const [selectedDiameter, setSelectedDiameter] = useState("");
+  const [pipeSelected, setPipeSelected] = useState(""); // boru türünü tut
 
   //Equipment
   //vehicle
@@ -22,14 +42,14 @@ const PipeConcrete = () => {
   const [numberOfTruck, setNumberOfTruck] = useState("");
   const [numberOfJCB, setNumberOfJCB] = useState("");
   //materials
-  const [valueOfSand, setValueOfSand] = useState(""); // kum koruge
-  const [valueOfSoil, setValueOfSoil] = useState(""); // toprak koruge
-  const [valueOfAggregate, setValueOfAggregate] = useState("");
-  const [valueOfExcavation, setValuOfExcavation] = useState("");
-  const [numberOfPipe, setNumberOfPipe] = useState(""); // kazı uzunluğuna göre kullanılacak boru adedi
-  const [numberOfBaseElement, setNumberofBaseElement] = useState(""); // taban, bilezik ve kanalizasyon kapak kısmı
-  const [numberOfConnectors, setNumberOfConnector] = useState(""); // parsel ve c bağlantısı adedi, kazı uzunluğundan cıkarılacak 1 mt c elemanı, pvc adedi
-  const [numberOfPvcPipe, setNumberOfPvcPipe] = useState(""); // parsel ile aynı 2 mt bağlantı boruları
+  const [valueOfSand, setValueOfSand] = useState(0); // kum koruge
+  const [valueOfSoil, setValueOfSoil] = useState(0); // toprak koruge
+  const [valueOfAggregate, setValueOfAggregate] = useState(0);
+  const [valueOfExcavation, setValuOfExcavation] = useState(0);
+  const [numberOfPipe, setNumberOfPipe] = useState(0); // kazı uzunluğuna göre kullanılacak boru adedi
+  const [numberOfBaseElement, setNumberofBaseElement] = useState(0); // taban, bilezik ve kanalizasyon kapak kısmı
+  const [numberOfConnectors, setNumberOfConnector] = useState(0); // parsel ve c bağlantısı adedi, kazı uzunluğundan cıkarılacak 1 mt c elemanı, pvc adedi
+  const [numberOfPvcPipe, setNumberOfPvcPipe] = useState(0); // parsel ile aynı 2 mt bağlantı boruları
 
   //workers
   const [numberOfWorkers, setNumberOfWorkers] = useState("");
@@ -38,17 +58,17 @@ const PipeConcrete = () => {
   const [priceExcavator, setPriceExcavator] = useState("");
   const [priceTruck, setPriceTruck] = useState("");
   const [priceJCB, setPriceJCB] = useState("");
-  const [priceAggregate, SetPriceAggregate] = useState("");
+  const [priceAggregate, setPriceAggregate] = useState("");
   const [priceExcavation, setPriceExcavation] = useState("");
   const [priceSand, setPriceSand] = useState("");
   const [priceSoil, setPriceSoil] = useState("");
-  const [pricePipe, setpricePipe] = useState("");
+  const [pricePipe, setPricePipe] = useState("");
   const [priceBaseElement, setPriceBaseElement] = useState("");
   const [priceConnectors, setPriceConnectors] = useState("");
   const [pricePvcPipe, setPricePvcPrice] = useState("");
   const [priceWorkers, setPriceWorkers] = useState("");
   const [calProjectTime, setCalProjectTime] = useState("");
-  const [totalProjectPrice, setTotalProjectPrice] = useState("");
+  const [totalProjectPrice, setTotalProjectPrice] = useState(0);
 
   //PipeConcrete project id
   const [idPipeConcreteProject, setIdPipeConcreteProject] = useState("");
@@ -70,9 +90,6 @@ const PipeConcrete = () => {
       nickname: "sewer type 2 - (Corrugated)",
     },
   ];
-
-  const [selectedDiameter, setSelectedDiameter] = useState("");
-  const [pipeSelected, setPipeSelected] = useState(""); // boru türünü tut
 
   // Seçeneklerin dropdown menüsüne dönüştürülmesi
   const options = pipeOptions.map((option, index) => (
@@ -99,8 +116,6 @@ const PipeConcrete = () => {
     ).toFixed(2);
     setVolume(calculatedVolume);
 
-    
-
     const meterConnectors = homePiece * 1; // 1 mt c eleman
     const meterBaseElements = (1 * (excavation_length / 60)).toFixed(2); // 1mt genişlik
     const calPiecePipe =
@@ -108,14 +123,12 @@ const PipeConcrete = () => {
       pipeSelected.length;
     const piecePipe = Math.ceil(calPiecePipe);
     setNumberOfPipe(piecePipe); // kaç adet boru hesabı
-  
 
     const calAggregateVolume =
       calculatedVolume - pipeSelected.volume * piecePipe; //beton boru aggrega hesabı
     const calSandVolume = 0.2 * excavation_width * excavation_length; // koruge boru alt taban
     const calSoilVolume =
       calculatedVolume - pipeSelected.volume * piecePipe - calSandVolume; // koruge boru üüst kısım
-
 
     setValuOfExcavation(calculatedVolume);
     setValueOfAggregate(calAggregateVolume);
@@ -124,7 +137,6 @@ const PipeConcrete = () => {
 
     const calBaseElement = Math.ceil(excavation_length / 60);
     const calConnectors = Math.ceil(homePiece);
-
 
     setNumberofBaseElement(calBaseElement); // bağlantı noktaları, taban , bilezik ve kapak
     setNumberOfConnector(calConnectors); // parsel bağlantısı icin, c elemanı, parsel taba, parsel kapak olarak
@@ -141,7 +153,7 @@ const PipeConcrete = () => {
   };
 
 
-  // düzenlemeleri yap ve db ey materialleri ekle öyle cek
+
   useEffect(() => {
     if (valueOfSand && valueOfAggregate && valueOfSoil && valueOfExcavation) {
       const fetchMaterialPrice = async () => {
@@ -158,7 +170,7 @@ const PipeConcrete = () => {
               setPriceSand(sandPRice);
             } else if (material.material_name === "aggregate") {
               const aggregatePrice = valueOfAggregate * material.material_price;
-              SetPriceAggregate(aggregatePrice);
+              setPriceAggregate(aggregatePrice);
             } else if (material.material_name === "excavation") {
               const excavationPrice =
                 valueOfExcavation * material.material_price;
@@ -168,12 +180,14 @@ const PipeConcrete = () => {
               setPriceSoil(soilPrice);
             } else if (material.material_name === selectPipeName) {
               const pipePrice = numberOfPipe * material.material_price;
-              setpricePipe(pipePrice);
+              setPricePipe(pipePrice);
             } else if (material.material_name === "baseElement") {
-              const baseElementPrice = numberOfBaseElement * material.material_price;
+              const baseElementPrice =
+                numberOfBaseElement * material.material_price;
               setPriceBaseElement(baseElementPrice);
             } else if (material.material_name === "connector") {
-              const connectorsPrice = numberOfConnectors * material.material_price;
+              const connectorsPrice =
+                numberOfConnectors * material.material_price;
               setPriceConnectors(connectorsPrice);
             } else if (material.material_name === "pvc") {
               const pvcPrice = numberOfPvcPipe * material.material_price;
@@ -186,78 +200,17 @@ const PipeConcrete = () => {
       };
       fetchMaterialPrice();
     }
-  }, [valueOfSand, valueOfAggregate, valueOfSoil, valueOfExcavation,numberOfPipe,numberOfBaseElement,numberOfConnectors,numberOfPvcPipe, pipeSelected]);
-
-//#region bunu dene
-// useEffect(() => {
-//   if (
-//     valueOfSand !== undefined && valueOfAggregate !== undefined && 
-//     valueOfSoil !== undefined && valueOfExcavation !== undefined && 
-//     numberOfPipe !== undefined && numberOfBaseElement !== undefined && 
-//     numberOfConnectors !== undefined && numberOfPvcPipe !== undefined
-//   ) {
-//     const fetchMaterialPrice = async () => {
-//       try {
-//         const response = await fetch(`http://localhost:3000/materials/all`);
-//         if (!response.ok) {
-//           throw new Error("Unexpected error");
-//         }
-//         const allMaterial = await response.json();
-        
-//         const newPrices = {};
-//         allMaterial.forEach((material) => {
-//           const { material_name, material_price } = material;
-//           switch (material_name) {
-//             case "sand":
-//               newPrices.priceSand = valueOfSand * material_price;
-//               break;
-//             case "aggregate":
-//               newPrices.priceAggregate = valueOfAggregate * material_price;
-//               break;
-//             case "excavation":
-//               newPrices.priceExcavation = valueOfExcavation * material_price;
-//               break;
-//             case "soil":
-//               newPrices.priceSoil = valueOfSoil * material_price;
-//               break;
-//             case "pipe":
-//               newPrices.pricePipe = numberOfPipe * material_price;
-//               break;
-//             case "baseElement":
-//               newPrices.priceBaseElement = numberOfBaseElement * material_price;
-//               break;
-//             case "connector":
-//               newPrices.priceConnectors = numberOfConnectors * material_price;
-//               break;
-//             case "pvc":
-//               newPrices.pricePvc = numberOfPvcPipe * material_price;
-//               break;
-//             default:
-//               break;
-//           }
-//         });
-
-//         setPriceSand(newPrices.priceSand);
-//         setPriceAggregate(newPrices.priceAggregate);
-//         setPriceExcavation(newPrices.priceExcavation);
-//         setPriceSoil(newPrices.priceSoil);
-//         setPricePipe(newPrices.pricePipe);
-//         setPriceBaseElement(newPrices.priceBaseElement);
-//         setPriceConnectors(newPrices.priceConnectors);
-//         setPricePvcPrice(newPrices.pricePvc);
-//       } catch (err) {
-//         console.error(err);
-//       }
-//     };
-
-//     fetchMaterialPrice();
-//   }
-// }, [
-//   valueOfSand, valueOfAggregate, valueOfSoil, valueOfExcavation, 
-//   numberOfPipe, numberOfBaseElement, numberOfConnectors, numberOfPvcPipe
-// ]);
-
-//#endregion
+  }, [
+    valueOfSand,
+    valueOfAggregate,
+    valueOfSoil,
+    valueOfExcavation,
+    numberOfPipe,
+    numberOfBaseElement,
+    numberOfConnectors,
+    numberOfPvcPipe,
+    pipeSelected,
+  ]);
 
 
   useEffect(() => {
@@ -289,7 +242,7 @@ const PipeConcrete = () => {
           });
 
           const workerPrice =
-            numberOfWorkers * workerGet[0].worker_price * (calProjectTime);
+            numberOfWorkers * workerGet[0].worker_price * calProjectTime;
           setPriceWorkers(workerPrice);
         } catch (err) {
           console.error(err);
@@ -305,19 +258,169 @@ const PipeConcrete = () => {
     calProjectTime,
   ]);
 
-  const handleSubmit = (e) => {
+
+  //Tüm fiyatlar hesaplanınca db ye kaydediyor
+  useEffect(() => {
+    if (totalProjectPrice) {
+      const sendToDB = async () => {
+        // send to db
+        try {
+          const response = await axios.post(
+            "http://localhost:3000/pipeConcrete/create",
+            {
+              equipments: [
+            { type: "equipment Type", quantity: 10, price: 100 }, // Örnek değerler
+          ],
+          vehicles: [
+            {
+              type: "excavator",
+              quantity: numberOfExcavator,
+              price: priceExcavator,
+            },
+            { type: "truck", quantity: numberOfTruck, price: priceTruck },
+            { type: "roller", quantity: numberOfJCB, price: priceJCB },
+          ],
+          materials: [
+            { type: "sand", quantity: valueOfSand, price: priceSand },
+            {
+              type: "soil",
+              quantity: valueOfSoil,
+              price: priceSoil,
+            },
+            {
+              type: "aggregate",
+              quantity: valueOfAggregate,
+              price: priceAggregate,
+            },
+            {
+              type: "excavation",
+              quantity: valueOfExcavation,
+              price: priceExcavation,
+            },
+            { type: "pipe", quantity: numberOfPipe, price: pricePipe },
+            {
+              type: "baseElement",
+              quantity: numberOfBaseElement,
+              price: priceBaseElement,
+            },
+            {
+              type: "connectors",
+              quantity: numberOfConnectors,
+              price: priceConnectors,
+            },
+            { type: "pvc", quantity: numberOfPvcPipe, price: pricePvcPipe },
+          ],
+          worker: [
+            { type: "worker", quantity: numberOfWorkers, price: priceWorkers },
+          ],
+          project_time: calProjectTime,
+            }
+          );
+  
+          const data_id = response.data._id;
+          setIdPipeConcreteProject(data_id);
+  
+          console.log("Backend'den gelen yanıt:", response.data);
+        } catch (error) {
+          console.error("Hata:", error);
+        }
+      };
+      sendToDB();
+    }
+  }, [totalProjectPrice]);
+  
+
+  // useEffect(()=>{
+  //   const sendToDB = async() =>{
+      
+  //   // send to db
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:3000/pipeConcrete/create",
+  //       {
+  //         equipments: [
+  //           { type: "equipment Type", quantity: 10, price: 100 }, // Örnek değerler
+  //         ],
+  //         vehicles: [
+  //           {
+  //             type: "excavator",
+  //             quantity: numberOfExcavator,
+  //             price: priceExcavator,
+  //           },
+  //           { type: "truck", quantity: numberOfTruck, price: priceTruck },
+  //           { type: "roller", quantity: numberOfJCB, price: priceJCB },
+  //         ],
+  //         materials: [
+  //           { type: "sand", quantity: valueOfSand, price: priceSand },
+  //           {
+  //             type: "soil",
+  //             quantity: valueOfSoil,
+  //             price: priceSoil,
+  //           },
+  //           {
+  //             type: "aggregate",
+  //             quantity: valueOfAggregate,
+  //             price: priceAggregate,
+  //           },
+  //           {
+  //             type: "excavation",
+  //             quantity: valueOfExcavation,
+  //             price: priceExcavation,
+  //           },
+  //           { type: "pipe", quantity: numberOfPipe, price: pricePipe },
+  //           {
+  //             type: "baseElement",
+  //             quantity: numberOfBaseElement,
+  //             price: priceBaseElement,
+  //           },
+  //           {
+  //             type: "connectors",
+  //             quantity: numberOfConnectors,
+  //             price: priceConnectors,
+  //           },
+  //           { type: "pvc", quantity: numberOfPvcPipe, price: pricePvcPipe },
+  //         ],
+  //         worker: [
+  //           { type: "worker", quantity: numberOfWorkers, price: priceWorkers },
+  //         ],
+  //         project_time: calProjectTime,
+  //       }
+  //     );
+
+  //     const data_id = response.data._id;
+  //     setIdPipeConcreteProject(data_id);
+
+  //     console.log("Backend'den gelen yanıt:", response.data);
+  //   } catch (error) {
+  //     console.error("Hata:", error);
+  //   }
+
+  //   };
+  //   sendToDB();
+  // },[totalProjectPrice])
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const calTimeofProject = Math.ceil(excavation_length / 2500);
     setCalProjectTime(calTimeofProject);
 
-    calcualteEssential();
+    await calcualteEssential();
 
-
-
-    const totalMPrice = priceExcavator + priceTruck + priceJCB + priceBaseElement + priceConnectors + pricePvcPipe;
+    const totalMPrice =
+      priceExcavator +
+      priceTruck +
+      priceJCB +
+      priceBaseElement +
+      priceConnectors +
+      pricePvcPipe;
     const totalVPRice =
-      priceAggregate + priceSand + priceExcavation + priceWorkers + priceSoil + pricePipe;
+      priceAggregate +
+      priceSand +
+      priceExcavation +
+      priceWorkers +
+      priceSoil +
+      pricePipe;
     const totalAllPrice = (totalMPrice + totalVPRice).toLocaleString("tr-TR");
     setTotalProjectPrice(totalAllPrice);
 
@@ -420,7 +523,8 @@ const PipeConcrete = () => {
                 </li>
                 <li>Total Pipe Volume = Pipe Volume (m³) X Pipe Piece </li>
                 <li>
-                  Total Sand value = {valueOfSand && <span>{valueOfSand} </span>}{" "}
+                  Total Sand value ={" "}
+                  {valueOfSand && <span>{valueOfSand} </span>}{" "}
                 </li>
                 <li>
                   Total Aggregate (m³) ={" "}
@@ -451,8 +555,7 @@ const PipeConcrete = () => {
                   {priceExcavation && (
                     <span>
                       {" "}
-                      {priceExcavation.toLocaleString("tr-TR") +
-                        " TL"}
+                      {priceExcavation.toLocaleString("tr-TR") + " TL"}
                     </span>
                   )}
                 </li>
@@ -461,17 +564,14 @@ const PipeConcrete = () => {
                   {priceAggregate && (
                     <span>
                       {" "}
-                      {priceAggregate.toLocaleString("tr-TR") +
-                        " TL"}
+                      {priceAggregate.toLocaleString("tr-TR") + " TL"}
                     </span>
                   )}
                 </li>
                 <li>Total Price = Price of Excavation + Price of Aggregate</li>
                 <li>
                   Total Price ={" "}
-                  {totalProjectPrice.toLocaleString(
-                    "tr-TR"
-                  ) + " TL"}
+                  {totalProjectPrice.toLocaleString("tr-TR") + " TL"}
                 </li>
               </ul>
             </div>
@@ -497,9 +597,7 @@ const PipeConcrete = () => {
                 <li>
                   Truck Total Price:
                   {priceTruck && (
-                    <span>
-                      {priceTruck.toLocaleString("tr-TR") + " TL"}{" "}
-                    </span>
+                    <span>{priceTruck.toLocaleString("tr-TR") + " TL"} </span>
                   )}{" "}
                 </li>
                 <li>
@@ -519,9 +617,7 @@ const PipeConcrete = () => {
                 <li>
                   Worker Price:{" "}
                   {priceWorkers && (
-                    <span>
-                      {priceWorkers.toLocaleString("tr-TR") + " TL"}{" "}
-                    </span>
+                    <span>{priceWorkers.toLocaleString("tr-TR") + " TL"} </span>
                   )}{" "}
                 </li>
                 <li>

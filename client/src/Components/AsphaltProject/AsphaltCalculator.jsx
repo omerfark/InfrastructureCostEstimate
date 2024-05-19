@@ -7,6 +7,7 @@ import Row from "react-bootstrap/Row";
 import asphalt_1 from "../../assets/asphalt-1.png";
 
 const AsphaltCalculator = () => {
+
   const [holdUserId, setHoldUserId] = useState("");
   const navigate = useNavigate();
   axios.defaults.withCredentials = true; // cookie özelliği eklemek için
@@ -61,43 +62,44 @@ const AsphaltCalculator = () => {
     });
   }, [navigate]);
 
-  useEffect(() => {
-    const fetchUserProject = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3000/project?user_id=${holdUserId}`);
-        if (response.data && response.data.length > 0) {
-          console.log("resp:", response.data);
-        } else {
-          console.log("No projects found for this user.");
-          createNewProject();
-        }
-      } catch (err) {
-        if (err.response && err.response.status === 404) {
-          console.log("User not found. Creating a new project...");
-          createNewProject();
-        } else {
-          console.log(err);
-        }
-      }
-    };
+  //#region 
+  // useEffect(() => {
+  //   const fetchUserProject = async () => {
+  //     try {
+  //       const response = await axios.get(`http://localhost:3000/project?user_id=${holdUserId}`);
+  //       if (response.data && response.data.length > 0) {
+  //         console.log("resp:", response.data);
+  //       } else {
+  //         console.log("No projects found for this user.");
+  //         createNewProject();
+  //       }
+  //     } catch (err) {
+  //       if (err.response && err.response.status === 404) {
+  //         console.log("User not found. Creating a new project...");
+  //         createNewProject();
+  //       } else {
+  //         console.log(err);
+  //       }
+  //     }
+  //   };
 
-    const createNewProject = async () => {
-      try {
-        const newProjectData = {
-          user_id: holdUserId, //bak buraya
-          project_name: "New Project",
-          // Diğer gerekli proje verilerini ekleyin
-        };
-        const response = await axios.post(`http://localhost:3000/project/create`, newProjectData);
-        console.log("New project created:", response.data);
-      } catch (err) {
-        console.log("Error creating new project:", err);
-      }
-    };
+  //   const createNewProject = async () => {
+  //     try {
+  //       const newProjectData = {
+  //         user_id: holdUserId, //bak buraya
+  //         project_name: "New Project",
+  //         // Diğer gerekli proje verilerini ekleyin
+  //       };
+  //       const response = await axios.post(`http://localhost:3000/project/create`, newProjectData);
+  //       console.log("New project created:", response.data);
+  //     } catch (err) {
+  //       console.log("Error creating new project:", err);
+  //     }
+  //   };
 
-    fetchUserProject();
-  },[holdUserId])
-
+  //   fetchUserProject();
+  // },[holdUserId])
+//#endregion
 
   const CalculateEssential_1 = () => {
     setDepth(0.2);
@@ -230,6 +232,74 @@ const AsphaltCalculator = () => {
   ]);
   //#endregion
 
+
+  
+  //Tüm fiyatlar hesaplanınca db ye kaydediyor
+  useEffect(() => {
+    if (totalProjectPrice) {
+      const sendToDB = async () => {
+        // send to db
+        try {
+          const response = await axios.post(
+            "http://localhost:3000/asphalt/create",
+            {
+              equipments: [
+                { type: "equipment Type", quantity: 10, price: 100 }, // Örnek değerler
+              ],
+              vehicles: [
+                {
+                  type: "excavator",
+                  quantity: numberOfExcavator,
+                  price: priceExcavator,
+                },
+                { type: "truck", quantity: numberOfTruck, price: priceTruck },
+                { type: "roller", quantity: numberOfRoller, price: priceRoller },
+                { type: "greyder", quantity: numberOfGreyder, price: priceGreyder },
+                {
+                  type: "finisher",
+                  quantity: numberOfFinisher,
+                  price: priceFinisher,
+                },
+              ],
+              materials: [
+                { type: "pmt", quantity: valueOfPmt, price: pricePmt },
+                {
+                  type: "asphalt_1",
+                  quantity: valueOfAsphalt_1,
+                  price: priceAsphalt_1,
+                },
+                {
+                  type: "asphalt_2",
+                  quantity: valueOfAsphalt_2,
+                  price: priceAsphalt_2,
+                },
+                {
+                  type: "excavation",
+                  quantity: valueOfExcavation,
+                  price: priceExcavation,
+                },
+              ],
+              worker: [
+                { type: "worker", quantity: numberOfWorkers, price: priceWorkers },
+              ],
+              project_time: calProjectTime,
+            }
+          );
+    
+          const data_id = response.data._id;
+          setIdAsphaltProject(data_id);
+    
+          console.log("Backend'den gelen yanıt:", response.data);
+        } catch (error) {
+          console.error("Hata:", error);
+        }
+    
+      };
+      sendToDB();
+    }
+  }, [totalProjectPrice]);
+  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -238,61 +308,7 @@ const AsphaltCalculator = () => {
 
     CalculateEssential_1(); //hesaplamaların yapıldığı fonksiyon
 
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/asphalt/create",
-        {
-          equipments: [
-            { type: "equipment Type", quantity: 10, price: 100 }, // Örnek değerler
-          ],
-          vehicles: [
-            {
-              type: "excavator",
-              quantity: numberOfExcavator,
-              price: priceExcavator,
-            },
-            { type: "truck", quantity: numberOfTruck, price: priceTruck },
-            { type: "roller", quantity: numberOfRoller, price: priceRoller },
-            { type: "greyder", quantity: numberOfGreyder, price: priceGreyder },
-            {
-              type: "finisher",
-              quantity: numberOfFinisher,
-              price: priceFinisher,
-            },
-          ],
-          materials: [
-            { type: "pmt", quantity: valueOfPmt, price: pricePmt },
-            {
-              type: "asphalt_1",
-              quantity: valueOfAsphalt_1,
-              price: priceAsphalt_1,
-            },
-            {
-              type: "asphalt_2",
-              quantity: valueOfAsphalt_2,
-              price: priceAsphalt_2,
-            },
-            {
-              type: "excavation",
-              quantity: valueOfExcavation,
-              price: priceExcavation,
-            },
-          ],
-          worker: [
-            { type: "worker", quantity: numberOfWorkers, price: priceWorkers },
-          ],
-          project_time: calProjectTime,
-        }
-      );
-
-      const data_id = response.data._id;
-      setIdAsphaltProject(data_id);
-
-      console.log("Backend'den gelen yanıt:", response.data);
-    } catch (error) {
-      console.error("Hata:", error);
-    }
-
+    
     const totalMPrice =
       priceExcavator + priceTruck + priceRoller + priceGreyder + priceFinisher;
     const totalVPRice =
@@ -306,24 +322,24 @@ const AsphaltCalculator = () => {
     console.log("deneme price: " + totalProjectPrice.toLocaleString("tr-TR"));
   };
 
-  //Add asphalt project to user project list
-  // useEffect(() => {
-  //   const postProjectId = async () => {
-  //     await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 saniye bekle
-  //     try {
-  //       const response = await axios.patch(
-  //         `http://localhost:3000/project/${holdUserId}/asphalt`,
-  //         {
-  //           asphalt_projects: idAsphaltProject,
-  //         }
-  //       );
-  //       console.log(response.data);
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-  //   postProjectId();
-  // }, [idAsphaltProject, holdUserId]);
+  // Add asphalt project to user project list
+  useEffect(() => {
+    const postProjectId = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 saniye bekle
+      try {
+        const response = await axios.patch(
+          `http://localhost:3000/project/${holdUserId}/asphalt`,
+          {
+            asphalt_projects: idAsphaltProject,
+          }
+        );
+        console.log(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    postProjectId();
+  }, [idAsphaltProject, holdUserId]);
 
   return (
     <div className="asphalt">

@@ -6,6 +6,13 @@ import phone_icon from "../../assets/phone-icon.png";
 import location_icon from "../../assets/location-icon.png";
 import white_arrow from "../../assets/white-arrow.png";
 import Title from "../Title/Title";
+import excavator_2 from'../../assets/excavator-2.png'
+import { Link } from 'react-router-dom'
+import excavator_1 from '../../assets/excavator-1.png'
+import truck_1 from '../../assets/truck-1.png'
+import paver_1 from '../../assets/paver-1.png'
+import freze_1 from '../../assets/freze-1.png'
+
 
 const Contact = () => {
   const [result, setResult] = React.useState("");
@@ -35,6 +42,45 @@ const Contact = () => {
 
   return (
     <>
+     <Title subTitle="About Us" title="About us kısa yazı" />
+    <div className='about '>
+      
+        <div className='about-left'>
+            <img src={excavator_2} alt='' className='about-img'/>
+        </div>
+        
+        <div className="about-right">
+            <h3></h3>
+            <h2></h2>
+            <p>Lorem, ipsum dolor 
+                sit amet consectetur adipisicing elit.
+                Neque, nulla illum! Quasi quia iusto 
+                amet ipsum hic eligendi et placeat
+                explicabo, nulla reprehenderit.
+                Similique sed, quas vel veritatis illum
+                ducimus.</p>
+            <p>Lorem ipsum dolor sit amet consectetur,
+                adipisicing elit. Ipsum non culpa
+                officia, aperiam voluptatum, veniam 
+                quas quasi porro molestias quis
+                officiis hic dolore a voluptatibus 
+                nam dignissimos facere. Magni,
+                voluptatem.</p>
+        </div>
+    </div>
+
+    <div className='campus'>
+      <Title subTitle='Vehicles' title='About Vehicles '/>
+        <div className="gallery">
+            <img src={excavator_1} alt=''/>
+            <img src={truck_1} alt=''/>
+            <img src={paver_1} alt=''/>
+            <img src={freze_1} alt=''/>
+        </div>
+        <Link to="/"><button className='btn dark-btn'>See more here <img src={white_arrow} alt=''/></button>
+</Link>
+    </div>
+
       <Title subTitle="Contact" title="Contact us" />
       <div className="contact">
         <div className="contact-col">

@@ -26,8 +26,6 @@ const Navbar = () => {
         <Link to='/'><img src={logo} alt='' className='logo' /></Link>
         <ul className={mobileMenu? '' : 'hide-mobile-menu'}>
             <li><Link to='/' >Home</Link></li>
-            <li><Link to='/about' >About us</Link></li>
-            <li><Link to='/campus' >Vehicles</Link></li>
             <li><Link to='/contact' >Contact us</Link></li>
             <li><Link to='/userprofile'> Profile</Link></li>
             <li><a href='/login' className='btn'>Login</a></li>

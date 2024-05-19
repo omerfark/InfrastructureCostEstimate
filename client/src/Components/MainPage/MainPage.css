@@ -4,7 +4,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-
+    flex-wrap: wrap;
 }
 
 .programs img{
@@ -17,6 +17,8 @@
 .program{
     flex-basis: 31%;
     position: relative;
+    width: calc(33.33% - 20px); /* 3 sütunlu düzen için genişlik ayarları */
+    margin-bottom: 20px; /* Altta boşluk bırakır */
 }
 
 .caption{
@@ -44,6 +46,11 @@
 
 }
 
+.caption p{
+    color: #fff;
+}
+
+
 .program:hover .caption{
     opacity: 1;
     padding-top: 0;
@@ -51,7 +58,7 @@
 
 /*--------- media query -------------*/
 
-@media  (max-width: 650px){
+@media  (max-width: 1000px){
     .programs{
         flex-direction: column;
 
@@ -59,6 +66,7 @@
     .program{
         flex-basis: 100%;
         margin: 20px;
+        width: 100%;
     }
     
 }

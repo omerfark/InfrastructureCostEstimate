@@ -4,8 +4,6 @@ import {BrowserRouter, Routes, Route } from 'react-router-dom'
 import Signup from './Components/Signup/Signup'
 import Login from './Components/Login/Login'
 import MainPage from './Components/MainPage/MainPage'
-import About from "./Components/About/About";
-import Campus from "./Components/Campus/Campus";
 import Contact from "./Components/Contact/Contact";
 import Footer from "./Components/Footer/Footer";
 import Navbar from './Components/Navbar/Navbar';
@@ -19,8 +17,6 @@ import ConcreteRoad from './Components/ConcreteRoad/ConcreteRoad'
 import ElectricProject from './Components/ElectricProject/ElectricProject'
 import PipeConcrete from './Components/PipeConcrete/PipeConcrete'
 
-
-
 function App() {
 
   return (
@@ -31,8 +27,6 @@ function App() {
         <Route path='/' element={<MainPage/>}></Route>
         <Route path='/signup' element={<Signup/>}></Route>
         <Route path='/login' element={<Login/>}></Route>
-        <Route path='/about' element={<About/>}></Route>
-        <Route path='/campus' element={<Campus/>}></Route>
         <Route path='/contact' element={<Contact/>}></Route>
         <Route path='/excavation' element={<Excavation/>}></Route>
         <Route path='/asphaltcalculator' element={<AsphaltCalculator/>}></Route>

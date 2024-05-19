@@ -189,6 +189,67 @@ const ElectricProject = () => {
   }, [numberOfCompactor, calProjectTime]);
   
 
+ //Tüm fiyatlar hesaplanınca db ye kaydediyor
+ useEffect(() => {
+  if (totalProjectPrice) {
+    const sendToDB = async () => {
+      // send to db
+      try {
+        const response = await axios.post(
+          "http://localhost:3000/electric/create",
+          {
+            equipments: [
+              {
+                type: "compactor",
+                quantity: numberOfCompactor,
+                price: priceCompactor,
+              },
+            ],
+            vehicles: [
+              {
+                type: "excavator",
+                quantity: numberOfExcavator,
+                price: priceExcavator,
+              },
+              { type: "truck", quantity: numberOfTruck, price: priceTruck },
+              { type: "JCB", quantity: numberOfJCB, price: priceJCB },
+            ],
+            materials: [
+              { type: "sand", quantity: valueOfSand, price: priceSand },
+              {
+                type: "aggregate",
+                quantity: valueOfAggregate,
+                price: priceAggregate,
+              },
+              {
+                type: "concrete slab",
+                quantity: valueOfConcreteSlab,
+                price: priceConcreteSlab,
+              },
+              {
+                type: "excavation",
+                quantity: valueOfExcavation,
+                price: priceExcavation,
+              },
+            ],
+            worker: [
+              { type: "worker", quantity: numberOfWorkers, price: priceWorkers },
+            ],
+            project_time: calProjectTime,
+          }
+        );
+    
+        const data_id = response.data._id;
+        setIdElectricProject(data_id);
+        console.log("Backend'den gelen yanıt:", response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    sendToDB();
+  }
+}, [totalProjectPrice]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const calTimeofProject = Math.ceil(excavation_length / 2500);
@@ -197,57 +258,7 @@ const ElectricProject = () => {
       await calculateEssential();
 
       
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/electric/create",
-        {
-          equipments: [
-            {
-              type: "compactor",
-              quantity: numberOfCompactor,
-              price: priceCompactor,
-            },
-          ],
-          vehicles: [
-            {
-              type: "excavator",
-              quantity: numberOfExcavator,
-              price: priceExcavator,
-            },
-            { type: "truck", quantity: numberOfTruck, price: priceTruck },
-            { type: "JCB", quantity: numberOfJCB, price: priceJCB },
-          ],
-          materials: [
-            { type: "sand", quantity: valueOfSand, price: priceSand },
-            {
-              type: "aggregate",
-              quantity: valueOfAggregate,
-              price: priceAggregate,
-            },
-            {
-              type: "concrete slab",
-              quantity: valueOfConcreteSlab,
-              price: priceConcreteSlab,
-            },
-            {
-              type: "excavation",
-              quantity: valueOfExcavation,
-              price: priceExcavation,
-            },
-          ],
-          worker: [
-            { type: "worker", quantity: numberOfWorkers, price: priceWorkers },
-          ],
-          project_time: calProjectTime,
-        }
-      );
-  
-      const data_id = response.data._id;
-      setIdElectricProject(data_id);
-      console.log("Backend'den gelen yanıt:", response.data);
-    } catch (err) {
-      console.log(err);
-    }
+    
   
     const totalMPrice = priceExcavator + priceTruck + priceJCB;
     const totalVPRice =

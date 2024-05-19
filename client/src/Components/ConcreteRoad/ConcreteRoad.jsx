@@ -186,6 +186,65 @@ const ConcreteRoad = () => {
   ]);
   //#endregion
 
+  useEffect(() => {
+    if (totalProjectPrice) {
+      const sendToDB = async () => {
+        // send to db
+        try {
+          const response = await axios.post(
+            "http://localhost:3000/concreteRoad/create",
+            {
+              equipments: [
+                { type: "equipment Type", quantity: 10, price: 100 }, // Örnek değerler
+              ],
+              vehicles: [
+                {
+                  type: "excavator",
+                  quantity: numberOfExcavator,
+                  price: priceExcavator,
+                },
+                { type: "truck", quantity: numberOfTruck, price: priceTruck },
+                { type: "roller", quantity: numberOfRoller, price: priceRoller },
+                { type: "greyder", quantity: numberOfGreyder, price: priceGreyder },
+              ],
+              materials: [
+                { type: "pmt", quantity: valueOfPmt, price: pricePmt },
+                {
+                  type: "cesan",
+                  quantity: valueOfCesan,
+                  price: priceCesan,
+                },
+                {
+                  type: "asphalt_2",
+                  quantity: valueOfConcrete,
+                  price: priceConcrete,
+                },
+                {
+                  type: "excavation",
+                  quantity: valueOfExcavation,
+                  price: priceExcavation,
+                },
+              ],
+              worker: [
+                { type: "worker", quantity: numberOfWorkers, price: priceWorkers },
+              ],
+              project_time: calProjectTime,
+            }
+          );
+    
+          const data_id = response.data._id;
+          setIdConcreteRoadProject(data_id);
+    
+          console.log("Backend'den gelen yanıt:", response.data);
+        
+        } catch (err) {
+          console.log(err)
+        }
+      };
+      sendToDB();
+    }
+  }, [totalProjectPrice]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -195,56 +254,7 @@ const ConcreteRoad = () => {
 
     calculateEssential();
 
-    try {
-      const response = await axios.post(
-        "http://localhost:3000/concreteRoad/create",
-        {
-          equipments: [
-            { type: "equipment Type", quantity: 10, price: 100 }, // Örnek değerler
-          ],
-          vehicles: [
-            {
-              type: "excavator",
-              quantity: numberOfExcavator,
-              price: priceExcavator,
-            },
-            { type: "truck", quantity: numberOfTruck, price: priceTruck },
-            { type: "roller", quantity: numberOfRoller, price: priceRoller },
-            { type: "greyder", quantity: numberOfGreyder, price: priceGreyder },
-          ],
-          materials: [
-            { type: "pmt", quantity: valueOfPmt, price: pricePmt },
-            {
-              type: "cesan",
-              quantity: valueOfCesan,
-              price: priceCesan,
-            },
-            {
-              type: "asphalt_2",
-              quantity: valueOfConcrete,
-              price: priceConcrete,
-            },
-            {
-              type: "excavation",
-              quantity: valueOfExcavation,
-              price: priceExcavation,
-            },
-          ],
-          worker: [
-            { type: "worker", quantity: numberOfWorkers, price: priceWorkers },
-          ],
-          project_time: calProjectTime,
-        }
-      );
-
-      const data_id = response.data._id;
-      setIdConcreteRoadProject(data_id);
-
-      console.log("Backend'den gelen yanıt:", response.data);
-    
-    } catch (err) {
-      console.log(err)
-    }
+   
 
     const totalMPrice =
       priceExcavator + priceTruck + priceRoller + priceGreyder ;
