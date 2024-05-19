@@ -61,6 +61,44 @@ const AsphaltCalculator = () => {
     });
   }, [navigate]);
 
+  useEffect(() => {
+    const fetchUserProject = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3000/project?user_id=${holdUserId}`);
+        if (response.data && response.data.length > 0) {
+          console.log("resp:", response.data);
+        } else {
+          console.log("No projects found for this user.");
+          createNewProject();
+        }
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          console.log("User not found. Creating a new project...");
+          createNewProject();
+        } else {
+          console.log(err);
+        }
+      }
+    };
+
+    const createNewProject = async () => {
+      try {
+        const newProjectData = {
+          user_id: holdUserId, //bak buraya
+          project_name: "New Project",
+          // Diğer gerekli proje verilerini ekleyin
+        };
+        const response = await axios.post(`http://localhost:3000/project/create`, newProjectData);
+        console.log("New project created:", response.data);
+      } catch (err) {
+        console.log("Error creating new project:", err);
+      }
+    };
+
+    fetchUserProject();
+  },[holdUserId])
+
+
   const CalculateEssential_1 = () => {
     setDepth(0.2);
     const calculatedVolume =
@@ -269,23 +307,23 @@ const AsphaltCalculator = () => {
   };
 
   //Add asphalt project to user project list
-  useEffect(() => {
-    const postProjectId = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 saniye bekle
-      try {
-        const response = await axios.patch(
-          `http://localhost:3000/project/${holdUserId}/asphalt`,
-          {
-            asphalt_projects: idAsphaltProject,
-          }
-        );
-        console.log(response.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    postProjectId();
-  }, [idAsphaltProject, holdUserId]);
+  // useEffect(() => {
+  //   const postProjectId = async () => {
+  //     await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 saniye bekle
+  //     try {
+  //       const response = await axios.patch(
+  //         `http://localhost:3000/project/${holdUserId}/asphalt`,
+  //         {
+  //           asphalt_projects: idAsphaltProject,
+  //         }
+  //       );
+  //       console.log(response.data);
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
+  //   postProjectId();
+  // }, [idAsphaltProject, holdUserId]);
 
   return (
     <div className="asphalt">

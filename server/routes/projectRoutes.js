@@ -260,21 +260,21 @@ try {
 //#endregion
 
 
-  //project id ye göre getirme
-  router.get("/:id", (req, res) => {
-    const projectId = req.params.id;
+  // //project id ye göre getirme
+  // router.get("/:id", (req, res) => {
+  //   const projectId = req.params.id;
   
-    ProjectModel.findOne({ _id: projectId })
-      .then((project) => {
-        if (!project) {
-          return res.status(404).json({ message: "Proje bulunamadı" });
-        }
-        res.json(project);
-      })
-      .catch((err) =>
-        res.status(500).json({ message: "Sunucu hatası", error: err })
-      );
-  });
+  //   ProjectModel.findOne({ _id: projectId })
+  //     .then((project) => {
+  //       if (!project) {
+  //         return res.status(404).json({ message: "Proje bulunamadı" });
+  //       }
+  //       res.json(project);
+  //     })
+  //     .catch((err) =>
+  //       res.status(500).json({ message: "Sunucu hatası", error: err })
+  //     );
+  // });
   
   
 
@@ -286,8 +286,8 @@ try {
     try{
       const userId= await ProjectModel.find({user_id: user_id})
   
-      if(!userId){
-        return res.status(404).json({ error: "user not found" });
+      if (userId.length === 0) {
+        return res.json({ error: "User not found" ,status: 404 });
       }
       res.json(userId);
   

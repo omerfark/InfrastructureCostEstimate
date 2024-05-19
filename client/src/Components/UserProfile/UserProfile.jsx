@@ -3,7 +3,7 @@ import "./UserProfile.css";
 import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
   const [isVehiclesLoading, setIsVehiclesLoading] = useState(true);
@@ -41,7 +41,9 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/users/${userToken.userId}`);
+        const response = await fetch(
+          `http://localhost:3000/users/${userToken.userId}`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch user info");
         }
@@ -60,7 +62,9 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchUserProjects = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/project?user_id=${userToken.userId}`);
+        const response = await fetch(
+          `http://localhost:3000/project?user_id=${userToken.userId}`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch user projects");
         }
@@ -75,12 +79,56 @@ const UserProfile = () => {
     }
   }, [userToken]);
 
+  useEffect(() => {
+    const fetchUserProject = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/project?user_id=${userToken.userId}`
+        );
+        if (response.data && response.data.length > 0) {
+          console.log("resp:", response.data);
+        } else {
+          console.log("No projects found for this user.");
+          createNewProject();
+        }
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          console.log("User not found. Creating a new project...");
+          createNewProject();
+        } else {
+          console.log(err);
+        }
+      }
+    };
+
+    const createNewProject = async () => {
+      try {
+        const newProjectData = {
+          user_id: "66434a87466a87c3c9ac6b58",
+          project_name: "New Project",
+          // Diğer gerekli proje verilerini ekleyin
+        };
+        const response = await axios.post(
+          `http://localhost:3000/project/create`,
+          newProjectData
+        );
+        console.log("New project created:", response.data);
+      } catch (err) {
+        console.log("Error creating new project:", err);
+      }
+    };
+
+    fetchUserProject();
+  }, []);
+
   // Fetch selected project details
   useEffect(() => {
     const fetchSelectedProject = async () => {
       if (selectedId) {
         try {
-          const response = await fetch(`http://localhost:3000/asphalt/${selectedId}`);
+          const response = await fetch(
+            `http://localhost:3000/asphalt/${selectedId}`
+          );
           if (!response.ok) {
             throw new Error("Failed to fetch project details");
           }
@@ -96,7 +144,8 @@ const UserProfile = () => {
 
   // Handle logout
   const handleLogout = () => {
-    axios.get("http://localhost:3000/auth/logout")
+    axios
+      .get("http://localhost:3000/auth/logout")
       .then((res) => {
         if (res.data.status) {
           navigate("/login");
@@ -122,7 +171,13 @@ const UserProfile = () => {
     }
   }, [selectedProject]);
 
+  const handleCreateProjectClick = () => {
+    navigate("/"); // Proje oluşturma sayfasına yönlendir
+  };
 
+  useEffect(() => {
+    console.log("Projects:", projects.length); // Veri yapısını ve içeriğini kontrol edin
+  }, [projects]);
   return (
     <div className="asphalt">
       <Col>
@@ -137,18 +192,30 @@ const UserProfile = () => {
           <h2>Project List</h2>
           <Col>
             <div className="excavation-col">
-              <h2>Asphalt Projects</h2>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <h2>Asphalt project</h2>
+          <button>
+            <Link to="/asphaltcalculator">Create</Link>
+          </button>
+        </div>
               <ul>
                 {projects.map((project) => (
                   <li key={project._id}>
-                    {project.asphalt_projects.map((asphaltProject) => (
-                      <button
-                        key={asphaltProject._id}
-                        onClick={() => handleButtonClick(asphaltProject)}
-                      >
-                        id: {asphaltProject}
+                    {project.asphalt_projects.length === 0 ? (
+                      <button onClick={handleCreateProjectClick}>
+                        No asphalt projects found. Click here to create a new
+                        project.
                       </button>
-                    ))}
+                    ) : (
+                      project.asphalt_projects.map((asphaltProject) => (
+                        <button
+                          key={asphaltProject._id}
+                          onClick={() => handleButtonClick(asphaltProject)}
+                        >
+                          id: {asphaltProject}
+                        </button>
+                      ))
+                    )}
                   </li>
                 ))}
               </ul>
@@ -156,18 +223,36 @@ const UserProfile = () => {
           </Col>
           <Col>
             <div className="excavation-col">
-              <h2>Project List</h2>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <h2>Project List</h2>
+                <button>
+                  <Link to="/asphaltcalculator">Create</Link>
+                </button>
+              </div>
               <ul>
                 {projects.map((project) => (
                   <li key={project._id}>
-                    {project.asphalt_projects.map((asphaltProject) => (
-                      <button
-                        key={asphaltProject._id}
-                        onClick={() => handleButtonClick(asphaltProject)}
-                      >
-                        id: {asphaltProject}
+                    {project.asphalt_projects.length === 0 ? (
+                      <button onClick={handleCreateProjectClick}>
+                        No asphalt projects found. Click here to create a new
+                        project.
                       </button>
-                    ))}
+                    ) : (
+                      project.asphalt_projects.map((asphaltProject) => (
+                        <button
+                          key={asphaltProject._id}
+                          onClick={() => handleButtonClick(asphaltProject)}
+                        >
+                          id: {asphaltProject}
+                        </button>
+                      ))
+                    )}
                   </li>
                 ))}
               </ul>
@@ -175,18 +260,30 @@ const UserProfile = () => {
           </Col>
           <Col>
             <div className="excavation-col">
-              <h2>Project List</h2>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <h2>Project List</h2>
+          <button>
+            <Link to="/asphaltcalculator">Create</Link>
+          </button>
+        </div>
               <ul>
                 {projects.map((project) => (
                   <li key={project._id}>
-                    {project.asphalt_projects.map((asphaltProject) => (
-                      <button
-                        key={asphaltProject._id}
-                        onClick={() => handleButtonClick(asphaltProject)}
-                      >
-                        id: {asphaltProject}
+                    {project.asphalt_projects.length === 0 ? (
+                      <button onClick={handleCreateProjectClick}>
+                        No asphalt projects found. Click here to create a new
+                        project.
                       </button>
-                    ))}
+                    ) : (
+                      project.asphalt_projects.map((asphaltProject) => (
+                        <button
+                          key={asphaltProject._id}
+                          onClick={() => handleButtonClick(asphaltProject)}
+                        >
+                          id: {asphaltProject}
+                        </button>
+                      ))
+                    )}
                   </li>
                 ))}
               </ul>
