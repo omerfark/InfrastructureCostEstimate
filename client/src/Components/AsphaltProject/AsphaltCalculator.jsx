@@ -5,6 +5,7 @@ import "./AsphaltCalculator.css";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import asphalt_1 from "../../assets/asphalt-1.png";
+import LeafletMap from "../LeafletMap/LeafletMap";
 
 const AsphaltCalculator = () => {
 
@@ -236,7 +237,7 @@ const AsphaltCalculator = () => {
   
   //Tüm fiyatlar hesaplanınca db ye kaydediyor
   useEffect(() => {
-    if (totalProjectPrice) {
+    if (totalProjectPrice && priceExcavator) {
       const sendToDB = async () => {
         // send to db
         try {
@@ -297,7 +298,7 @@ const AsphaltCalculator = () => {
       };
       sendToDB();
     }
-  }, [totalProjectPrice]);
+  }, [totalProjectPrice,priceExcavator]);
   
 
   const handleSubmit = async (e) => {
@@ -341,10 +342,23 @@ const AsphaltCalculator = () => {
     postProjectId();
   }, [idAsphaltProject, holdUserId]);
 
+  const [distance, setDistance] = useState(0);
+
+  const handleTotalDistanceChange = (newDistance) => {
+    setDistance(newDistance);
+  };
+
+  useEffect(()=>{
+    setLength(distance)
+  },[setDistance])
+
   return (
     <div className="asphalt">
       <Col>
         <Row>
+        <Col>
+          <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
+          </Col>
           <Col xs={6}>
             <div className="excavation-col">
               <h2>Excavation Volume Calculating</h2>
@@ -395,7 +409,9 @@ const AsphaltCalculator = () => {
               </div>
             </div>
           </Col>
-          <Col xs={6} className="mt-4">
+        </Row>
+        <Row>
+        <Col xs={6} className="mt-4">
             <div className="excavation-col">
               <h2> Asphalt Calculator </h2>
 

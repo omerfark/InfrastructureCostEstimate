@@ -1,0 +1,5 @@
+.leaflet-container {
+    height: 60vh;
+    position: relative; /* z-index'in çalışması için gerekli */
+    z-index: 0; /* Verilen diğer öğelerin z-index değerine göre ayarlanabilir */
+}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Contact.css";
 import msg_icon from "../../assets/msg-icon.png";
 import mail_icon from "../../assets/mail-icon.png";
@@ -12,6 +12,7 @@ import excavator_1 from '../../assets/excavator-1.png'
 import truck_1 from '../../assets/truck-1.png'
 import paver_1 from '../../assets/paver-1.png'
 import freze_1 from '../../assets/freze-1.png'
+import LeafletMap from "../LeafletMap/LeafletMap";
 
 
 const Contact = () => {
@@ -38,6 +39,19 @@ const Contact = () => {
       console.log("Error", data);
       setResult(data.message);
     }
+  };
+
+
+  const [distance, setDistance] = useState(0);
+
+  const handleTotalDistanceChange = (newDistance) => {
+    setDistance(newDistance);
+  };
+
+
+  const [showMap, setShowMap] = useState(false);
+  const toggleMap = () => {
+    setShowMap(!showMap);
   };
 
   return (
@@ -140,6 +154,27 @@ const Contact = () => {
           <span>{result}</span>
         </div>
       </div>
+
+      {/* <div>
+        <LeafletMap onTotalDistanceChange={handleTotalDistanceChange}/>
+        <h2> total distance : {distance}</h2>
+      </div> */}
+
+      <div>
+      <Title subTitle="Map" title="Map container"/>
+      <h1>My Map Application</h1>
+
+      <button onClick={toggleMap}>
+        {showMap ? 'Hide Map' : 'Show Map'}
+      </button>
+      {showMap && (
+        <div>
+          
+          <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
+          <h2>Total Distance: {distance} m</h2>
+        </div>
+      )}
+    </div>
     </>
   );
 };
