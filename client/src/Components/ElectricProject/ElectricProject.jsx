@@ -98,6 +98,7 @@ const ElectricProject = () => {
     });
   };
   
+  //Get material Price
   useEffect(() => {
     if (valueOfSand && valueOfAggregate && valueOfConcreteSlab && valueOfExcavation) {
       const fetchMaterialPrice = async () => {
@@ -130,6 +131,7 @@ const ElectricProject = () => {
     }
   }, [valueOfSand, valueOfAggregate, valueOfConcreteSlab, valueOfExcavation]);
   
+  // get Vehicle price
   useEffect(() => {
     if (numberOfTruck && numberOfExcavator && numberOfJCB && numberOfWorkers) {
       const fetchVehiclePrice = async () => {
@@ -189,7 +191,7 @@ const ElectricProject = () => {
   }, [numberOfCompactor, calProjectTime]);
   
 
- //Tüm fiyatlar hesaplanınca db ye kaydediyor
+ // reacord data to  electric db
  useEffect(() => {
   if (totalProjectPrice) {
     const sendToDB = async () => {
@@ -250,8 +252,11 @@ const ElectricProject = () => {
   }
 }, [totalProjectPrice]);
 
+
+//Calculate button
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     const calTimeofProject = Math.ceil(excavation_length / 2500);
     setCalProjectTime(calTimeofProject);
   
@@ -268,6 +273,7 @@ const ElectricProject = () => {
     console.log("deneme price: " + totalProjectPrice.toLocaleString("tr-TR"));
   };
   
+  // record project id to general proejct db
   useEffect(() => {
     const postProjectId = async () => {
       await new Promise((resolve) => setTimeout(resolve, 3000)); // 3 saniye bekle
