@@ -16,6 +16,7 @@ import ResetPassword from './Components/ResetPassword/ResetPassword'
 import ConcreteRoad from './Components/ConcreteRoad/ConcreteRoad'
 import ElectricProject from './Components/ElectricProject/ElectricProject'
 import PipeConcrete from './Components/PipeConcrete/PipeConcrete'
+import Sidebar from './Components/Sidebar/Sidebar'
 
 function App() {
 
@@ -36,6 +37,7 @@ function App() {
         <Route path='/userprofile' element={<UserProfile/>}></Route>
         <Route path='/forgotPassword' element={<ForgotPassword/>}></Route>
         <Route path='/resetPassword/:token' element={<ResetPassword/>}></Route>
+        <Route path='/sidebar' element={<Sidebar/>}></Route>
       </Routes>
       <Footer/>
       </div>

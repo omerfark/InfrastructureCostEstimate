@@ -4,6 +4,7 @@ import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import Sidebar from "../Sidebar/Sidebar";
 
 const UserProfile = () => {
   const [isVehiclesLoading, setIsVehiclesLoading] = useState(true);
@@ -179,211 +180,238 @@ const UserProfile = () => {
     console.log("Projects:", projects.length); // Veri yapısını ve içeriğini kontrol edin
   }, [projects]);
   return (
-    <div className="asphalt">
-      <Col>
-        <Row>
-          <div>
-            <button onClick={handleLogout} type="logout" className="btn">
-              Logout
-            </button>
-          </div>
-        </Row>
-        <Row>
-          <h2>Project List</h2>
-          <Col>
-            <div className="excavation-col">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <h2>Asphalt project</h2>
-          <button>
-            <Link to="/asphaltcalculator">Create</Link>
-          </button>
-        </div>
-              <ul>
-                {projects.map((project) => (
-                  <li key={project._id}>
-                    {project.asphalt_projects.length === 0 ? (
-                      <button onClick={handleCreateProjectClick}>
-                        No asphalt projects found. Click here to create a new
-                        project.
-                      </button>
-                    ) : (
-                      project.asphalt_projects.map((asphaltProject) => (
-                        <button
-                          key={asphaltProject._id}
-                          onClick={() => handleButtonClick(asphaltProject)}
-                        >
-                          id: {asphaltProject}
-                        </button>
-                      ))
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Col>
-          <Col>
-            <div className="excavation-col">
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
+    <Col>
+      <Row>
+        <Col md={3}>
+        <div>{<Sidebar/>} </div>
+        </Col>
+        <Col>
+        <div className="asphalt">
+            <Col>
+              <Row>
+                <div>
+                  <button onClick={handleLogout} type="logout" className="btn">
+                    Logout
+                  </button>
+                </div>
+              </Row>
+              <Row>
                 <h2>Project List</h2>
-                <button>
-                  <Link to="/asphaltcalculator">Create</Link>
-                </button>
-              </div>
-              <ul>
-                {projects.map((project) => (
-                  <li key={project._id}>
-                    {project.asphalt_projects.length === 0 ? (
-                      <button onClick={handleCreateProjectClick}>
-                        No asphalt projects found. Click here to create a new
-                        project.
+                <Col>
+                  <div className="excavation-col">
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <h2>Asphalt project</h2>
+                      <button>
+                        <Link to="/asphaltcalculator">Create</Link>
                       </button>
-                    ) : (
-                      project.asphalt_projects.map((asphaltProject) => (
-                        <button
-                          key={asphaltProject._id}
-                          onClick={() => handleButtonClick(asphaltProject)}
-                        >
-                          id: {asphaltProject}
-                        </button>
-                      ))
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Col>
-          <Col>
-            <div className="excavation-col">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <h2>Project List</h2>
-          <button>
-            <Link to="/asphaltcalculator">Create</Link>
-          </button>
-        </div>
-              <ul>
-                {projects.map((project) => (
-                  <li key={project._id}>
-                    {project.asphalt_projects.length === 0 ? (
-                      <button onClick={handleCreateProjectClick}>
-                        No asphalt projects found. Click here to create a new
-                        project.
-                      </button>
-                    ) : (
-                      project.asphalt_projects.map((asphaltProject) => (
-                        <button
-                          key={asphaltProject._id}
-                          onClick={() => handleButtonClick(asphaltProject)}
-                        >
-                          id: {asphaltProject}
-                        </button>
-                      ))
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            {selectedProject ? (
-              isVehiclesLoading ? (
-                <div>Loading vehicles...</div>
-              ) : (
-                <div className="excavation-col">
-                  <ul>
-                    {selectedProject.vehicles &&
-                      selectedProject.vehicles.map((vehicle) => (
-                        <li key={vehicle._id}>
-                          Vehicle Name: {vehicle.type}
-                          <br />
-                          Vehicle Quantity: {vehicle.quantity}
-                          <br />
-                          Vehicle Price: {vehicle.price}
+                    </div>
+                    <ul>
+                      {projects.map((project) => (
+                        <li key={project._id}>
+                          {project.asphalt_projects.length === 0 ? (
+                            <button onClick={handleCreateProjectClick}>
+                              No asphalt projects found. Click here to create a
+                              new project.
+                            </button>
+                          ) : (
+                            project.asphalt_projects.map((asphaltProject) => (
+                              <button
+                                key={asphaltProject._id}
+                                onClick={() =>
+                                  handleButtonClick(asphaltProject)
+                                }
+                              >
+                                id: {asphaltProject}
+                              </button>
+                            ))
+                          )}
                         </li>
                       ))}
-                  </ul>
-                </div>
-              )
-            ) : null}
-          </Col>
-          <Col>
-            {selectedProject ? (
-              isMaterialsLoading ? (
-                <div>Loading materials...</div>
-              ) : (
-                <div className="excavation-col">
-                  <ul>
-                    {selectedProject.materials &&
-                      selectedProject.materials.map((material) => (
-                        <li key={material._id}>
-                          Material Type: {material.type}
-                          <br />
-                          Material Quantity: {material.quantity}
-                          <br />
-                          Material Price: {material.price}
+                    </ul>
+                  </div>
+                </Col>
+                <Col>
+                  <div className="excavation-col">
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <h2>Project List</h2>
+                      <button>
+                        <Link to="/asphaltcalculator">Create</Link>
+                      </button>
+                    </div>
+                    <ul>
+                      {projects.map((project) => (
+                        <li key={project._id}>
+                          {project.asphalt_projects.length === 0 ? (
+                            <button onClick={handleCreateProjectClick}>
+                              No asphalt projects found. Click here to create a
+                              new project.
+                            </button>
+                          ) : (
+                            project.asphalt_projects.map((asphaltProject) => (
+                              <button
+                                key={asphaltProject._id}
+                                onClick={() =>
+                                  handleButtonClick(asphaltProject)
+                                }
+                              >
+                                id: {asphaltProject}
+                              </button>
+                            ))
+                          )}
                         </li>
                       ))}
-                  </ul>
-                </div>
-              )
-            ) : null}
-          </Col>
-          <Col>
-            <Row>
-              {selectedProject ? (
-                isEquipmentsLoading ? (
-                  <div>Loading equipments...</div>
-                ) : (
-                  <div className="excavation-col">
-                    <ul>
-                      {selectedProject.equipments &&
-                        selectedProject.equipments.map((equipment) => (
-                          <li key={equipment._id}>
-                            Equipment Type: {equipment.type}
-                            <br />
-                            Equipment Quantity: {equipment.quantity}
-                            <br />
-                            Equipment Price: {equipment.price}
-                          </li>
-                        ))}
                     </ul>
                   </div>
-                )
-              ) : null}
-            </Row>
-            <Row>
-              {selectedProject ? (
-                isWorkersLoading ? (
-                  <div>Loading workers...</div>
-                ) : (
+                </Col>
+                <Col>
                   <div className="excavation-col">
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <h2>Project List</h2>
+                      <button>
+                        <Link to="/asphaltcalculator">Create</Link>
+                      </button>
+                    </div>
                     <ul>
-                      {selectedProject.worker &&
-                        selectedProject.worker.map((worker) => (
-                          <li key={worker._id}>
-                            Worker Type: {worker.type}
-                            <br />
-                            Worker Quantity: {worker.quantity}
-                            <br />
-                            Worker Price: {worker.price}
-                          </li>
-                        ))}
+                      {projects.map((project) => (
+                        <li key={project._id}>
+                          {project.asphalt_projects.length === 0 ? (
+                            <button onClick={handleCreateProjectClick}>
+                              No asphalt projects found. Click here to create a
+                              new project.
+                            </button>
+                          ) : (
+                            project.asphalt_projects.map((asphaltProject) => (
+                              <button
+                                key={asphaltProject._id}
+                                onClick={() =>
+                                  handleButtonClick(asphaltProject)
+                                }
+                              >
+                                id: {asphaltProject}
+                              </button>
+                            ))
+                          )}
+                        </li>
+                      ))}
                     </ul>
                   </div>
-                )
-              ) : null}
-            </Row>
-          </Col>
-        </Row>
-      </Col>
-    </div>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  {selectedProject ? (
+                    isVehiclesLoading ? (
+                      <div>Loading vehicles...</div>
+                    ) : (
+                      <div className="excavation-col">
+                        <ul>
+                          {selectedProject.vehicles &&
+                            selectedProject.vehicles.map((vehicle) => (
+                              <li key={vehicle._id}>
+                                Vehicle Name: {vehicle.type}
+                                <br />
+                                Vehicle Quantity: {vehicle.quantity}
+                                <br />
+                                Vehicle Price: {vehicle.price}
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
+                    )
+                  ) : null}
+                </Col>
+                <Col>
+                  {selectedProject ? (
+                    isMaterialsLoading ? (
+                      <div>Loading materials...</div>
+                    ) : (
+                      <div className="excavation-col">
+                        <ul>
+                          {selectedProject.materials &&
+                            selectedProject.materials.map((material) => (
+                              <li key={material._id}>
+                                Material Type: {material.type}
+                                <br />
+                                Material Quantity: {material.quantity}
+                                <br />
+                                Material Price: {material.price}
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
+                    )
+                  ) : null}
+                </Col>
+                <Col>
+                  <Row>
+                    {selectedProject ? (
+                      isEquipmentsLoading ? (
+                        <div>Loading equipments...</div>
+                      ) : (
+                        <div className="excavation-col">
+                          <ul>
+                            {selectedProject.equipments &&
+                              selectedProject.equipments.map((equipment) => (
+                                <li key={equipment._id}>
+                                  Equipment Type: {equipment.type}
+                                  <br />
+                                  Equipment Quantity: {equipment.quantity}
+                                  <br />
+                                  Equipment Price: {equipment.price}
+                                </li>
+                              ))}
+                          </ul>
+                        </div>
+                      )
+                    ) : null}
+                  </Row>
+                  <Row>
+                    {selectedProject ? (
+                      isWorkersLoading ? (
+                        <div>Loading workers...</div>
+                      ) : (
+                        <div className="excavation-col">
+                          <ul>
+                            {selectedProject.worker &&
+                              selectedProject.worker.map((worker) => (
+                                <li key={worker._id}>
+                                  Worker Type: {worker.type}
+                                  <br />
+                                  Worker Quantity: {worker.quantity}
+                                  <br />
+                                  Worker Price: {worker.price}
+                                </li>
+                              ))}
+                          </ul>
+                        </div>
+                      )
+                    ) : null}
+                  </Row>
+                </Col>
+              </Row>
+            </Col>
+          </div>
+        </Col>
+      </Row>
+    </Col>
   );
 };
 

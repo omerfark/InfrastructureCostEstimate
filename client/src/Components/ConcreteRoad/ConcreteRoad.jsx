@@ -62,7 +62,8 @@ const ConcreteRoad = () => {
   const [matPrices, setMatPrices] = useState([]);
   const [vehPrices, setVehPrices] = useState([]);
   const [worPrices, setWorPrices] = useState(0);
-  //  no no no  wait dont change let me
+
+  
   const calculateEssential = useCallback(
     (matPrices, vehPrices) => {
       console.log("first caluclation");

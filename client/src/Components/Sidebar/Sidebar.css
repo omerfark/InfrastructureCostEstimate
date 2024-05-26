@@ -1,0 +1,108 @@
+.sidebar-container {
+    background-color: #1e1e2f; /* Dark Purple Color */
+    height: 100vh;
+    padding: 2rem;
+    padding-top: 2rem;
+    position: relative;
+    transition: width 0.3s;
+    z-index: 2;
+  }
+  
+  .sidebar-container-open {
+    width: 18rem; /* 72px */
+  }
+  
+  .sidebar-container-closed {
+    width: 5rem; /* 20px */
+  }
+  
+  .control-icon {
+    position: absolute;
+    cursor: pointer;
+    top: 2.25rem; /* 9px */
+    width: 1.75rem; /* 7px */
+    border-color: #1e1e2f; /* Dark Purple Border */
+    color: white;
+    border-width: 2px;
+    border-radius: 50%;
+    transition: transform 0.3s;
+  }
+  
+  .control-icon-closed {
+    transform: rotate(180deg);
+  }
+  
+  .logo-container {
+    display: flex;
+    gap: 1rem; /* Adjust gap as needed */
+    align-items: center;
+  }
+  
+  .logo {
+    cursor: pointer;
+    transition: transform 0.5s;
+  }
+  
+  .logo-open {
+    transform: rotate(360deg);
+  }
+  
+  .designer-title {
+    color: white;
+    transform-origin: left;
+    font-weight: 500;
+    font-size: 1.25rem; /* 1.25rem = 20px */
+    transition: transform 0.2s;
+  }
+  
+  .designer-title-closed {
+    transform: scale(0);
+  }
+  
+  .menu-list {
+    padding-top: 1.5rem;
+  }
+  
+  .menu-item {
+    display: flex;
+    border-radius: 0.375rem; /* 6px */
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    color: #b0b0b0; /* Light Gray Color */
+    font-size: 0.875rem; /* 14px */
+    align-items: center;
+    gap: 1rem; /* Adjust gap as needed */
+  }
+  
+  .menu-item-gap {
+    margin-top: 2.25rem; /* 9px */
+  }
+  
+  .menu-item-default {
+    margin-top: 0.5rem; /* 2px */
+  }
+  
+  .menu-item-active {
+    background-color: #4b5563; /* Light White Background */
+  }
+  
+  .menu-icon {
+    /* You can add any additional styles for the icons here */
+  }
+  
+  .menu-title-closed {
+    display: none;
+  }
+  
+  .main-content {
+    height: 100vh;
+    flex-grow: 1;
+    padding: 1.75rem; /* 7px */
+  }
+  
+  .main-heading {
+    font-size: 1.5rem; /* 2xl */
+    font-weight: 600;
+  }
+  
