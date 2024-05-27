@@ -1,7 +1,7 @@
 .sidebar-container {
     background-color: #1e1e2f; /* Dark Purple Color */
     height: 100vh;
-    padding: 2rem;
+    padding: 1px;
     padding-top: 2rem;
     position: relative;
     transition: width 0.3s;

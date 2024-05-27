@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./AsphaltCalculator.css";
@@ -8,49 +8,10 @@ import asphalt_1 from "../../assets/asphalt-1.png";
 import LeafletMap from "../LeafletMap/LeafletMap";
 
 const AsphaltCalculator = () => {
-
   const [holdUserId, setHoldUserId] = useState("");
+
   const navigate = useNavigate();
   axios.defaults.withCredentials = true; // cookie özelliği eklemek için
-
-  const [excavation_length, setLength] = useState(""); // Kazı boyu
-  const [excavation_width, setWidth] = useState(""); // Genişlik
-  const [excavation_depth, setDepth] = useState(0.2); // Derinlik
-  const [excavation_volume, setVolume] = useState(""); // Hacim
-  const [asphaltAmount, setAmount] = useState("");
-
-  // Vehicles
-  const [numberOfExcavator, setNumberOfExcavator] = useState("");
-  const [numberOfTruck, setNumberOfTruck] = useState("");
-  const [numberOfRoller, setNumberOfRoller] = useState("");
-  const [numberOfGreyder, setNumberOfGreyder] = useState("");
-  const [numberOfFinisher, setNumberOfFinisher] = useState("");
-
-  // Materials
-  const [valueOfPmt, setValuOfPmt] = useState("");
-  const [valueOfAsphalt_1, setValuOfAsphlt_1] = useState("");
-  const [valueOfAsphalt_2, setValuOfAsphlt_2] = useState("");
-  const [valueOfExcavation, setValuOfExcavation] = useState("");
-
-  // Workers
-  const [numberOfWorkers, setNumberOfWorkers] = useState("");
-
-  // Prices
-  const [priceExcavator, setPriceExcavator] = useState("");
-  const [priceTruck, setPriceTruck] = useState("");
-  const [priceRoller, setPriceRoller] = useState("");
-  const [priceGreyder, setPriceGreyder] = useState("");
-  const [priceFinisher, setPriceFinisher] = useState("");
-  const [pricePmt, setPricePmt] = useState("");
-  const [priceAsphalt_1, setPriceAsphalt_1] = useState("");
-  const [priceAsphalt_2, setPriceAsphalt_2] = useState("");
-  const [priceExcavation, setPriceExcavation] = useState("");
-  const [priceWorkers, setPriceWorkers] = useState("");
-  const [totalProjectPrice, setTotalProjectPrice] = useState("");
-  const [calProjectTime, setCalProjectTime] = useState("");
-
-  // Asphalt project id
-  const [idAsphaltProject, setIdAsphaltProject] = useState("");
 
   // Doğrulama
   useEffect(() => {
@@ -63,76 +24,125 @@ const AsphaltCalculator = () => {
     });
   }, [navigate]);
 
-  //#region 
-  // useEffect(() => {
-  //   const fetchUserProject = async () => {
-  //     try {
-  //       const response = await axios.get(`http://localhost:3000/project?user_id=${holdUserId}`);
-  //       if (response.data && response.data.length > 0) {
-  //         console.log("resp:", response.data);
-  //       } else {
-  //         console.log("No projects found for this user.");
-  //         createNewProject();
-  //       }
-  //     } catch (err) {
-  //       if (err.response && err.response.status === 404) {
-  //         console.log("User not found. Creating a new project...");
-  //         createNewProject();
-  //       } else {
-  //         console.log(err);
-  //       }
-  //     }
-  //   };
+  const [length, setLength] = useState(null); // Kazı boyu
+  const [width, setWidth] = useState(null); // Genişlik
+  const depth = 0.2;
+  const [volume, setVolume] = useState(null); // Hacim
 
-  //   const createNewProject = async () => {
-  //     try {
-  //       const newProjectData = {
-  //         user_id: holdUserId, //bak buraya
-  //         project_name: "New Project",
-  //         // Diğer gerekli proje verilerini ekleyin
-  //       };
-  //       const response = await axios.post(`http://localhost:3000/project/create`, newProjectData);
-  //       console.log("New project created:", response.data);
-  //     } catch (err) {
-  //       console.log("Error creating new project:", err);
-  //     }
-  //   };
+  // Vehicles
+  const [numberOfExcavator, setNumberOfExcavator] = useState(null);
+  const [numberOfTruck, setNumberOfTruck] = useState(null);
+  const [numberOfRoller, setNumberOfRoller] = useState(null);
+  const [numberOfGreyder, setNumberOfGreyder] = useState(null);
+  const [numberOfFinisher, setNumberOfFinisher] = useState(null);
 
-  //   fetchUserProject();
-  // },[holdUserId])
-//#endregion
+  // Materials
+  const [valueOfPmt, setValuOfPmt] = useState(null);
+  const [valueOfAsphalt_1, setValuOfAsphlt_1] = useState(null);
+  const [valueOfAsphalt_2, setValuOfAsphlt_2] = useState(null);
+  const [valueOfExcavation, setValuOfExcavation] = useState(null);
 
-  const CalculateEssential_1 = () => {
-    setDepth(0.2);
-    const calculatedVolume =
-      excavation_length * excavation_width * excavation_depth;
-    setVolume(calculatedVolume);
-    const asphaltCalculate = (calculatedVolume * 2.4).toFixed(2); // Maksimum 2 ondalık hane
-    setAmount(asphaltCalculate);
+  // Workers
+  const [numberOfWorkers, setNumberOfWorkers] = useState(null);
 
-    const essentialNumberOfEquipment = Math.ceil(excavation_length / 3000);
-    const numberOfTwo = 2 * essentialNumberOfEquipment;
-    const numberOfOne = essentialNumberOfEquipment;
-    const numberOfWorkers = 4 * essentialNumberOfEquipment;
+  // Prices
+  const [priceExcavator, setPriceExcavator] = useState(null);
+  const [priceTruck, setPriceTruck] = useState(null);
+  const [priceRoller, setPriceRoller] = useState(null);
+  const [priceGreyder, setPriceGreyder] = useState(null);
+  const [priceFinisher, setPriceFinisher] = useState(null);
+  const [pricePmt, setPricePmt] = useState(null);
+  const [priceAsphalt_1, setPriceAsphalt_1] = useState(null);
+  const [priceAsphalt_2, setPriceAsphalt_2] = useState(null);
+  const [priceExcavation, setPriceExcavation] = useState(null);
+  const [priceWorkers, setPriceWorkers] = useState(null);
+  const [totalProjectPrice, setTotalProjectPrice] = useState(null);
+  const [calProjectTime, setCalProjectTime] = useState(null);
 
-    setNumberOfExcavator(numberOfTwo);
-    setNumberOfTruck(numberOfTwo);
-    setNumberOfRoller(numberOfOne);
-    setNumberOfGreyder(numberOfOne);
-    setNumberOfFinisher(1);
-    setNumberOfWorkers(numberOfWorkers);
+  // Asphalt project id
+  const [idAsphaltProject, setIdAsphaltProject] = useState("");
 
-    const totalValueAsphalt_1 =
-      2.4 * (0.15 * excavation_length * excavation_width); // alt tabaka 15 cm
-    const totalValueAsphalt_2 =
-      2.4 * (0.05 * excavation_length * excavation_width); // üst tabaka 5 cm
-    const totalValuePmt = 0.1 * excavation_length * excavation_width; // pmt tabakası 10 cm
+  const [matPrices, setMatPrices] = useState([]);
+  const [vehPrices, setVehPrices] = useState([]);
+  const [worPrices, setWorPrices] = useState(0);
 
-    setValuOfExcavation(calculatedVolume);
-    setValuOfAsphlt_1(totalValueAsphalt_1);
-    setValuOfAsphlt_2(totalValueAsphalt_2);
-    setValuOfPmt(totalValuePmt);
-  };
+  const CalculateEssential_1 = useCallback(
+    (matPrices, vehPrices) => {
+      console.log("first caluclation");
+      console.log("matPrices", matPrices);
+      console.log("vehPrices", vehPrices);
+
+      const calTimeofProject = Math.ceil(volume / 3200);
+
+      const calculatedVolume = length * width * depth;
+      setVolume(calculatedVolume);
+
+      const essentialNumberOfEquipment = Math.ceil(length / 3000);
+      const numberOfTwo = 2 * essentialNumberOfEquipment;
+      const numberOfOne = essentialNumberOfEquipment;
+      const numberOfWorkers = 4 * essentialNumberOfEquipment;
+
+      const totalValueAsphalt_1 = 2.4 * (0.15 * length * width); // alt tabaka 15 cm
+      const totalValueAsphalt_2 = 2.4 * (0.05 * length * width); // üst tabaka 5 cm
+      const totalValuePmt = 0.1 * length * width; // pmt tabakası 10 cm
+
+      vehPrices.forEach((item) => {
+        switch (item.type) {
+          case "excavator":
+            setPriceExcavator(item.price * numberOfTwo * calTimeofProject);
+            break;
+          case "truck":
+            setPriceTruck(item.price * numberOfTwo * calTimeofProject);
+            break;
+          case "roller":
+            setPriceRoller(item.price * numberOfOne * calTimeofProject);
+            break;
+          case "greyder":
+            setPriceGreyder(item.price * numberOfOne * calTimeofProject);
+            break;
+          case "finisher":
+            setPriceFinisher(item.price * numberOfOne * calTimeofProject);
+            break;
+          default:
+            break;
+        }
+      });
+
+      matPrices.forEach((item) => {
+        switch (item.type) {
+          case "pmt":
+            setPricePmt(item.price * totalValuePmt);
+            break;
+          case "asphalt_1":
+            setPriceAsphalt_1(item.price * totalValueAsphalt_1);
+            break;
+          case "asphalt_2":
+            setPriceAsphalt_2(item.price * totalValueAsphalt_2); // yes like that  calculatedVolume
+            break;
+          case "excavation":
+            setPriceExcavation(item.price * calculatedVolume);
+            break;
+          default:
+            break;
+        }
+      });
+
+      setNumberOfExcavator(numberOfTwo);
+      setNumberOfTruck(numberOfTwo);
+      setNumberOfRoller(numberOfOne);
+      setNumberOfGreyder(numberOfOne);
+      setNumberOfFinisher(numberOfOne);
+      setNumberOfWorkers(numberOfWorkers);
+
+      setValuOfExcavation(calculatedVolume);
+      setValuOfAsphlt_1(totalValueAsphalt_1);
+      setValuOfAsphlt_2(totalValueAsphalt_2);
+      setValuOfPmt(totalValuePmt);
+      setCalProjectTime(calTimeofProject);
+      return { numberOfWorkers: numberOfWorkers };
+    },
+    [length, width, depth, volume]
+  );
 
   //#region materials price
   useEffect(() => {
@@ -142,31 +152,34 @@ const AsphaltCalculator = () => {
         if (!response.ok) {
           throw new Error("Failed to fetch material prices");
         }
+
         const allMaterial = await response.json();
+
+        const newPrices = [];
+
         allMaterial.forEach((material) => {
-          switch (material.material_name) {
-            case "pmt":
-              setPricePmt(valueOfPmt * material.material_price);
-              break;
-            case "asphalt_1":
-              setPriceAsphalt_1(valueOfAsphalt_1 * material.material_price);
-              break;
-            case "asphalt_2":
-              setPriceAsphalt_2(valueOfAsphalt_2 * material.material_price);
-              break;
-            case "excavation":
-              setPriceExcavation(valueOfExcavation * material.material_price);
-              break;
-            default:
-              break;
+          if (material.material_name === "pmt") {
+            const pmtPrice = material.material_price;
+            newPrices.push({ type: "pmt", price: pmtPrice });
+          } else if (material.material_name === "asphalt_1") {
+            const asphaltPrice = material.material_price;
+            newPrices.push({ type: "asphalt_1", price: asphaltPrice });
+          } else if (material.material_name === "asphalt_2") {
+            const asphalt2Price = material.material_price;
+            newPrices.push({ type: "asphalt_2", price: asphalt2Price });
+          } else if (material.material_name === "excavation") {
+            const excavationPrice = material.material_price;
+            newPrices.push({ type: "excavation", price: excavationPrice });
           }
         });
+
+        setMatPrices(newPrices);
       } catch (err) {
         console.error(err);
       }
     };
     fetchMaterialPrice();
-  }, [valueOfPmt, valueOfAsphalt_1, valueOfAsphalt_2, valueOfExcavation]);
+  }, []);
   //#endregion
 
   //#region Vehicle price
@@ -181,165 +194,192 @@ const AsphaltCalculator = () => {
         const allVehicles = await response.json();
         const workerGet = await response2.json();
 
-        allVehicles.forEach((vehicle) => {
-          switch (vehicle.vehicle_type) {
-            case "truck":
-              setPriceTruck(
-                numberOfTruck * vehicle.vehicle_price * calProjectTime
-              );
-              break;
-            case "excavator":
-              setPriceExcavator(
-                numberOfExcavator * vehicle.vehicle_price * calProjectTime
-              );
-              break;
-            case "roller":
-              setPriceRoller(
-                numberOfRoller * vehicle.vehicle_price * calProjectTime
-              );
-              break;
-            case "greyder":
-              setPriceGreyder(
-                numberOfGreyder * vehicle.vehicle_price * calProjectTime
-              );
-              break;
-            case "finisher":
-              setPriceFinisher(
-                numberOfFinisher * vehicle.vehicle_price * calProjectTime
-              );
-              break;
-            default:
-              break;
+        const newVehPrices = [];
+
+        allVehicles.map((vehicle) => {
+          if (vehicle.vehicle_type === "truck") {
+            const truckPrice = vehicle.vehicle_price;
+            newVehPrices.push({ type: "truck", price: truckPrice });
+          } else if (vehicle.vehicle_type === "excavator") {
+            const excavatorPrice = vehicle.vehicle_price;
+            newVehPrices.push({ type: "excavator", price: excavatorPrice });
+          } else if (vehicle.vehicle_type === "roller") {
+            const rollerPrice = vehicle.vehicle_price;
+            newVehPrices.push({ type: "roller", price: rollerPrice });
+          } else if (vehicle.vehicle_type === "greyder") {
+            const greyderPrice = vehicle.vehicle_price;
+            newVehPrices.push({ type: "greyder", price: greyderPrice });
+          } else if (vehicle.vehicle_type === "finisher") {
+            const finisherPrices = vehicle.vehicle_price;
+            newVehPrices.push({ type: "finisher", price: finisherPrices });
           }
         });
+        setVehPrices(newVehPrices);
 
         // Worker Price
-        setPriceWorkers(
-          numberOfWorkers * workerGet[0].worker_price * calProjectTime
-        );
+        const workerPrice = workerGet[0].worker_price;
+        setWorPrices(workerPrice);
       } catch (err) {
         console.error(err);
       }
     };
     fetchVehiclePrice();
+  }, []);
+  //#endregion
+
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  const sendToDB = useCallback(async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/asphalt/create",
+        {
+          equipments: [
+            { type: "equipment Type", quantity: 10, price: 100 }, // Örnek değerler
+          ],
+          vehicles: [
+            {
+              type: "excavator",
+              quantity: numberOfExcavator,
+              price: priceExcavator,
+            },
+            { type: "truck", quantity: numberOfTruck, price: priceTruck },
+            {
+              type: "roller",
+              quantity: numberOfRoller,
+              price: priceRoller,
+            },
+            {
+              type: "greyder",
+              quantity: numberOfGreyder,
+              price: priceGreyder,
+            },
+            {
+              type: "finisher",
+              quantity: numberOfFinisher,
+              price: priceFinisher,
+            },
+          ],
+          materials: [
+            { type: "pmt", quantity: valueOfPmt, price: pricePmt },
+            {
+              type: "asphalt_1",
+              quantity: valueOfAsphalt_1,
+              price: priceAsphalt_1,
+            },
+            {
+              type: "asphalt_2",
+              quantity: valueOfAsphalt_2,
+              price: priceAsphalt_2,
+            },
+            {
+              type: "excavation",
+              quantity: valueOfExcavation,
+              price: priceExcavation,
+            },
+          ],
+          worker: [
+            {
+              type: "worker",
+              quantity: numberOfWorkers,
+              price: priceWorkers,
+            },
+          ],
+          project_time: calProjectTime,
+        }
+      );
+
+      const data_id = response.data._id;
+      setIdAsphaltProject(data_id);
+
+      console.log("Backend'den gelen yanıt:", response.data);
+    } catch (error) {
+      console.error("Hata:", error);
+      if (isMounted.current) {
+        console.error("Failed to send data to DB", error);
+      }
+    }
   }, [
-    numberOfTruck,
+    calProjectTime,
     numberOfExcavator,
+    numberOfTruck,
     numberOfRoller,
     numberOfGreyder,
     numberOfFinisher,
+    valueOfPmt,
+    valueOfAsphalt_1,
+    valueOfAsphalt_2,
+    valueOfExcavation,
     numberOfWorkers,
-    calProjectTime,
+    priceExcavator,
+    priceTruck,
+    priceRoller,
+    priceGreyder,
+    priceFinisher,
+    pricePmt,
+    priceAsphalt_1,
+    priceAsphalt_2,
+    priceExcavation,
+    priceWorkers,
   ]);
-  //#endregion
 
-
-  
-  //Tüm fiyatlar hesaplanınca db ye kaydediyor
   useEffect(() => {
-    if (totalProjectPrice && priceExcavator) {
-      const sendToDB = async () => {
-        // send to db
-        try {
-          const response = await axios.post(
-            "http://localhost:3000/asphalt/create",
-            {
-              equipments: [
-                { type: "equipment Type", quantity: 10, price: 100 }, // Örnek değerler
-              ],
-              vehicles: [
-                {
-                  type: "excavator",
-                  quantity: numberOfExcavator,
-                  price: priceExcavator,
-                },
-                { type: "truck", quantity: numberOfTruck, price: priceTruck },
-                { type: "roller", quantity: numberOfRoller, price: priceRoller },
-                { type: "greyder", quantity: numberOfGreyder, price: priceGreyder },
-                {
-                  type: "finisher",
-                  quantity: numberOfFinisher,
-                  price: priceFinisher,
-                },
-              ],
-              materials: [
-                { type: "pmt", quantity: valueOfPmt, price: pricePmt },
-                {
-                  type: "asphalt_1",
-                  quantity: valueOfAsphalt_1,
-                  price: priceAsphalt_1,
-                },
-                {
-                  type: "asphalt_2",
-                  quantity: valueOfAsphalt_2,
-                  price: priceAsphalt_2,
-                },
-                {
-                  type: "excavation",
-                  quantity: valueOfExcavation,
-                  price: priceExcavation,
-                },
-              ],
-              worker: [
-                { type: "worker", quantity: numberOfWorkers, price: priceWorkers },
-              ],
-              project_time: calProjectTime,
-            }
-          );
-    
-          const data_id = response.data._id;
-          setIdAsphaltProject(data_id);
-    
-          console.log("Backend'den gelen yanıt:", response.data);
-        } catch (error) {
-          console.error("Hata:", error);
-        }
-    
-      };
-      sendToDB();
-    }
-  }, [totalProjectPrice,priceExcavator]);
-  
+    //okey
+    if (!matPrices && !vehPrices)
+      return console.log("error gettign the data from the state");
+    CalculateEssential_1(matPrices, vehPrices);
 
-  const handleSubmit = async (e) => {
+    if (!worPrices && !numberOfWorkers)
+      return console.log("error getting worker price");
+    setPriceWorkers(worPrices * numberOfWorkers);
+  }, [matPrices, vehPrices, numberOfWorkers, worPrices, CalculateEssential_1]);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
 
-    const calTimeofProject = Math.ceil(excavation_volume / 3200);
-    setCalProjectTime(calTimeofProject);
-
-    CalculateEssential_1(); //hesaplamaların yapıldığı fonksiyon
-
-    
     const totalMPrice =
       priceExcavator + priceTruck + priceRoller + priceGreyder + priceFinisher;
+
     const totalVPRice =
       pricePmt +
       priceAsphalt_1 +
       priceAsphalt_2 +
       priceExcavation +
       priceWorkers;
+
     const totalAllPrice = totalMPrice + totalVPRice;
+
     setTotalProjectPrice(totalAllPrice);
-    console.log("deneme price: " + totalProjectPrice.toLocaleString("tr-TR"));
+
+    console.log("deneme price: " + totalAllPrice.toLocaleString("tr-TR"));
+    sendToDB();
   };
 
   // Add asphalt project to user project list
   useEffect(() => {
-    const postProjectId = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 saniye bekle
-      try {
-        const response = await axios.patch(
-          `http://localhost:3000/project/${holdUserId}/asphalt`,
-          {
-            asphalt_projects: idAsphaltProject,
-          }
-        );
-        console.log(response.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    postProjectId();
+    if (idAsphaltProject) {
+      const postProjectId = async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 saniye bekle
+        try {
+          const response = await axios.patch(
+            `http://localhost:3000/project/${holdUserId}/asphalt`,
+            {
+              asphalt_projects: idAsphaltProject,
+            }
+          );
+          console.log(response.data);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      postProjectId();
+    }
   }, [idAsphaltProject, holdUserId]);
 
   const [distance, setDistance] = useState(0);
@@ -348,27 +388,27 @@ const AsphaltCalculator = () => {
     setDistance(newDistance);
   };
 
-  useEffect(()=>{
-    setLength(distance)
-  },[setDistance])
+  useEffect(() => {
+    setLength(distance);
+  }, [distance]);
 
   return (
     <div className="asphalt">
       <Col>
-        <Row>
-        <Col>
-          <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
+        <Row className="mt-5">
+          <Col  >
+            <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
           </Col>
-          <Col xs={6}>
-            <div className="excavation-col">
-              <h2>Excavation Volume Calculating</h2>
+          <Col xs={6} >
+            <div className="excavation-col flex-grow-1 ">
+              <h2>Asphalt Road Calculating</h2>
               <form onSubmit={handleSubmit}>
                 <label>
                   Length (m):
                   <input
                     className="m-2"
                     type="number"
-                    value={excavation_length}
+                    value={length}
                     onChange={(e) => setLength(e.target.value)}
                     onFocus={(e) => e.target.select()} // Girdiye odaklandığında içeriği seç
                   />
@@ -379,7 +419,7 @@ const AsphaltCalculator = () => {
                   <input
                     className="m-2"
                     type="number"
-                    value={excavation_width}
+                    value={width}
                     onChange={(e) => setWidth(e.target.value)}
                     onFocus={(e) => e.target.select()} // Girdiye odaklandığında içeriği seç
                   />
@@ -391,7 +431,7 @@ const AsphaltCalculator = () => {
                     className="m-2"
                     type="number"
                     placeholder="Not needed"
-                    value={excavation_depth}
+                    value={depth}
                     readOnly // Sadece okunabilir olarak ayarla
                   />
                 </label>
@@ -404,40 +444,84 @@ const AsphaltCalculator = () => {
                 </div>
               </form>
               <div className="result">
-                Volume (m³) :{" "}
-                {excavation_volume && <span> {excavation_volume} m³</span>}
+                Volume (m³) : {volume && <span> {volume} m³</span>}
               </div>
             </div>
           </Col>
         </Row>
         <Row>
-        <Col xs={6} className="mt-4">
+          <Col xs={12} className="mt-4">
             <div className="excavation-col">
-              <h2> Asphalt Calculator </h2>
-
-              <ul>
-                <li>Total Volume = Length X Width X Depth</li>
-                <li>
-                  Total Volume (m³) ={" "}
-                  {excavation_volume && <span> {excavation_volume} m³</span>}
-                </li>
-                <li>Total Quantity = Total Volume X Density of Asphalt</li>
-                <li>
-                  Total Quantity ={" "}
-                  {excavation_volume && (
-                    <span> {excavation_volume} m³ X 2.4</span>
-                  )}
-                </li>
-                <li>
-                  Total Quantity ={" "}
-                  {asphaltAmount && (
-                    <span>
-                      {""}
-                      {asphaltAmount} m³
-                    </span>
-                  )}
-                </li>
-              </ul>
+              <h2>Asphalt Road Calculator</h2>
+              <h3> For Material</h3>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Material Name</th>
+                    <th>Total Value</th>
+                    <th>Total Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Total Excavation Volume (m³)</td>
+                    <td>{valueOfExcavation ? `${valueOfExcavation} m³` : "-"}</td>
+                    <td>{priceExcavation ? `${priceExcavation.toLocaleString("tr-TR") + " TL"} ` : "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Pmt Quantity</td>
+                    <td>{valueOfPmt ? `${valueOfPmt.toFixed(2)} m³` : "-"}</td>
+                    <td>{pricePmt ? `${pricePmt.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Bitum Asphalt Quantity</td>
+                    <td>{valueOfAsphalt_1 ? `${valueOfAsphalt_1 .toFixed(2)} m³` : "-"}</td>
+                    <td>{priceAsphalt_1 ? `${priceAsphalt_1.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Wear Asphalt Quantity</td>
+                    <td>{valueOfAsphalt_1 ? `${valueOfAsphalt_1 .toFixed(2)} m³` : "-"}</td>
+                    <td>{priceAsphalt_2 ? `${priceAsphalt_2.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <br/>
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Vehicle Name</th>
+                    <th>Total Value</th>
+                    <th>Total Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Number of Excavator (m³)</td>
+                    <td>{numberOfExcavator ? `${numberOfExcavator} piece` : "-"}</td>
+                    <td>{priceExcavator ? `${priceExcavator.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Number of Truck</td>
+                    <td>{numberOfTruck ? `${numberOfTruck} piece` : "-"}</td>
+                    <td>{priceTruck ? `${priceTruck.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Number of Roller</td>
+                    <td>{numberOfRoller ? `${numberOfRoller} piece` : "-"}</td>
+                    <td>{priceRoller ? `${priceRoller.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Number of Greyder</td>
+                    <td>{numberOfGreyder ? `${numberOfGreyder} piece ` : "-"}</td>
+                    <td>{priceGreyder ? `${priceGreyder.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                  </tr>
+                  <tr>
+                    <td>Number of Finisher</td>
+                    <td>{numberOfFinisher ? `${numberOfFinisher} piece` : "-"}</td>
+                    <td>{priceFinisher ? `${priceFinisher.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </Col>
         </Row>

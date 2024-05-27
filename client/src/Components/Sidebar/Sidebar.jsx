@@ -39,7 +39,7 @@ const Sidebar = () => {
             >
               <Link to={Menu.link} className="menu-link">
                 {Menu.icon}
-                <span className={`${!open && 'menu-title-closed'} origin-left duration-200`}>{Menu.title}</span>
+                <span className={`${!open && 'menu-title-closed'} origin-left duration-200 `}>{Menu.title}</span>
               </Link>
             </li>
           ))}

@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
 import "./LeafletMap.css";
-import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  Polyline,
+  useMapEvents,
+} from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L from "leaflet";
 
-const LeafletMap = ({onTotalDistanceChange }) => {
+const LeafletMap = ({ onTotalDistanceChange }) => {
   const [markers, setMarkers] = useState([]);
   const [totalDistance, setTotalDistance] = useState(0);
 
@@ -21,7 +28,7 @@ const LeafletMap = ({onTotalDistanceChange }) => {
       const latlng2 = L.latLng(markers[i + 1].lat, markers[i + 1].lng);
       distance += latlng1.distanceTo(latlng2);
     }
-    return distance.toFixed(1) ; // Kilometre cinsinden
+    return distance.toFixed(1); // Kilometre cinsinden
   };
 
   const handleRemoveLastMarker = () => {
@@ -39,8 +46,6 @@ const LeafletMap = ({onTotalDistanceChange }) => {
     onTotalDistanceChange(0);
   };
 
-
-
   const MapClickHandler = () => {
     useMapEvents({
       click: (e) => {
@@ -57,14 +62,18 @@ const LeafletMap = ({onTotalDistanceChange }) => {
         console.log("Markers:", newMarkers);
         console.log("Total Distance:", newTotalDistance);
         onTotalDistanceChange(newTotalDistance); // totalDistance değerini dışa aktar
-      }
+      },
     });
     return null;
   };
 
   return (
     <div>
-      <MapContainer center={[41.01, 29.00]} zoom={13} style={{ height: "600px", width: "100%", zIndex: 1 }}>
+      <MapContainer
+        center={[41.01, 29.0]}
+        zoom={13}
+        style={{ height: "600px", width: "100%", zIndex: 1 }}
+      >
         <TileLayer
           attribution='&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -77,13 +86,21 @@ const LeafletMap = ({onTotalDistanceChange }) => {
           ))}
         </MarkerClusterGroup>
         {markers.length > 1 && (
-          <Polyline positions={markers.map(marker => [marker.lat, marker.lng])} color="blue" />
+          <Polyline
+            positions={markers.map((marker) => [marker.lat, marker.lng])}
+            color="blue"
+          />
         )}
         <MapClickHandler />
       </MapContainer>
-      <div style={{ marginTop: '20px' }}>
+      <div style={{ marginTop: "2px" }}>
         <h2>Total Distance: {totalDistance} m</h2>
-        <button onClick={handleRemoveLastMarker}>Son Noktayı Sil</button>
+        <button
+          onClick={handleRemoveLastMarker}
+          style={{ marginRight: "10px" }}
+        >
+          Son Noktayı Sil
+        </button>
         <button onClick={handleRemoveAllMarkers}>Tümünü Sil</button>
       </div>
     </div>

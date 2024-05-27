@@ -4,6 +4,7 @@ import axios from "axios";
 import "./ConcreteRoad.css";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
+import LeafletMap from "../LeafletMap/LeafletMap";
 
 const ConcreteRoad = () => {
   const [holdUserId, setHoldUserId] = useState("");
@@ -63,32 +64,23 @@ const ConcreteRoad = () => {
   const [vehPrices, setVehPrices] = useState([]);
   const [worPrices, setWorPrices] = useState(0);
 
-  
   const calculateEssential = useCallback(
     (matPrices, vehPrices) => {
       console.log("first caluclation");
       console.log("matPrices", matPrices);
       console.log("vehPrices", vehPrices);
 
-      const calculatedVolume = length * depth * width; // thwe are different thing but  values is same for calculation
-      // in ur code implemntation they are the same so now if i go to post to db the value of the volume will be the same with valueOfExcavation
-      setVolume(calculatedVolume); // okey you try solve ı am looking
+      const calculatedVolume = length * depth * width;
+      setVolume(calculatedVolume);
+
       const calTimeofProject = Math.ceil(length / 1500); // proje süresi
       console.log(calTimeofProject);
 
-      // you have length here that is base on it you will decide the numer of the equipment and the price of the equipment
-      // this is changed based on the length
-      const essentialNumberOfEquipment = Math.ceil(length / 3000); // 3 km de ekip sayısını 1 arttır
-
-      // now  automticlly u will calculate the number of the equipment based on the length which is the essentialNumberOfEquipment based on
-      //   so you will have numberOfTwo,numberOfOne,numberOfWorkers calculated based on the essentialNumberOfEquipment-> this is the first step
-      // this will be change based essentialNumberOfEquipment
+      const essentialNumberOfEquipment = Math.ceil(length / 3000);
       const numberOfTwo = 2 * essentialNumberOfEquipment;
       const numberOfOne = essentialNumberOfEquipment;
-      const numberOfWorkers = 8 * essentialNumberOfEquipment; // beton yol icin 1 ekip icinde 8 kişi bulunur
+      const numberOfWorkers = 8 * essentialNumberOfEquipment;
 
-      // now you have other things here that again will be based on the length and width so you will have the value of the pmt, cesan, totalValuePmt, totalValueConcrete
-      // this will be from the state based on the length and width values
       const cesanValue = (length / 5) * 2; // 1 tanesi 5m x 2.15 m, 7cm şeklinde --> adet 100 adet 10 bin tl
       const totalValuePmt = 0.1 * length * width; // 10 cm pmt serilir
       const totalValueConcrete = 2.5 * (width * length * 0.15); // 1 m3 beton 2.5 ton ediyor
@@ -101,7 +93,7 @@ const ConcreteRoad = () => {
       vehPrices.forEach((item) => {
         switch (item.type) {
           case "excavator": {
-            excPrice = item.price * numberOfTwo * calTimeofProject; // 3 is the mistake value. ı just try  something wait -- thats true  -- yes :D
+            excPrice = item.price * numberOfTwo * calTimeofProject;
             break;
           }
           case "truck":
@@ -127,7 +119,7 @@ const ConcreteRoad = () => {
             setPriceCesan(item.price * (length / 5) * 2);
             break;
           case "excavation":
-            setPriceExcavation(item.price * calculatedVolume); // yes like that  calculatedVolume
+            setPriceExcavation(item.price * calculatedVolume);
             break;
           case "concrete":
             setPriceConcrete(item.price * 2.5 * (width * length * 0.15));
@@ -160,7 +152,6 @@ const ConcreteRoad = () => {
   );
 
   //#region Material Price
-
   // depend on promise ( this is okay )
   useEffect(() => {
     const fetchMaterialPrice = async () => {
@@ -210,7 +201,6 @@ const ConcreteRoad = () => {
   //#endregion
 
   //#region get Vehicle price
-
   //  independent of promise ( this is okay )
   useEffect(() => {
     const fetchVehiclePrice = async () => {
@@ -324,11 +314,10 @@ const ConcreteRoad = () => {
           project_time: calProjectTime,
         }
       );
-      // you will move what inside to out of the if block and delete the block
-      if (isMounted.current) {
-        const data_id = response.data._id;
-        setIdConcreteRoadProject(data_id);
-      }
+
+      const data_id = response.data._id;
+      setIdConcreteRoadProject(data_id);
+
       console.log("Backend'den gelen yanıt:", response.data);
     } catch (err) {
       console.log(err);
@@ -357,41 +346,9 @@ const ConcreteRoad = () => {
     priceExcavation,
     priceWorkers,
   ]);
-  //  one sec checking something about axios okey
-  // send data to concrete road db
-  useEffect(() => {
-    // here yes
-    if (
-      totalProjectPrice !== null &&
-      numberOfExcavator !== null &&
-      numberOfTruck !== null &&
-      numberOfRoller !== null &&
-      numberOfGreyder !== null &&
-      valueOfPmt !== null &&
-      valueOfCesan !== null &&
-      valueOfConcrete !== null &&
-      valueOfExcavation !== null &&
-      numberOfWorkers !== null &&
-      calProjectTime !== null
-    ) {
-      sendToDB();
-    }
-  }, [
-    totalProjectPrice,
-    numberOfExcavator,
-    numberOfTruck,
-    numberOfRoller,
-    numberOfGreyder,
-    valueOfPmt,
-    valueOfCesan,
-    valueOfConcrete,
-    valueOfExcavation,
-    numberOfWorkers,
-    calProjectTime,
-    sendToDB,
-  ]); // now run it lets see if it works
 
-  useEffect(() => { //okey
+  useEffect(() => {
+    //okey
     if (!matPrices && !vehPrices)
       return console.log("error gettign the data from the state");
     calculateEssential(matPrices, vehPrices);
@@ -415,11 +372,12 @@ const ConcreteRoad = () => {
       priceExcavation +
       worPrices * numberOfWorkers;
 
-    const totalAllPrice = totalMPrice + totalVPRice; // okey
+    const totalAllPrice = totalMPrice + totalVPRice;
 
     setTotalProjectPrice(totalAllPrice);
 
     console.log("deneme price: " + totalAllPrice.toLocaleString("tr-TR"));
+    sendToDB();
   };
 
   // okey ?yup
@@ -444,11 +402,24 @@ const ConcreteRoad = () => {
     }
   }, [idConcreteRoadProject, holdUserId]);
 
+  const [distance, setDistance] = useState(0);
+
+  const handleTotalDistanceChange = (newDistance) => {
+    setDistance(newDistance);
+  };
+
+  useEffect(() => {
+    setLength(distance);
+  }, [distance]);
+
   return (
     <div className="concrete">
       <Col>
-        <Row>
-          <Col xs={6}>
+        <Row className="mt-5">
+          <Col >
+            <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
+          </Col>
+          <Col xs={6} >
             <div className="excavation-col">
               <h2>Concrete Volume Calculating</h2>
               <form onSubmit={handleSubmit}>
@@ -499,6 +470,8 @@ const ConcreteRoad = () => {
               </div>
             </div>
           </Col>
+        </Row>
+        <Row>
           <Col>
             <div className="excavation-col">
               <h2> Concrete Road Calculator </h2>

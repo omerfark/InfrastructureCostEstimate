@@ -18,8 +18,10 @@ a{
     line-height: 1;
     cursor: pointer;
 }
+
 .container1{
     padding-right: 5%;
+    padding-left: 5%;
 
 }
 
@@ -50,9 +52,17 @@ a{
 /*--------- media query -------------*/
 
 @media(max-width: 1400px){
-
+    .container1{
+        padding-right: 5%;
+        padding-left: 5%;
+    
+    }
+    
     .btn{
         padding: 14px 22px;
     }
 }
 
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */

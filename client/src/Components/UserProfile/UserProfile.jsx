@@ -182,9 +182,6 @@ const UserProfile = () => {
   return (
     <Col>
       <Row>
-        <Col md={3}>
-        <div>{<Sidebar/>} </div>
-        </Col>
         <Col>
         <div className="asphalt">
             <Col>
