@@ -56,7 +56,7 @@ router.post("/login", async (req, res) => {
     expiresIn: "1h",
   }); //user should login again then 1 hour
 
-  res.cookie("token", token, { httpOnly: true, maxAge: 600000 });//
+  res.cookie("token", token, { httpOnly: true, maxAge: 1200000 });//
 
   return res.json({ status: true, message: "login successfully"});
 });

@@ -404,7 +404,6 @@ const AsphaltCalculator = () => {
   ]);
 
   useEffect(() => {
-    //okey
     if (!matPrices && !vehPrices)
       return console.log("error gettign the data from the state");
     CalculateEssential_1(matPrices, vehPrices);
@@ -549,13 +548,13 @@ const AsphaltCalculator = () => {
                 <thead>
                   <tr>
                     <th>Material Name</th>
-                    <th>Total Value M3</th>
+                    <th>M3 && Piece</th>
                     <th>Total Price</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Total Excavation Volume (m³)</td>
+                    <td>Excavation </td>
                     <td>
                       {valueOfExcavation ? `${valueOfExcavation} m³` : "-"}
                     </td>
@@ -566,7 +565,7 @@ const AsphaltCalculator = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Pmt Quantity</td>
+                    <td>Pmt</td>
                     <td>{valueOfPmt ? `${valueOfPmt.toFixed(2)} m³` : "-"}</td>
                     <td>
                       {pricePmt
@@ -575,7 +574,7 @@ const AsphaltCalculator = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Bitum Asphalt Quantity</td>
+                    <td>Bitum Asphalt</td>
                     <td>
                       {valueOfAsphalt_1
                         ? `${valueOfAsphalt_1.toFixed(2)} m³`
@@ -588,7 +587,7 @@ const AsphaltCalculator = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Wear Asphalt Quantity</td>
+                    <td>Wear Asphalt</td>
                     <td>
                       {valueOfAsphalt_1
                         ? `${valueOfAsphalt_1.toFixed(2)} m³`
@@ -614,7 +613,7 @@ const AsphaltCalculator = () => {
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Number of Excavator (m³)</td>
+                    <td>Excavator (m³)</td>
                     <td>
                       {numberOfExcavator ? `${numberOfExcavator} piece` : "-"}
                     </td>
@@ -625,7 +624,7 @@ const AsphaltCalculator = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Number of Truck</td>
+                    <td>Truck</td>
                     <td>{numberOfTruck ? `${numberOfTruck} piece` : "-"}</td>
                     <td>
                       {priceTruck
@@ -634,7 +633,7 @@ const AsphaltCalculator = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Number of Roller</td>
+                    <td>Roller</td>
                     <td>{numberOfRoller ? `${numberOfRoller} piece` : "-"}</td>
                     <td>
                       {priceRoller
@@ -643,7 +642,7 @@ const AsphaltCalculator = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Number of Greyder</td>
+                    <td>Greyder</td>
                     <td>
                       {numberOfGreyder ? `${numberOfGreyder} piece ` : "-"}
                     </td>
@@ -654,7 +653,7 @@ const AsphaltCalculator = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Number of Finisher</td>
+                    <td>Finisher</td>
                     <td>
                       {numberOfFinisher ? `${numberOfFinisher} piece` : "-"}
                     </td>
@@ -694,7 +693,7 @@ const AsphaltCalculator = () => {
                 <thead>
                   <tr>
                     <th>Worker Type</th>
-                    <th>Number of Workers</th>
+                    <th>Number of</th>
                     <th>Total Price</th>
                   </tr>
                 </thead>

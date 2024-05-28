@@ -80,6 +80,8 @@ const UserProfile = () => {
     }
   }, [userToken]);
 
+
+  //project yoksa burası calışıyor
   useEffect(() => {
     const fetchUserProject = async () => {
       try {
@@ -122,7 +124,7 @@ const UserProfile = () => {
     fetchUserProject();
   }, []);
 
-  // Fetch selected project details
+  // Fetch selected project details  ASphalt
   useEffect(() => {
     const fetchSelectedProject = async () => {
       if (selectedId) {
@@ -142,6 +144,70 @@ const UserProfile = () => {
     };
     fetchSelectedProject();
   }, [selectedId]);
+
+ // Fetch selected project details Electric
+ useEffect(() => {
+  const fetchSelectedProject = async () => {
+    if (selectedId) {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/electric/${selectedId}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch project details");
+        }
+        const dataOfAsphaltP = await response.json();
+        setSelectedProject(dataOfAsphaltP);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+  fetchSelectedProject();
+}, [selectedId]);
+
+ // Fetch selected project details Concrete road
+ useEffect(() => {
+  const fetchSelectedProject = async () => {
+    if (selectedId) {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/concreteRoad/${selectedId}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch project details");
+        }
+        const dataOfAsphaltP = await response.json();
+        setSelectedProject(dataOfAsphaltP);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+  fetchSelectedProject();
+}, [selectedId]);
+
+ // Fetch selected project details pipe concrete
+ useEffect(() => {
+  const fetchSelectedProject = async () => {
+    if (selectedId) {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/pipeConcrete/${selectedId}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch project details");
+        }
+        const dataOfAsphaltP = await response.json();
+        setSelectedProject(dataOfAsphaltP);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  };
+  fetchSelectedProject();
+}, [selectedId]);
+
 
   // Handle logout
   const handleLogout = () => {
@@ -179,6 +245,7 @@ const UserProfile = () => {
   useEffect(() => {
     console.log("Projects:", projects.length); // Veri yapısını ve içeriğini kontrol edin
   }, [projects]);
+
   return (
     <Col>
       <Row>
@@ -203,7 +270,7 @@ const UserProfile = () => {
                         justifyContent: "center",
                       }}
                     >
-                      <h2>Asphalt project</h2>
+                      <h2>Asphalt Road</h2>
                       <button>
                         <Link to="/asphaltcalculator">Create</Link>
                       </button>
@@ -242,28 +309,69 @@ const UserProfile = () => {
                         justifyContent: "center",
                       }}
                     >
-                      <h2>Project List</h2>
+                      <h2>Electric Laying</h2>
                       <button>
-                        <Link to="/asphaltcalculator">Create</Link>
+                        <Link to="/electric">Create</Link>
                       </button>
                     </div>
                     <ul>
                       {projects.map((project) => (
                         <li key={project._id}>
-                          {project.asphalt_projects.length === 0 ? (
+                          {project.electric_projects.length === 0 ? (
                             <button onClick={handleCreateProjectClick}>
                               No asphalt projects found. Click here to create a
                               new project.
                             </button>
                           ) : (
-                            project.asphalt_projects.map((asphaltProject) => (
+                            project.electric_projects.map((electricProject) => (
                               <button
-                                key={asphaltProject._id}
+                                key={electricProject._id}
                                 onClick={() =>
-                                  handleButtonClick(asphaltProject)
+                                  handleButtonClick(electricProject)
                                 }
                               >
-                                id: {asphaltProject}
+                                id: {electricProject}
+                              </button>
+                            ))
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </Col>
+              </Row>
+              <Row>
+              <Col>
+                  <div className="excavation-col">
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <h2>Concrete Road</h2>
+                      <button>
+                        <Link to="/concreteRoad">Create</Link>
+                      </button>
+                    </div>
+                    <ul>
+                      {projects.map((project) => (
+                        <li key={project._id}>
+                          {project.concreteroad_projects.length === 0 ? (
+                            <button onClick={handleCreateProjectClick}>
+                              No asphalt projects found. Click here to create a
+                              new project.
+                            </button>
+                          ) : (
+                            project.concreteroad_projects.map((concreteRoadProject) => (
+                              <button
+                                key={concreteRoadProject._id}
+                                onClick={() =>
+                                  handleButtonClick(concreteRoadProject)
+                                }
+                              >
+                                id: {concreteRoadProject}
                               </button>
                             ))
                           )}
@@ -281,28 +389,28 @@ const UserProfile = () => {
                         justifyContent: "center",
                       }}
                     >
-                      <h2>Project List</h2>
+                      <h2>Pipe Laying</h2>
                       <button>
-                        <Link to="/asphaltcalculator">Create</Link>
+                        <Link to="/pipeConcrete">Create</Link>
                       </button>
                     </div>
                     <ul>
                       {projects.map((project) => (
                         <li key={project._id}>
-                          {project.asphalt_projects.length === 0 ? (
+                          {project.pipeconcrete_projects.length === 0 ? (
                             <button onClick={handleCreateProjectClick}>
                               No asphalt projects found. Click here to create a
                               new project.
                             </button>
                           ) : (
-                            project.asphalt_projects.map((asphaltProject) => (
+                            project.pipeconcrete_projects.map((pipeConcreteProject) => (
                               <button
-                                key={asphaltProject._id}
+                                key={pipeConcreteProject._id}
                                 onClick={() =>
-                                  handleButtonClick(asphaltProject)
+                                  handleButtonClick(pipeConcreteProject)
                                 }
                               >
-                                id: {asphaltProject}
+                                id: {pipeConcreteProject}
                               </button>
                             ))
                           )}

@@ -6,6 +6,7 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import büzz_pipe from "../../assets/büzz-pipe.png";
 import koruge_pipe from "../../assets/koruge-pipe.png";
+import LeafletMap from "../LeafletMap/LeafletMap";
 
 const PipeConcrete = () => {
   const [holdUserId, setHoldUserId] = useState("");
@@ -68,13 +69,13 @@ const PipeConcrete = () => {
   const [priceJCB, setPriceJCB] = useState(null);
   const [priceAggregate, setPriceAggregate] = useState(null);
   const [priceExcavation, setPriceExcavation] = useState(null);
-  const [pricePipe, setPricePipe] = useState("");
-  const [priceBaseElement, setPriceBaseElement] = useState("");
-  const [priceConnectors, setPriceConnectors] = useState("");
-  const [pricePvcPipe, setPricePvcPrice] = useState("");
-  const [priceWorkers, setPriceWorkers] = useState("");
-  const [calProjectTime, setCalProjectTime] = useState("");
-  const [totalProjectPrice, setTotalProjectPrice] = useState(0);
+  const [pricePipe, setPricePipe] = useState(null);
+  const [priceBaseElement, setPriceBaseElement] = useState(null);
+  const [priceConnectors, setPriceConnectors] = useState(null);
+  const [pricePvcPipe, setPricePvcPrice] = useState(null);
+  const [priceWorkers, setPriceWorkers] = useState(null);
+  const [calProjectTime, setCalProjectTime] = useState(null);
+  const [totalProjectPrice, setTotalProjectPrice] = useState(null);
 
   //PipeConcrete project id
   const [idPipeConcreteProject, setIdPipeConcreteProject] = useState("");
@@ -107,7 +108,7 @@ const PipeConcrete = () => {
     setWidth(widthValue);
 
     const calculatedVolume = length * widthValue * depthValue;
-    setVolume(calculatedVolume);
+    setVolume(calculatedVolume.toFixed(0));
 
     const meterConnectors = homePiece * 1; // 1 mt c eleman
     const meterBaseElements = 1 * (length / 60); // 1mt genişlik uzunluk
@@ -118,11 +119,11 @@ const PipeConcrete = () => {
     const calAggregateVolume = calculatedVolume - (options[0].volume * piecePipe); //beton boru aggrega hesabı alt üst eşit
 
     const calBaseElement = Math.ceil(length / 60);
-    const calConnectors = Math.ceil(homePiece);
+    const calConnectors = Math.ceil(meterConnectors);
 
     const calNumberOfVehicles = Math.ceil(calculatedVolume / 6000); // üst tama yuvarlama
     const numberOfTwo = 2 * calNumberOfVehicles;
-    const calNumberOfWorkers = 6 * calNumberOfVehicles;
+    const numberOfWorkers = 6 * calNumberOfVehicles;
 
     vehPrices.forEach((item) => {
       switch (item.type) {
@@ -150,16 +151,16 @@ const PipeConcrete = () => {
           setPricePipe(item.price * piecePipe);
           break;
         case "baseElement":
-          setPriceBaseElement(item.price * calBaseElement); // yes like that  calculatedVolume
+          setPriceBaseElement(item.price * calBaseElement); 
           break;
         case "excavation":
           setPriceExcavation(item.price * calculatedVolume);
           break;
-          case "connector":
-          setPriceConnectors(item.price * calConnectors); // yes like that  calculatedVolume
+        case "connector":
+          setPriceConnectors(item.price * calConnectors); 
           break;
         case "pvc":
-          setPricePvcPrice(item.price * calculatedVolume);
+          setPricePvcPrice(item.price * calConnectors);
           break;
         default:
           break;
@@ -168,7 +169,7 @@ const PipeConcrete = () => {
 
     setCalProjectTime(calTimeofProject);
 
-    setValuOfExcavation(calculatedVolume);
+    setValuOfExcavation(calculatedVolume.toFixed(0));
     setValueOfAggregate(calAggregateVolume);
     setNumberOfPipe(piecePipe); // kaç adet boru hesabı
     setNumberofBaseElement(calBaseElement); // bağlantı noktaları, taban , bilezik ve kapak
@@ -178,10 +179,10 @@ const PipeConcrete = () => {
     setNumberOfExcavator(numberOfTwo);
     setNumberOfJCB(numberOfTwo);
     setNumberOfTruck(numberOfTwo);
-    setNumberOfWorkers(calNumberOfWorkers);
+    setNumberOfWorkers(numberOfWorkers);
 
     return { numberOfWorkers: numberOfWorkers };
-  }, []);
+  }, [length,homePiece]);
 
   //material Price
   useEffect(() => {
@@ -391,8 +392,44 @@ const PipeConcrete = () => {
       console.log("Backend'den gelen yanıt:", response.data);
     } catch (error) {
       console.error("Hata:", error);
+      if (isMounted.current) {
+        console.error("Failed to send data to DB", error);
+      }
     }
-  }, []);
+  }, [
+    numberOfExcavator,
+    excavatorUnitPrice,
+    priceExcavator,
+    numberOfTruck,
+    truckUnitPrice,
+    priceTruck,
+    numberOfJCB,
+    jcbUnitPrice,
+    priceJCB,
+    valueOfAggregate,
+    aggregateUnitPrice,
+    priceAggregate,
+    valueOfExcavation,
+    excavationUnitPrice,
+    priceExcavation,
+    numberOfPipe,
+    pipeUnitPrice,
+    pricePipe,
+    numberOfBaseElement,
+    baseElementUnitPrice,
+    priceBaseElement,
+    numberOfConnectors,
+    connectorsUnitPrice,
+    priceConnectors,
+    numberOfPvcPipe,
+    pvcUnitPrice,
+    pricePvcPipe,
+    numberOfWorkers,
+    workerUnitPrice,
+    priceWorkers,
+    calProjectTime,
+    totalProjectPrice
+  ]);
 
   useEffect(() => {
     if (!matPrices && !vehPrices)
@@ -413,10 +450,6 @@ const PipeConcrete = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
- 
-
-    calcualteEssential();
-
     const totalMPrice =
       priceExcavator +
       priceTruck +
@@ -430,10 +463,10 @@ const PipeConcrete = () => {
       priceWorkers +
       pricePipe;
 
-    const totalAllPrice = (totalMPrice + totalVPRice).toLocaleString("tr-TR");
-    setTotalProjectPrice(totalAllPrice);
+    const totalAllPrice = totalMPrice + totalVPRice;
+    setTotalProjectPrice(totalAllPrice.toFixed(0));
 
-    console.log("deneme price: " + totalProjectPrice.toLocaleString("tr-TR"));
+    console.log("deneme price: " + totalAllPrice.toLocaleString("tr-TR"));
     sendToDB();
   };
 
@@ -444,7 +477,7 @@ const PipeConcrete = () => {
         await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 saniye bekle
         try {
           const response = await axios.patch(
-            `http://localhost:3000/project/${holdUserId}/asphalt`,
+            `http://localhost:3000/project/${holdUserId}/pipeConcrete`,
             {
               pipeconcrete_projects: idPipeConcreteProject,
             }
@@ -458,10 +491,27 @@ const PipeConcrete = () => {
     }
   }, [idPipeConcreteProject, holdUserId]);
 
+
+  const [distance, setDistance] = useState(0);
+
+  //leaflet map
+  const handleTotalDistanceChange = (newDistance) => {
+    setDistance(newDistance);
+  };
+
+  useEffect(() => {
+    setLength(distance);
+  }, [distance]);
+
+
+
   return (
     <div className="pipe-calculator">
       <Col>
         <Row>
+        <Col>
+            <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
+          </Col>
           <Col xs={6}>
             <div className="excavation-col">
               <h2>Excavation and Pipe Calculator</h2>
@@ -541,13 +591,13 @@ const PipeConcrete = () => {
                 <thead>
                   <tr>
                     <th>Material Name</th>
-                    <th>Total Value M3</th>
+                    <th>M3 && Piece</th>
                     <th>Total Price</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Total Excavation Volume (m³)</td>
+                    <td>Excavation (m³)</td>
                     <td>
                       {valueOfExcavation ? `${valueOfExcavation} m³` : "-"}
                     </td>
@@ -558,7 +608,7 @@ const PipeConcrete = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Pmt Quantity</td>
+                    <td>Aggreaga</td>
                     <td>{valueOfAggregate ? `${valueOfAggregate.toFixed(2)} m³` : "-"}</td>
                     <td>
                       {priceAggregate
@@ -567,10 +617,10 @@ const PipeConcrete = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Bitum Asphalt Quantity</td>
+                    <td>Pipe</td>
                     <td>
                       {numberOfPipe
-                        ? `${numberOfPipe.toFixed(2)} m³`
+                        ? `${numberOfPipe} piece`
                         : "-"}
                     </td>
                     <td>
@@ -580,10 +630,10 @@ const PipeConcrete = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Wear Asphalt Quantity</td>
+                    <td>Base Element</td>
                     <td>
                       {numberOfBaseElement
-                        ? `${numberOfBaseElement.toFixed(2)} m³`
+                        ? `${numberOfBaseElement} piece`
                         : "-"}
                     </td>
                     <td>
@@ -593,10 +643,10 @@ const PipeConcrete = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Wear Asphalt Quantity</td>
+                    <td>Connectors</td>
                     <td>
                       {numberOfConnectors
-                        ? `${numberOfConnectors.toFixed(2)} m³`
+                        ? `${numberOfConnectors} piece`
                         : "-"}
                     </td>
                     <td>
@@ -606,10 +656,10 @@ const PipeConcrete = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Wear Asphalt Quantity</td>
+                    <td>PVC</td>
                     <td>
                       {numberOfPvcPipe
-                        ? `${numberOfPvcPipe.toFixed(2)} m³`
+                        ? `${numberOfPvcPipe} piece`
                         : "-"}
                     </td>
                     <td>
@@ -632,7 +682,7 @@ const PipeConcrete = () => {
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Number of Excavator (m³)</td>
+                    <td>Excavator</td>
                     <td>
                       {numberOfExcavator ? `${numberOfExcavator} piece` : "-"}
                     </td>
@@ -643,7 +693,7 @@ const PipeConcrete = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Number of Truck</td>
+                    <td>Truck</td>
                     <td>{numberOfTruck ? `${numberOfTruck} piece` : "-"}</td>
                     <td>
                       {priceTruck
@@ -652,7 +702,7 @@ const PipeConcrete = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Number of Roller</td>
+                    <td>Roller</td>
                     <td>{numberOfJCB ? `${numberOfJCB} piece` : "-"}</td>
                     <td>
                       {priceJCB
@@ -690,7 +740,7 @@ const PipeConcrete = () => {
                 <thead>
                   <tr>
                     <th>Worker Type</th>
-                    <th>Number of Workers</th>
+                    <th>Number of </th>
                     <th>Total Price</th>
                   </tr>
                 </thead>

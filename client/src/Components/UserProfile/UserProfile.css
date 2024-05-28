@@ -77,3 +77,29 @@
     width: 100%;
     height: 350px;
 }
+
+
+ul {
+    list-style-type: none; /* Liste işaretlerini kaldır */
+    padding: 0; /* Varsayılan dolgu boşluklarını kaldır */
+  }
+  
+  .project-item {
+    margin-bottom: 20px; /* Her proje öğesi arasında boşluk bırak */
+  }
+  
+  .create-project-button, .pipe-project-button {
+    display: block; /* Butonların tamamının blok seviyesinde olmasını sağlar */
+    margin: 10px 0; /* Butonlar arasında dikey boşluk bırakır */
+    padding: 10px 15px; /* Butonların içeriğini hizalar */
+    background-color: #007bff; /* Butonun arka plan rengini belirler */
+    color: white; /* Buton metninin rengini beyaz yapar */
+    border: none; /* Butonun kenarlığını kaldırır */
+    border-radius: 5px; /* Butona köşe yuvarlaklığı ekler */
+    cursor: pointer; /* Butonun üzerine gelindiğinde fare işaretçisini değiştirir */
+  }
+  
+  .create-project-button:hover, .pipe-project-button:hover {
+    background-color: #0056b3; /* Butonun üzerine gelindiğinde arka plan rengini değiştirir */
+  }
+  
