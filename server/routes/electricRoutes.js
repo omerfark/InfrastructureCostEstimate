@@ -19,43 +19,51 @@ router.get("/:id/export/excel", async (req, res) => {
 
       // Sütunu tanımlayın
       worksheet.columns = [
-          { header: 'Product', key: 'product', width: 20 },
-          { header: 'Quantity', key: 'quantity', width: 15 },
-          { header: 'Definition', key: 'definition', width: 15 },
-          { header: 'Price (TL)', key: 'price', width: 15 },
-          { header: 'Currency', key: 'currency', width: 15 } // TL ifadesini buraya ekleyin
+        { header: 'Product', key: 'product', width: 15 },
+        { header: 'Quantity', key: 'quantity', width: 10 },
+        { header: 'Definition', key: 'definition', width: 10 },
+        { header: 'Unit Price (TL)', key: 'unitprice', width: 15 },
+        { header: 'Unit Price Currency', key: 'unitpriceCurrency', width: 10 },
+        { header: 'Price (TL)', key: 'price', width: 15 },
+        { header: 'Currency', key: 'currency', width: 10 } 
       ];
 
       // Ekipmanları ekle
       electricProject.equipments.forEach(equipment => {
           worksheet.addRow({
-              product: equipment.type,
-              quantity: equipment.quantity,
-              definition: "adet",
-              price: equipment.price,
-              currency: 'TL' // TL ifadesini ekleyin
+            product: equipment.type,
+            quantity: equipment.quantity,
+            definition: "piece",
+            unitprice: equipment.unitprice,
+            unitpriceCurrency: "TL",
+            price: equipment.price,
+            currency: 'TL' // TL ifadesini ekleyin
           });
       });
 
       // Araçları ekle
       electricProject.vehicles.forEach(vehicle => {
           worksheet.addRow({
-              product: vehicle.type,
-              quantity: vehicle.quantity,
-              definition: "adet",
-              price: vehicle.price,
-              currency: 'TL' // TL ifadesini ekleyin
+            product: vehicle.type,
+            quantity: vehicle.quantity,
+            definition: "piece",
+            unitprice: vehicle.unitprice,
+            unitpriceCurrency: "TL",
+            price: vehicle.price,
+            currency: 'TL' // TL ifadesini ekleyin
           });
       });
 
       // Malzemeleri ekle
       electricProject.materials.forEach(material => {
           worksheet.addRow({
-              product: material.type,
-              quantity: material.quantity, 
-              definition: "m3",
-              price: material.price,
-              currency: 'TL' // TL ifadesini ekleyin
+            product: material.type,
+            quantity: material.quantity, 
+            definition: "m3",
+            unitprice: material.unitprice,
+            unitpriceCurrency: "TL",
+            price: material.price,
+            currency: 'TL' // TL ifadesini ekleyin
           });
       });
 
@@ -63,7 +71,9 @@ router.get("/:id/export/excel", async (req, res) => {
         worksheet.addRow({
             product: worker.type,
             quantity:worker.quantity,
-            definition: "adet",
+            definition: "people",
+            unitprice: worker.unitprice,
+            unitpriceCurrency: "TL",
             price: worker.price,
             currency: 'TL'
         });

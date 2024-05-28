@@ -24,6 +24,7 @@ const AsphaltCalculator = () => {
     });
   }, [navigate]);
 
+  const emptyValue = null;
   const [length, setLength] = useState(null); // Kazı boyu
   const [width, setWidth] = useState(null); // Genişlik
   const depth = 0.2;
@@ -44,6 +45,18 @@ const AsphaltCalculator = () => {
 
   // Workers
   const [numberOfWorkers, setNumberOfWorkers] = useState(null);
+
+  //unit Prices
+  const [excavatorUnitPrice, setExcavatorUnitPrice] = useState(null);
+  const [truckUnitPrice, setTruckUnitPrice] = useState(null);
+  const [rollerunitPrice, setRollerunitPrice] = useState(null);
+  const [greyderUnitPrice, setGreyderUnitPrice] = useState(null);
+  const [finisherUnitPrice, setFinisherUnitPrice] = useState(null);
+  const [pmtUnitPrice, setPmtUnitPrice] = useState(null);
+  const [asphalt_1UnitPrice, setAsphalt_1UnitPrice] = useState(null);
+  const [asphalt_2UnitPrice, setAsphalt_2UnitPrice] = useState(null);
+  const [excavationUnitPrice, setExcavationUnitPrice] = useState(null);
+  const [workerUnitPrice, setWorkerUnitPrice] = useState(null);
 
   // Prices
   const [priceExcavator, setPriceExcavator] = useState(null);
@@ -66,8 +79,7 @@ const AsphaltCalculator = () => {
   const [vehPrices, setVehPrices] = useState([]);
   const [worPrices, setWorPrices] = useState(0);
 
-  const CalculateEssential_1 = useCallback(
-    (matPrices, vehPrices) => {
+  const CalculateEssential_1 = useCallback((matPrices, vehPrices) => {
       console.log("first caluclation");
       console.log("matPrices", matPrices);
       console.log("vehPrices", vehPrices);
@@ -75,7 +87,7 @@ const AsphaltCalculator = () => {
       const calTimeofProject = Math.ceil(volume / 3200);
 
       const calculatedVolume = length * width * depth;
-      setVolume(calculatedVolume);
+      setVolume(calculatedVolume.toFixed(0));
 
       const essentialNumberOfEquipment = Math.ceil(length / 3000);
       const numberOfTwo = 2 * essentialNumberOfEquipment;
@@ -85,6 +97,7 @@ const AsphaltCalculator = () => {
       const totalValueAsphalt_1 = 2.4 * (0.15 * length * width); // alt tabaka 15 cm
       const totalValueAsphalt_2 = 2.4 * (0.05 * length * width); // üst tabaka 5 cm
       const totalValuePmt = 0.1 * length * width; // pmt tabakası 10 cm
+
 
       vehPrices.forEach((item) => {
         switch (item.type) {
@@ -134,11 +147,12 @@ const AsphaltCalculator = () => {
       setNumberOfFinisher(numberOfOne);
       setNumberOfWorkers(numberOfWorkers);
 
-      setValuOfExcavation(calculatedVolume);
+      setValuOfExcavation(calculatedVolume.toFixed(0));
       setValuOfAsphlt_1(totalValueAsphalt_1);
       setValuOfAsphlt_2(totalValueAsphalt_2);
       setValuOfPmt(totalValuePmt);
       setCalProjectTime(calTimeofProject);
+
       return { numberOfWorkers: numberOfWorkers };
     },
     [length, width, depth, volume]
@@ -159,15 +173,19 @@ const AsphaltCalculator = () => {
 
         allMaterial.forEach((material) => {
           if (material.material_name === "pmt") {
+            setPmtUnitPrice(material.material_price);
             const pmtPrice = material.material_price;
             newPrices.push({ type: "pmt", price: pmtPrice });
           } else if (material.material_name === "asphalt_1") {
+            setAsphalt_1UnitPrice(material.material_price);
             const asphaltPrice = material.material_price;
             newPrices.push({ type: "asphalt_1", price: asphaltPrice });
           } else if (material.material_name === "asphalt_2") {
+            setAsphalt_2UnitPrice(material.material_price);
             const asphalt2Price = material.material_price;
             newPrices.push({ type: "asphalt_2", price: asphalt2Price });
           } else if (material.material_name === "excavation") {
+            setExcavationUnitPrice(material.material_price);
             const excavationPrice = material.material_price;
             newPrices.push({ type: "excavation", price: excavationPrice });
           }
@@ -198,18 +216,23 @@ const AsphaltCalculator = () => {
 
         allVehicles.map((vehicle) => {
           if (vehicle.vehicle_type === "truck") {
+            setTruckUnitPrice(vehicle.vehicle_price);
             const truckPrice = vehicle.vehicle_price;
             newVehPrices.push({ type: "truck", price: truckPrice });
           } else if (vehicle.vehicle_type === "excavator") {
+            setExcavatorUnitPrice(vehicle.vehicle_price);
             const excavatorPrice = vehicle.vehicle_price;
             newVehPrices.push({ type: "excavator", price: excavatorPrice });
           } else if (vehicle.vehicle_type === "roller") {
+            setRollerunitPrice(vehicle.vehicle_price);
             const rollerPrice = vehicle.vehicle_price;
             newVehPrices.push({ type: "roller", price: rollerPrice });
           } else if (vehicle.vehicle_type === "greyder") {
+            setGreyderUnitPrice(vehicle.vehicle_price);
             const greyderPrice = vehicle.vehicle_price;
             newVehPrices.push({ type: "greyder", price: greyderPrice });
           } else if (vehicle.vehicle_type === "finisher") {
+            setFinisherUnitPrice(vehicle.vehicle_price);
             const finisherPrices = vehicle.vehicle_price;
             newVehPrices.push({ type: "finisher", price: finisherPrices });
           }
@@ -218,7 +241,9 @@ const AsphaltCalculator = () => {
 
         // Worker Price
         const workerPrice = workerGet[0].worker_price;
+        setWorkerUnitPrice(workerGet[0].worker_price);
         setWorPrices(workerPrice);
+
       } catch (err) {
         console.error(err);
       }
@@ -235,52 +260,88 @@ const AsphaltCalculator = () => {
     };
   }, []);
 
+  const getExcel = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/asphalt/${idAsphaltProject}/export/excel`,
+        { responseType: "blob" } // Yanıtın blob formatında gelmesi için
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "asphalt_project.xlsx"); // Dosya adını belirleyin
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.log("error: " + error);
+    }
+  }, [idAsphaltProject]);
+
   const sendToDB = useCallback(async () => {
     try {
       const response = await axios.post(
         "http://localhost:3000/asphalt/create",
         {
           equipments: [
-            { type: "equipment Type", quantity: 10, price: 100 }, // Örnek değerler
+            { type: "equipment Type", quantity: 10, unitprice: 10, price: 100 }, // Örnek değerler
           ],
           vehicles: [
             {
               type: "excavator",
               quantity: numberOfExcavator,
+              unitprice: excavatorUnitPrice,
               price: priceExcavator,
             },
-            { type: "truck", quantity: numberOfTruck, price: priceTruck },
+            {
+              type: "truck",
+              quantity: numberOfTruck,
+              unitprice: truckUnitPrice,
+              price: priceTruck,
+            },
             {
               type: "roller",
               quantity: numberOfRoller,
+              unitprice: rollerunitPrice,
               price: priceRoller,
             },
             {
               type: "greyder",
               quantity: numberOfGreyder,
+              unitprice: greyderUnitPrice,
               price: priceGreyder,
             },
             {
               type: "finisher",
               quantity: numberOfFinisher,
+              unitprice: finisherUnitPrice,
               price: priceFinisher,
             },
           ],
           materials: [
-            { type: "pmt", quantity: valueOfPmt, price: pricePmt },
+            {
+              type: "pmt",
+              quantity: valueOfPmt,
+              unitprice: pmtUnitPrice,
+              price: pricePmt,
+            },
             {
               type: "asphalt_1",
               quantity: valueOfAsphalt_1,
+              unitprice: asphalt_1UnitPrice,
               price: priceAsphalt_1,
             },
             {
               type: "asphalt_2",
               quantity: valueOfAsphalt_2,
+              unitprice: asphalt_2UnitPrice,
               price: priceAsphalt_2,
             },
             {
               type: "excavation",
               quantity: valueOfExcavation,
+              unitprice: excavationUnitPrice,
               price: priceExcavation,
             },
           ],
@@ -288,10 +349,12 @@ const AsphaltCalculator = () => {
             {
               type: "worker",
               quantity: numberOfWorkers,
+              unitprice: workerUnitPrice,
               price: priceWorkers,
             },
           ],
           project_time: calProjectTime,
+          total_price: totalProjectPrice,
         }
       );
 
@@ -327,6 +390,17 @@ const AsphaltCalculator = () => {
     priceAsphalt_2,
     priceExcavation,
     priceWorkers,
+    excavatorUnitPrice,
+    truckUnitPrice,
+    rollerunitPrice,
+    greyderUnitPrice,
+    finisherUnitPrice,
+    pmtUnitPrice,
+    asphalt_1UnitPrice,
+    asphalt_2UnitPrice,
+    excavationUnitPrice,
+    workerUnitPrice,
+    totalProjectPrice,
   ]);
 
   useEffect(() => {
@@ -340,24 +414,34 @@ const AsphaltCalculator = () => {
     setPriceWorkers(worPrices * numberOfWorkers);
   }, [matPrices, vehPrices, numberOfWorkers, worPrices, CalculateEssential_1]);
 
+  const handleExport = (e) => {
+    e.preventDefault();
+
+    getExcel();
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
     const totalMPrice =
-      priceExcavator + priceTruck + priceRoller + priceGreyder + priceFinisher;
+    priceExcavator +
+    priceTruck +
+    priceRoller +
+    priceGreyder +
+    priceFinisher;
 
-    const totalVPRice =
-      pricePmt +
-      priceAsphalt_1 +
-      priceAsphalt_2 +
-      priceExcavation +
-      priceWorkers;
+  const totalVPRice =
+    pricePmt +
+    priceAsphalt_1 +
+    priceAsphalt_2 +
+    priceExcavation +
+    priceWorkers;
 
-    const totalAllPrice = totalMPrice + totalVPRice;
+  const totalAllPrice = totalMPrice + totalVPRice;
+  setTotalProjectPrice(totalAllPrice.toFixed(0));
 
-    setTotalProjectPrice(totalAllPrice);
+  console.log("deneme price: " + totalAllPrice.toLocaleString("tr-TR"));
 
-    console.log("deneme price: " + totalAllPrice.toLocaleString("tr-TR"));
     sendToDB();
   };
 
@@ -384,6 +468,7 @@ const AsphaltCalculator = () => {
 
   const [distance, setDistance] = useState(0);
 
+  //leaflet map
   const handleTotalDistanceChange = (newDistance) => {
     setDistance(newDistance);
   };
@@ -396,10 +481,10 @@ const AsphaltCalculator = () => {
     <div className="asphalt">
       <Col>
         <Row className="mt-5">
-          <Col  >
+          <Col>
             <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
           </Col>
-          <Col xs={6} >
+          <Col xs={6}>
             <div className="excavation-col flex-grow-1 ">
               <h2>Asphalt Road Calculating</h2>
               <form onSubmit={handleSubmit}>
@@ -439,7 +524,7 @@ const AsphaltCalculator = () => {
                 <div className="calculate">
                   <button type="submit" className="calculate-button">
                     {" "}
-                    Calculate
+                    Record it
                   </button>
                 </div>
               </form>
@@ -452,76 +537,203 @@ const AsphaltCalculator = () => {
         <Row>
           <Col xs={12} className="mt-4">
             <div className="excavation-col">
-              <h2>Asphalt Road Calculator</h2>
-              <h3> For Material</h3>
-              <table className="table">
+              <h2>Asphalt Road Calculator </h2>
+              <h3>
+                {" "}
+                Project Time: {calProjectTime
+                  ? `${calProjectTime} month`
+                  : "-"}{" "}
+              </h3>
+              <h3> For Materials</h3>
+              <table className="uniform-table">
                 <thead>
                   <tr>
                     <th>Material Name</th>
-                    <th>Total Value</th>
+                    <th>Total Value M3</th>
                     <th>Total Price</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>Total Excavation Volume (m³)</td>
-                    <td>{valueOfExcavation ? `${valueOfExcavation} m³` : "-"}</td>
-                    <td>{priceExcavation ? `${priceExcavation.toLocaleString("tr-TR") + " TL"} ` : "-"}</td>
+                    <td>
+                      {valueOfExcavation ? `${valueOfExcavation} m³` : "-"}
+                    </td>
+                    <td>
+                      {priceExcavation
+                        ? `${priceExcavation.toLocaleString("tr-TR") + " TL"} `
+                        : "-"}
+                    </td>
                   </tr>
                   <tr>
                     <td>Pmt Quantity</td>
                     <td>{valueOfPmt ? `${valueOfPmt.toFixed(2)} m³` : "-"}</td>
-                    <td>{pricePmt ? `${pricePmt.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                    <td>
+                      {pricePmt
+                        ? `${pricePmt.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
                   </tr>
                   <tr>
                     <td>Bitum Asphalt Quantity</td>
-                    <td>{valueOfAsphalt_1 ? `${valueOfAsphalt_1 .toFixed(2)} m³` : "-"}</td>
-                    <td>{priceAsphalt_1 ? `${priceAsphalt_1.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                    <td>
+                      {valueOfAsphalt_1
+                        ? `${valueOfAsphalt_1.toFixed(2)} m³`
+                        : "-"}
+                    </td>
+                    <td>
+                      {priceAsphalt_1
+                        ? `${priceAsphalt_1.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
                   </tr>
                   <tr>
                     <td>Wear Asphalt Quantity</td>
-                    <td>{valueOfAsphalt_1 ? `${valueOfAsphalt_1 .toFixed(2)} m³` : "-"}</td>
-                    <td>{priceAsphalt_2 ? `${priceAsphalt_2.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                    <td>
+                      {valueOfAsphalt_1
+                        ? `${valueOfAsphalt_1.toFixed(2)} m³`
+                        : "-"}
+                    </td>
+                    <td>
+                      {priceAsphalt_2
+                        ? `${priceAsphalt_2.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
                   </tr>
                 </tbody>
               </table>
-              <br/>
-              <table className="table">
+              <br />
+              <h3> For Vehicles</h3>
+              <table className="uniform-table">
                 <thead>
                   <tr>
                     <th>Vehicle Name</th>
-                    <th>Total Value</th>
+                    <th>Number of Vehicle</th>
                     <th>Total Price</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td>Number of Excavator (m³)</td>
-                    <td>{numberOfExcavator ? `${numberOfExcavator} piece` : "-"}</td>
-                    <td>{priceExcavator ? `${priceExcavator.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                    <td>
+                      {numberOfExcavator ? `${numberOfExcavator} piece` : "-"}
+                    </td>
+                    <td>
+                      {priceExcavator
+                        ? `${priceExcavator.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
                   </tr>
                   <tr>
                     <td>Number of Truck</td>
                     <td>{numberOfTruck ? `${numberOfTruck} piece` : "-"}</td>
-                    <td>{priceTruck ? `${priceTruck.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                    <td>
+                      {priceTruck
+                        ? `${priceTruck.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
                   </tr>
                   <tr>
                     <td>Number of Roller</td>
                     <td>{numberOfRoller ? `${numberOfRoller} piece` : "-"}</td>
-                    <td>{priceRoller ? `${priceRoller.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                    <td>
+                      {priceRoller
+                        ? `${priceRoller.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
                   </tr>
                   <tr>
                     <td>Number of Greyder</td>
-                    <td>{numberOfGreyder ? `${numberOfGreyder} piece ` : "-"}</td>
-                    <td>{priceGreyder ? `${priceGreyder.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                    <td>
+                      {numberOfGreyder ? `${numberOfGreyder} piece ` : "-"}
+                    </td>
+                    <td>
+                      {priceGreyder
+                        ? `${priceGreyder.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
                   </tr>
                   <tr>
                     <td>Number of Finisher</td>
-                    <td>{numberOfFinisher ? `${numberOfFinisher} piece` : "-"}</td>
-                    <td>{priceFinisher ? `${priceFinisher.toLocaleString("tr-TR") + " TL"}` : "-"}</td>
+                    <td>
+                      {numberOfFinisher ? `${numberOfFinisher} piece` : "-"}
+                    </td>
+                    <td>
+                      {priceFinisher
+                        ? `${priceFinisher.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
                   </tr>
                 </tbody>
               </table>
+              <br />
+              <h3> For Equipments</h3>
+              <table className="uniform-table">
+                <thead>
+                  <tr>
+                    <th>Equipment Name</th>
+                    <th>Total Number</th>
+                    <th>Total Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>None</td>
+                    <td>{emptyValue ? `${emptyValue} piece` : "-"}</td>
+                    <td>
+                      {emptyValue
+                        ? `${emptyValue.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+              <h3> For Workers</h3>
+              <table className="uniform-table">
+                <thead>
+                  <tr>
+                    <th>Worker Type</th>
+                    <th>Number of Workers</th>
+                    <th>Total Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Worker </td>
+                    <td>
+                      {numberOfWorkers ? `${numberOfWorkers} piece` : "-"}
+                    </td>
+                    <td>
+                      {priceWorkers
+                        ? `${priceWorkers.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>All Total Price</td>
+                    <td>
+                      {totalProjectPrice
+                        ? `${totalProjectPrice.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <button onClick={handleExport} className="calculate-button">
+                {" "}
+                Export Excel
+              </button>
             </div>
           </Col>
         </Row>

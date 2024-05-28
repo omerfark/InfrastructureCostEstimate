@@ -61,6 +61,8 @@
     margin-bottom: 20px;
 }
 
+
+
 .asphalt-info p, .asphalt-info li {
     font-size: 16px;
     line-height: 1.6;
@@ -90,3 +92,6 @@
     justify-content: center;
   }
   
+  .uniform-table th, .uniform-table td {
+    width: 15%; /* Adjust the percentage as needed */
+  }

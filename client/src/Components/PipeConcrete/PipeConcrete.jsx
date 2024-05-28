@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./PipeConcrete.css";
@@ -11,57 +11,63 @@ const PipeConcrete = () => {
   const [holdUserId, setHoldUserId] = useState("");
 
   //Doğrulama anahtarı
-  // const navigate = useNavigate();
-  // axios.defaults.withCredentials = true; //cookie özelliği eklemek için
+  const navigate = useNavigate();
+  axios.defaults.withCredentials = true; //cookie özelliği eklemek için
 
-  // useEffect(() => {
-  //   axios.get("http://localhost:3000/auth/verify").then((res) => {
-  //     if (res.data.status) {
-  //       console.log(res.data);
-  //       const tokenValue = res.data.token;
-  //       const sbtUser = tokenValue.userId;
-  //       setHoldUserId(sbtUser);
-  //     } else {
-  //       navigate("/login");
-  //     }
-  //   });
-  // }, []);
+  // Doğrulama
+  useEffect(() => {
+    axios.get("http://localhost:3000/auth/verify").then((res) => {
+      if (res.data.status) {
+        setHoldUserId(res.data.token.userId);
+      } else {
+        navigate("/login");
+      }
+    });
+  }, [navigate]);
 
-  const [excavation_length, setLength] = useState(""); // Kazı boyu
-  const [excavation_width, setWidth] = useState(""); // Genişlik
-  const [excavation_depth, setDepth] = useState(""); // Derinlik
-  const [excavation_volume, setVolume] = useState(""); // Hacim
-  const [homePiece, setHomePiece] = useState(""); // kaç adet ev olduğu
+  //test.omer1212@gmail.com
 
-  const [selectedDiameter, setSelectedDiameter] = useState("");
-  const [pipeSelected, setPipeSelected] = useState(""); // boru türünü tut
+  const emptyValue = null;
+  const [length, setLength] = useState(null); // Kazı boyu
+  const [excavation_width, setWidth] = useState(null); // Genişlik
+  const [excavation_depth, setDepth] = useState(null); // Derinlik
+  const [volume, setVolume] = useState(null); // Hacim
+  const [homePiece, setHomePiece] = useState(null); // kaç adet ev olduğu
 
   //Equipment
   //vehicle
-  const [numberOfExcavator, setNumberOfExcavator] = useState("");
-  const [numberOfTruck, setNumberOfTruck] = useState("");
-  const [numberOfJCB, setNumberOfJCB] = useState("");
+  const [numberOfExcavator, setNumberOfExcavator] = useState(null);
+  const [numberOfTruck, setNumberOfTruck] = useState(null);
+  const [numberOfJCB, setNumberOfJCB] = useState(null);
   //materials
-  const [valueOfSand, setValueOfSand] = useState(0); // kum koruge
-  const [valueOfSoil, setValueOfSoil] = useState(0); // toprak koruge
-  const [valueOfAggregate, setValueOfAggregate] = useState(0);
-  const [valueOfExcavation, setValuOfExcavation] = useState(0);
-  const [numberOfPipe, setNumberOfPipe] = useState(0); // kazı uzunluğuna göre kullanılacak boru adedi
-  const [numberOfBaseElement, setNumberofBaseElement] = useState(0); // taban, bilezik ve kanalizasyon kapak kısmı
-  const [numberOfConnectors, setNumberOfConnector] = useState(0); // parsel ve c bağlantısı adedi, kazı uzunluğundan cıkarılacak 1 mt c elemanı, pvc adedi
-  const [numberOfPvcPipe, setNumberOfPvcPipe] = useState(0); // parsel ile aynı 2 mt bağlantı boruları
+  const [valueOfAggregate, setValueOfAggregate] = useState(null);
+  const [valueOfExcavation, setValuOfExcavation] = useState(null);
+  const [numberOfPipe, setNumberOfPipe] = useState(null); // kazı uzunluğuna göre kullanılacak boru adedi
+  const [numberOfBaseElement, setNumberofBaseElement] = useState(null); // taban, bilezik ve kanalizasyon kapak kısmı
+  const [numberOfConnectors, setNumberOfConnector] = useState(null); // parsel ve c bağlantısı adedi, kazı uzunluğundan cıkarılacak 1 mt c elemanı, pvc adedi
+  const [numberOfPvcPipe, setNumberOfPvcPipe] = useState(null); // parsel ile aynı 2 mt bağlantı boruları
 
   //workers
-  const [numberOfWorkers, setNumberOfWorkers] = useState("");
+  const [numberOfWorkers, setNumberOfWorkers] = useState(null);
+
+  //unit Prices
+  const [excavatorUnitPrice, setExcavatorUnitPrice] = useState(null);
+  const [truckUnitPrice, setTruckUnitPrice] = useState(null);
+  const [jcbUnitPrice, setJcbUnitPrice] = useState(null);
+  const [aggregateUnitPrice, setAggregateUnitPrice] = useState(null);
+  const [pipeUnitPrice, setPipeUnitPrice] = useState(null);
+  const [baseElementUnitPrice, setBaseElementUnitPrice] = useState(null);
+  const [excavationUnitPrice, setExcavationUnitPrice] = useState(null);
+  const [connectorsUnitPrice, setConnectorsUnitPrice] = useState(null);
+  const [pvcUnitPrice, setPvcUnitPrice] = useState(null);
+  const [workerUnitPrice, setWorkerUnitPrice] = useState(null);
 
   //priceAll
-  const [priceExcavator, setPriceExcavator] = useState("");
-  const [priceTruck, setPriceTruck] = useState("");
-  const [priceJCB, setPriceJCB] = useState("");
-  const [priceAggregate, setPriceAggregate] = useState("");
-  const [priceExcavation, setPriceExcavation] = useState("");
-  const [priceSand, setPriceSand] = useState("");
-  const [priceSoil, setPriceSoil] = useState("");
+  const [priceExcavator, setPriceExcavator] = useState(null);
+  const [priceTruck, setPriceTruck] = useState(null);
+  const [priceJCB, setPriceJCB] = useState(null);
+  const [priceAggregate, setPriceAggregate] = useState(null);
+  const [priceExcavation, setPriceExcavation] = useState(null);
   const [pricePipe, setPricePipe] = useState("");
   const [priceBaseElement, setPriceBaseElement] = useState("");
   const [priceConnectors, setPriceConnectors] = useState("");
@@ -73,339 +79,343 @@ const PipeConcrete = () => {
   //PipeConcrete project id
   const [idPipeConcreteProject, setIdPipeConcreteProject] = useState("");
 
-  // Seçenekler listesi
-  const pipeOptions = [
-    {
-      name: "concretepipe",
-      diameter: "0.3",
-      volume: "0.11",
-      length: "1.5",
-      nickname: "sewer type 1 - (Concrete)",
-    },
-    {
-      name: "corrugated",
-      diameter: "0.2",
-      volume: "0.19",
-      length: "6",
-      nickname: "sewer type 2 - (Corrugated)",
-    },
-  ];
+  const [matPrices, setMatPrices] = useState([]);
+  const [vehPrices, setVehPrices] = useState([]);
+  const [worPrices, setWorPrices] = useState(0);
 
-  // Seçeneklerin dropdown menüsüne dönüştürülmesi
-  const options = pipeOptions.map((option, index) => (
-    <option key={index} value={option.diameter}>
-      {option.nickname}
-    </option>
-  ));
+  const calcualteEssential = useCallback((matPrices, vehPrices) => {
+    console.log("first caluclation");
+    console.log("matPrices", matPrices);
+    console.log("vehPrices", vehPrices);
 
-  const calcualteEssential = () => {
-    // Seçilen borunun özelliklerini al
-    const selectedPipe = pipeOptions.find(
-      (option) => option.diameter === selectedDiameter
-    );
-    setPipeSelected(selectedPipe);
+    const calTimeofProject = Math.ceil(length / 2500);
 
-    const depthValue = 10 * pipeSelected.diameter; // dernilik boru çapı nın 8 katı olmalı, km artarsa 2  katına cıkar
-    const widthValue = 4 * pipeSelected.diameter;
+    const options = [
+      {
+        name: "concretepipe",
+        diameter: "0.3",
+        volume: "0.11",
+        length: "1.5",
+        nickname: "sewer type 1 - (Concrete)",
+      },
+    ];
+
+    const depthValue = 10 * options[0].diameter; // boru tipine göre genişlik
+    const widthValue = 4 * options[0].diameter; // boru tipine göre genişlik
+
     setDepth(depthValue);
     setWidth(widthValue);
-    const calculatedVolume = (
-      excavation_length *
-      excavation_width *
-      excavation_depth
-    ).toFixed(2);
+
+    const calculatedVolume = length * widthValue * depthValue;
     setVolume(calculatedVolume);
 
     const meterConnectors = homePiece * 1; // 1 mt c eleman
-    const meterBaseElements = (1 * (excavation_length / 60)).toFixed(2); // 1mt genişlik
-    const calPiecePipe =
-      (excavation_length - (meterBaseElements + meterConnectors)) /
-      pipeSelected.length;
+    const meterBaseElements = 1 * (length / 60); // 1mt genişlik uzunluk
+    const calPiecePipe =(length - (meterBaseElements + meterConnectors)) /options[0].length;
     const piecePipe = Math.ceil(calPiecePipe);
-    setNumberOfPipe(piecePipe); // kaç adet boru hesabı
+    
 
-    const calAggregateVolume =
-      calculatedVolume - pipeSelected.volume * piecePipe; //beton boru aggrega hesabı
-    const calSandVolume = 0.2 * excavation_width * excavation_length; // koruge boru alt taban
-    const calSoilVolume =
-      calculatedVolume - pipeSelected.volume * piecePipe - calSandVolume; // koruge boru üüst kısım
+    const calAggregateVolume = calculatedVolume - (options[0].volume * piecePipe); //beton boru aggrega hesabı alt üst eşit
 
-    setValuOfExcavation(calculatedVolume);
-    setValueOfAggregate(calAggregateVolume);
-    setValueOfSand(calSandVolume);
-    setValueOfSoil(calSoilVolume);
-
-    const calBaseElement = Math.ceil(excavation_length / 60);
+    const calBaseElement = Math.ceil(length / 60);
     const calConnectors = Math.ceil(homePiece);
-
-    setNumberofBaseElement(calBaseElement); // bağlantı noktaları, taban , bilezik ve kapak
-    setNumberOfConnector(calConnectors); // parsel bağlantısı icin, c elemanı, parsel taba, parsel kapak olarak
-    setNumberOfPvcPipe(calConnectors); // ev adedi sayısıyla parsel borusu sayısı aynı olacak 2mt lik alınacak
 
     const calNumberOfVehicles = Math.ceil(calculatedVolume / 6000); // üst tama yuvarlama
     const numberOfTwo = 2 * calNumberOfVehicles;
     const calNumberOfWorkers = 6 * calNumberOfVehicles;
 
+    vehPrices.forEach((item) => {
+      switch (item.type) {
+        case "excavator":
+          setPriceExcavator(item.price * numberOfTwo * calTimeofProject);
+          break;
+        case "truck":
+          setPriceTruck(item.price * numberOfTwo * calTimeofProject);
+          break;
+        case "JCB":
+          setPriceJCB(item.price * numberOfTwo * calTimeofProject);
+          break;
+        default:
+          break;
+      }
+    });
+
+
+    matPrices.forEach((item) => {
+      switch (item.type) {
+        case "aggregate":
+          setPriceAggregate(item.price * calAggregateVolume);
+          break;
+        case "concretepipe":
+          setPricePipe(item.price * piecePipe);
+          break;
+        case "baseElement":
+          setPriceBaseElement(item.price * calBaseElement); // yes like that  calculatedVolume
+          break;
+        case "excavation":
+          setPriceExcavation(item.price * calculatedVolume);
+          break;
+          case "connector":
+          setPriceConnectors(item.price * calConnectors); // yes like that  calculatedVolume
+          break;
+        case "pvc":
+          setPricePvcPrice(item.price * calculatedVolume);
+          break;
+        default:
+          break;
+      }
+    });
+
+    setCalProjectTime(calTimeofProject);
+
+    setValuOfExcavation(calculatedVolume);
+    setValueOfAggregate(calAggregateVolume);
+    setNumberOfPipe(piecePipe); // kaç adet boru hesabı
+    setNumberofBaseElement(calBaseElement); // bağlantı noktaları, taban , bilezik ve kapak
+    setNumberOfConnector(calConnectors); // parsel bağlantısı icin, c elemanı, parsel taba, parsel kapak olarak 1mt
+    setNumberOfPvcPipe(calConnectors); // ev adedi sayısıyla parsel borusu sayısı aynı olacak 2mt lik alınacak pvc
+
     setNumberOfExcavator(numberOfTwo);
     setNumberOfJCB(numberOfTwo);
     setNumberOfTruck(numberOfTwo);
     setNumberOfWorkers(calNumberOfWorkers);
-  };
 
+    return { numberOfWorkers: numberOfWorkers };
+  }, []);
 
+  //material Price
+  useEffect(() => {
+    const fetchMaterialPrice = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/materials/all`);
+        if (!response.ok) {
+          throw new Error("Unexpected error");
+        }
+
+        const allMaterial = await response.json();
+
+        const newPrices = [];
+
+        allMaterial.forEach((material) => {
+          if (material.material_name === "aggregate") {
+            setAggregateUnitPrice(material.material_price);
+            const aggregatePrice = material.material_price;
+            newPrices.push({ type: "aggregate", price: aggregatePrice });
+          }else if (material.material_name === "excavation") {
+            setExcavationUnitPrice(material.material_price);
+            const excavationPrice = material.material_price;
+            newPrices.push({ type: "excavation", price: excavationPrice });
+          } else if (material.material_name === "concretepipe") {
+            setPipeUnitPrice(material.material_price);
+            const concretepipePrice = material.material_price;
+            newPrices.push({ type: "concretepipe", price: concretepipePrice });
+          } else if (material.material_name === "baseElement") {
+            setBaseElementUnitPrice(material.material_price);
+            const baseElementPrice = material.material_price;
+            newPrices.push({ type: "baseElement", price: baseElementPrice });
+          } else if (material.material_name === "connector") {
+            setConnectorsUnitPrice(material.material_price);
+            const connectorPrice = material.material_price;
+            newPrices.push({ type: "connector", price: connectorPrice });
+          } else if (material.material_name === "pvc") {
+            setPvcUnitPrice(material.material_price);
+            const pvcPrice = material.material_price;
+            newPrices.push({ type: "pvc", price: pvcPrice });
+          }
+        });
+
+        setMatPrices(newPrices);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchMaterialPrice();
+  }, []);
+
+  //vehicle price
+  useEffect(() => {
+    const fetchVehiclePrice = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/vehicles/all`);
+        const response2 = await fetch("http://localhost:3000/worker/all");
+        if (!response.ok && response2.ok) {
+          throw new Error("Unexpected error");
+        }
+        const allVehicles = await response.json();
+        const workerGet = await response2.json();
+
+        const newVehPrices = [];
+
+        allVehicles.map((vehicle) => {
+          if (vehicle.vehicle_type === "truck") {
+            setTruckUnitPrice(vehicle.vehicle_price);
+            const truckPrice = vehicle.vehicle_price;
+            newVehPrices.push({ type: "truck", price: truckPrice });
+          } else if (vehicle.vehicle_type === "excavator") {
+            setExcavatorUnitPrice(vehicle.vehicle_price);
+            const excavatorPrice = vehicle.vehicle_price;
+            newVehPrices.push({ type: "excavator", price: excavatorPrice });
+          } else if (vehicle.vehicle_type === "JCB") {
+            setJcbUnitPrice(vehicle.vehicle_price);
+            const JCBPrice = vehicle.vehicle_price;
+            newVehPrices.push({ type: "JCB", price: JCBPrice });
+          }
+        });
+
+        setVehPrices(newVehPrices);
+
+        // Worker Price
+        const workerPrice = workerGet[0].worker_price;
+        setWorkerUnitPrice(workerGet[0].worker_price);
+        setWorPrices(workerPrice);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchVehiclePrice();
+  }, []);
+
+  const isMounted = useRef(true);
 
   useEffect(() => {
-    if (valueOfSand && valueOfAggregate && valueOfSoil && valueOfExcavation) {
-      const fetchMaterialPrice = async () => {
-        try {
-          const response = await fetch(`http://localhost:3000/materials/all`);
-          if (!response.ok) {
-            throw new Error("Unexpected error");
-          }
-          const selectPipeName = pipeSelected.name; // seçilen borunun ismini al
-          const allMaterial = await response.json();
-          allMaterial.forEach((material) => {
-            if (material.material_name === "sand") {
-              const sandPRice = valueOfSand * material.material_price;
-              setPriceSand(sandPRice);
-            } else if (material.material_name === "aggregate") {
-              const aggregatePrice = valueOfAggregate * material.material_price;
-              setPriceAggregate(aggregatePrice);
-            } else if (material.material_name === "excavation") {
-              const excavationPrice =
-                valueOfExcavation * material.material_price;
-              setPriceExcavation(excavationPrice);
-            } else if (material.material_name === "soil") {
-              const soilPrice = valueOfSoil * material.material_price;
-              setPriceSoil(soilPrice);
-            } else if (material.material_name === selectPipeName) {
-              const pipePrice = numberOfPipe * material.material_price;
-              setPricePipe(pipePrice);
-            } else if (material.material_name === "baseElement") {
-              const baseElementPrice =
-                numberOfBaseElement * material.material_price;
-              setPriceBaseElement(baseElementPrice);
-            } else if (material.material_name === "connector") {
-              const connectorsPrice =
-                numberOfConnectors * material.material_price;
-              setPriceConnectors(connectorsPrice);
-            } else if (material.material_name === "pvc") {
-              const pvcPrice = numberOfPvcPipe * material.material_price;
-              setPricePvcPrice(pvcPrice);
-            }
-          });
-        } catch (err) {
-          console.error(err);
-        }
-      };
-      fetchMaterialPrice();
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
+
+  //get excel report
+  const getExcel = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/pipeConcrete/${idPipeConcreteProject}/export/excel`,
+        { responseType: "blob" } // Yanıtın blob formatında gelmesi için
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "asphalt_project.xlsx"); // Dosya adını belirleyin
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.log("error: " + error);
     }
-  }, [
-    valueOfSand,
-    valueOfAggregate,
-    valueOfSoil,
-    valueOfExcavation,
-    numberOfPipe,
-    numberOfBaseElement,
-    numberOfConnectors,
-    numberOfPvcPipe,
-    pipeSelected,
-  ]);
-
-
-  useEffect(() => {
-    if (numberOfTruck && numberOfExcavator && numberOfJCB && numberOfWorkers) {
-      const fetchVehiclePrice = async () => {
-        try {
-          const response = await fetch(`http://localhost:3000/vehicles/all`);
-          const response2 = await fetch("http://localhost:3000/worker/all");
-          if (!response.ok && response2.ok) {
-            throw new Error("Unexpected error");
-          }
-          const allVehicles = await response.json();
-          const workerGet = await response2.json();
-
-          allVehicles.forEach((vehicle) => {
-            if (vehicle.vehicle_type === "truck") {
-              const truckPrice =
-                numberOfTruck * vehicle.vehicle_price * calProjectTime;
-              setPriceTruck(truckPrice);
-            } else if (vehicle.vehicle_type === "excavator") {
-              const excavatorPrice =
-                numberOfExcavator * vehicle.vehicle_price * calProjectTime;
-              setPriceExcavator(excavatorPrice);
-            } else if (vehicle.vehicle_type === "JCB") {
-              const JCBPrice =
-                numberOfJCB * vehicle.vehicle_price * calProjectTime;
-              setPriceJCB(JCBPrice);
-            }
-          });
-
-          const workerPrice =
-            numberOfWorkers * workerGet[0].worker_price * calProjectTime;
-          setPriceWorkers(workerPrice);
-        } catch (err) {
-          console.error(err);
-        }
-      };
-      fetchVehiclePrice();
-    }
-  }, [
-    numberOfTruck,
-    numberOfExcavator,
-    numberOfJCB,
-    numberOfWorkers,
-    calProjectTime,
-  ]);
-
+  }, [idPipeConcreteProject]);
 
   //Tüm fiyatlar hesaplanınca db ye kaydediyor
-  useEffect(() => {
-    if (totalProjectPrice) {
-      const sendToDB = async () => {
-        // send to db
-        try {
-          const response = await axios.post(
-            "http://localhost:3000/pipeConcrete/create",
-            {
-              equipments: [
-            { type: "equipment Type", quantity: 10, price: 100 }, // Örnek değerler
+
+  const sendToDB = useCallback(async () => {
+    // send to db
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/pipeConcrete/create",
+        {
+          equipments: [
+            { type: "equipment Type", quantity: 10, unitprice: 10, price: 100 }, // Örnek değerler
           ],
           vehicles: [
             {
               type: "excavator",
               quantity: numberOfExcavator,
+              unitprice: excavatorUnitPrice,
               price: priceExcavator,
             },
-            { type: "truck", quantity: numberOfTruck, price: priceTruck },
-            { type: "roller", quantity: numberOfJCB, price: priceJCB },
+            {
+              type: "truck",
+              quantity: numberOfTruck,
+              unitprice: truckUnitPrice,
+              price: priceTruck,
+            },
+            {
+              type: "JCB",
+              quantity: numberOfJCB,
+              unitprice: jcbUnitPrice,
+              price: priceJCB,
+            },
           ],
           materials: [
-            { type: "sand", quantity: valueOfSand, price: priceSand },
-            {
-              type: "soil",
-              quantity: valueOfSoil,
-              price: priceSoil,
-            },
             {
               type: "aggregate",
               quantity: valueOfAggregate,
+              unitprice: aggregateUnitPrice,
               price: priceAggregate,
             },
             {
               type: "excavation",
               quantity: valueOfExcavation,
+              unitprice: excavationUnitPrice,
               price: priceExcavation,
             },
-            { type: "pipe", quantity: numberOfPipe, price: pricePipe },
+            {
+              type: "pipe",
+              quantity: numberOfPipe,
+              unitprice: pipeUnitPrice,
+              price: pricePipe,
+            },
             {
               type: "baseElement",
               quantity: numberOfBaseElement,
+              unitprice: baseElementUnitPrice,
               price: priceBaseElement,
             },
             {
               type: "connectors",
               quantity: numberOfConnectors,
+              unitprice: connectorsUnitPrice,
               price: priceConnectors,
             },
-            { type: "pvc", quantity: numberOfPvcPipe, price: pricePvcPipe },
+            {
+              type: "pvc",
+              quantity: numberOfPvcPipe,
+              unitprice: pvcUnitPrice,
+              price: pricePvcPipe,
+            },
           ],
           worker: [
-            { type: "worker", quantity: numberOfWorkers, price: priceWorkers },
+            {
+              type: "worker",
+              quantity: numberOfWorkers,
+              unitprice: workerUnitPrice,
+              price: priceWorkers,
+            },
           ],
           project_time: calProjectTime,
-            }
-          );
-  
-          const data_id = response.data._id;
-          setIdPipeConcreteProject(data_id);
-  
-          console.log("Backend'den gelen yanıt:", response.data);
-        } catch (error) {
-          console.error("Hata:", error);
+          total_price: totalProjectPrice,
         }
-      };
-      sendToDB();
+      );
+
+      const data_id = response.data._id;
+      setIdPipeConcreteProject(data_id);
+
+      console.log("Backend'den gelen yanıt:", response.data);
+    } catch (error) {
+      console.error("Hata:", error);
     }
-  }, [totalProjectPrice]);
-  
+  }, []);
 
-  // useEffect(()=>{
-  //   const sendToDB = async() =>{
-      
-  //   // send to db
-  //   try {
-  //     const response = await axios.post(
-  //       "http://localhost:3000/pipeConcrete/create",
-  //       {
-  //         equipments: [
-  //           { type: "equipment Type", quantity: 10, price: 100 }, // Örnek değerler
-  //         ],
-  //         vehicles: [
-  //           {
-  //             type: "excavator",
-  //             quantity: numberOfExcavator,
-  //             price: priceExcavator,
-  //           },
-  //           { type: "truck", quantity: numberOfTruck, price: priceTruck },
-  //           { type: "roller", quantity: numberOfJCB, price: priceJCB },
-  //         ],
-  //         materials: [
-  //           { type: "sand", quantity: valueOfSand, price: priceSand },
-  //           {
-  //             type: "soil",
-  //             quantity: valueOfSoil,
-  //             price: priceSoil,
-  //           },
-  //           {
-  //             type: "aggregate",
-  //             quantity: valueOfAggregate,
-  //             price: priceAggregate,
-  //           },
-  //           {
-  //             type: "excavation",
-  //             quantity: valueOfExcavation,
-  //             price: priceExcavation,
-  //           },
-  //           { type: "pipe", quantity: numberOfPipe, price: pricePipe },
-  //           {
-  //             type: "baseElement",
-  //             quantity: numberOfBaseElement,
-  //             price: priceBaseElement,
-  //           },
-  //           {
-  //             type: "connectors",
-  //             quantity: numberOfConnectors,
-  //             price: priceConnectors,
-  //           },
-  //           { type: "pvc", quantity: numberOfPvcPipe, price: pricePvcPipe },
-  //         ],
-  //         worker: [
-  //           { type: "worker", quantity: numberOfWorkers, price: priceWorkers },
-  //         ],
-  //         project_time: calProjectTime,
-  //       }
-  //     );
+  useEffect(() => {
+    if (!matPrices && !vehPrices)
+      return console.log("error gettign the data from the state");
+    calcualteEssential(matPrices, vehPrices);
 
-  //     const data_id = response.data._id;
-  //     setIdPipeConcreteProject(data_id);
+    if (!worPrices && !numberOfWorkers)
+      return console.log("error getting worker price");
+    setPriceWorkers(worPrices * numberOfWorkers);
+  }, [matPrices, vehPrices, numberOfWorkers, worPrices, calcualteEssential]);
 
-  //     console.log("Backend'den gelen yanıt:", response.data);
-  //   } catch (error) {
-  //     console.error("Hata:", error);
-  //   }
-
-  //   };
-  //   sendToDB();
-  // },[totalProjectPrice])
-
-  const handleSubmit = async (e) => {
+  const handleExport = (e) => {
     e.preventDefault();
 
-    const calTimeofProject = Math.ceil(excavation_length / 2500);
-    setCalProjectTime(calTimeofProject);
+    getExcel();
+  };
 
-    await calcualteEssential();
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+ 
+
+    calcualteEssential();
 
     const totalMPrice =
       priceExcavator +
@@ -416,16 +426,37 @@ const PipeConcrete = () => {
       pricePvcPipe;
     const totalVPRice =
       priceAggregate +
-      priceSand +
       priceExcavation +
       priceWorkers +
-      priceSoil +
       pricePipe;
+
     const totalAllPrice = (totalMPrice + totalVPRice).toLocaleString("tr-TR");
     setTotalProjectPrice(totalAllPrice);
 
     console.log("deneme price: " + totalProjectPrice.toLocaleString("tr-TR"));
+    sendToDB();
   };
+
+  // Add Pipe project to user project list
+  useEffect(() => {
+    if (idPipeConcreteProject) {
+      const postProjectId = async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 saniye bekle
+        try {
+          const response = await axios.patch(
+            `http://localhost:3000/project/${holdUserId}/asphalt`,
+            {
+              pipeconcrete_projects: idPipeConcreteProject,
+            }
+          );
+          console.log(response.data);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      postProjectId();
+    }
+  }, [idPipeConcreteProject, holdUserId]);
 
   return (
     <div className="pipe-calculator">
@@ -435,28 +466,13 @@ const PipeConcrete = () => {
             <div className="excavation-col">
               <h2>Excavation and Pipe Calculator</h2>
               <form onSubmit={handleSubmit}>
-                <label>
-                  Diameter (m):
-                  <select
-                    className="m-2"
-                    value={selectedDiameter}
-                    onChange={(e) => setSelectedDiameter(e.target.value)}
-                  >
-                    <option value="">Select Pipe</option>
-                    {options}
-                  </select>
-                </label>
                 {/* Seçilen derinlik değerini gösterme */}
-                {selectedDiameter && (
-                  <div>Selected Diameter: {selectedDiameter} m</div>
-                )}
-                <br />
                 <label>
                   Length (m):
                   <input
                     className="m-2"
                     type="number"
-                    value={excavation_length}
+                    value={length}
                     onChange={(e) => setLength(e.target.value)}
                     onFocus={(e) => e.target.select()} // Girdiye odaklandığında içeriği seç
                   />
@@ -505,127 +521,215 @@ const PipeConcrete = () => {
               </form>
               <div className="result">
                 Volume (m³) :{" "}
-                {excavation_volume && <span> {excavation_volume} m³</span>}
+                {volume && <span> {volume} m³</span>}
               </div>
             </div>
           </Col>
-          <Col xs={6}>
-            <div className="excavation-col">
-              <h2> Pipe Infrastructure Calculator </h2>
-              <ul>
-                <li>Total Volume = Length X Width X Depth</li>
-                <li>
-                  Excavation Volume (m³) ={" "}
-                  {excavation_volume && <span> {excavation_volume} m³</span>}
-                </li>
-                <li>
-                  Pipe Volume (m³) = 3.14 X Pipe Diameter (m) X Pipe Length (m){" "}
-                </li>
-                <li>Total Pipe Volume = Pipe Volume (m³) X Pipe Piece </li>
-                <li>
-                  Total Sand value ={" "}
-                  {valueOfSand && <span>{valueOfSand} </span>}{" "}
-                </li>
-                <li>
-                  Total Aggregate (m³) ={" "}
-                  {valueOfAggregate && (
-                    <span> {valueOfAggregate.toLocaleString("tr-TR")} m³</span>
-                  )}
-                </li>
-                <li>
-                  {" "}
-                  Total Price ={" "}
-                  {totalProjectPrice && (
-                    <span>
-                      {totalProjectPrice.toLocaleString("tr-TR") + " TL"}{" "}
-                    </span>
-                  )}
-                </li>
-              </ul>
-            </div>
-          </Col>
         </Row>
         <Row>
-          <Col>
+        <Col xs={12} className="mt-4">
             <div className="excavation-col">
-              <ul>
-                <li>
-                  {" "}
-                  Price of Excavation:
-                  {priceExcavation && (
-                    <span>
-                      {" "}
-                      {priceExcavation.toLocaleString("tr-TR") + " TL"}
-                    </span>
-                  )}
-                </li>
-                <li>
-                  Price of Aggregate:{" "}
-                  {priceAggregate && (
-                    <span>
-                      {" "}
-                      {priceAggregate.toLocaleString("tr-TR") + " TL"}
-                    </span>
-                  )}
-                </li>
-                <li>Total Price = Price of Excavation + Price of Aggregate</li>
-                <li>
-                  Total Price ={" "}
-                  {totalProjectPrice.toLocaleString("tr-TR") + " TL"}
-                </li>
-              </ul>
-            </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <div className="excavation-col">
-              <ul>
-                {/* {vehicles.map(
-                  (vehicle, index) => (
-                    <li key={index}>Vehicle type :{vehicle.vehicle_type} -- Vehicle price: {vehicle.vehicle_price} </li>
-                  )
-                )} */}
-                <li>
-                  Excavator Total Price:{" "}
-                  {priceExcavator && (
-                    <span>
-                      {priceExcavator.toLocaleString("tr-TR") + " TL"}{" "}
-                    </span>
-                  )}{" "}
-                </li>
-                <li>
-                  Truck Total Price:
-                  {priceTruck && (
-                    <span>{priceTruck.toLocaleString("tr-TR") + " TL"} </span>
-                  )}{" "}
-                </li>
-                <li>
-                  JCB total Price:
-                  {priceJCB && (
-                    <span>{priceJCB.toLocaleString("tr-TR") + " TL"} </span>
-                  )}{" "}
-                </li>
-                <li>
-                  Connector Price:{" "}
-                  {priceConnectors && (
-                    <span>
-                      {priceConnectors.toLocaleString("tr-TR") + " TL"}{" "}
-                    </span>
-                  )}{" "}
-                </li>
-                <li>
-                  Worker Price:{" "}
-                  {priceWorkers && (
-                    <span>{priceWorkers.toLocaleString("tr-TR") + " TL"} </span>
-                  )}{" "}
-                </li>
-                <li>
-                  {" "}
-                  Project Time :{" "}
-                  {calProjectTime && <span>{calProjectTime} months</span>}{" "}
-                </li>
-              </ul>
+              <h2>Asphalt Road Calculator </h2>
+              <h3>
+                {" "}
+                Project Time: {calProjectTime
+                  ? `${calProjectTime} month`
+                  : "-"}{" "}
+              </h3>
+              <h3> For Materials</h3>
+              <table className="uniform-table">
+                <thead>
+                  <tr>
+                    <th>Material Name</th>
+                    <th>Total Value M3</th>
+                    <th>Total Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Total Excavation Volume (m³)</td>
+                    <td>
+                      {valueOfExcavation ? `${valueOfExcavation} m³` : "-"}
+                    </td>
+                    <td>
+                      {priceExcavation
+                        ? `${priceExcavation.toLocaleString("tr-TR") + " TL"} `
+                        : "-"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Pmt Quantity</td>
+                    <td>{valueOfAggregate ? `${valueOfAggregate.toFixed(2)} m³` : "-"}</td>
+                    <td>
+                      {priceAggregate
+                        ? `${priceAggregate.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Bitum Asphalt Quantity</td>
+                    <td>
+                      {numberOfPipe
+                        ? `${numberOfPipe.toFixed(2)} m³`
+                        : "-"}
+                    </td>
+                    <td>
+                      {pricePipe
+                        ? `${pricePipe.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Wear Asphalt Quantity</td>
+                    <td>
+                      {numberOfBaseElement
+                        ? `${numberOfBaseElement.toFixed(2)} m³`
+                        : "-"}
+                    </td>
+                    <td>
+                      {priceBaseElement
+                        ? `${priceBaseElement.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Wear Asphalt Quantity</td>
+                    <td>
+                      {numberOfConnectors
+                        ? `${numberOfConnectors.toFixed(2)} m³`
+                        : "-"}
+                    </td>
+                    <td>
+                      {priceConnectors
+                        ? `${priceConnectors.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Wear Asphalt Quantity</td>
+                    <td>
+                      {numberOfPvcPipe
+                        ? `${numberOfPvcPipe.toFixed(2)} m³`
+                        : "-"}
+                    </td>
+                    <td>
+                      {pricePvcPipe
+                        ? `${pricePvcPipe.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+              <h3> For Vehicles</h3>
+              <table className="uniform-table">
+                <thead>
+                  <tr>
+                    <th>Vehicle Name</th>
+                    <th>Number of Vehicle</th>
+                    <th>Total Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Number of Excavator (m³)</td>
+                    <td>
+                      {numberOfExcavator ? `${numberOfExcavator} piece` : "-"}
+                    </td>
+                    <td>
+                      {priceExcavator
+                        ? `${priceExcavator.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Number of Truck</td>
+                    <td>{numberOfTruck ? `${numberOfTruck} piece` : "-"}</td>
+                    <td>
+                      {priceTruck
+                        ? `${priceTruck.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Number of Roller</td>
+                    <td>{numberOfJCB ? `${numberOfJCB} piece` : "-"}</td>
+                    <td>
+                      {priceJCB
+                        ? `${priceJCB.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+              <h3> For Equipments</h3>
+              <table className="uniform-table">
+                <thead>
+                  <tr>
+                    <th>Equipment Name</th>
+                    <th>Total Number</th>
+                    <th>Total Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>None</td>
+                    <td>{emptyValue ? `${emptyValue} piece` : "-"}</td>
+                    <td>
+                      {emptyValue
+                        ? `${emptyValue.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <br />
+              <h3> For Workers</h3>
+              <table className="uniform-table">
+                <thead>
+                  <tr>
+                    <th>Worker Type</th>
+                    <th>Number of Workers</th>
+                    <th>Total Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Worker </td>
+                    <td>
+                      {numberOfWorkers ? `${numberOfWorkers} piece` : "-"}
+                    </td>
+                    <td>
+                      {priceWorkers
+                        ? `${priceWorkers.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>All Total Price</td>
+                    <td>
+                      {totalProjectPrice
+                        ? `${totalProjectPrice.toLocaleString("tr-TR") + " TL"}`
+                        : "-"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <button onClick={handleExport} className="calculate-button">
+                {" "}
+                Export Excel
+              </button>
             </div>
           </Col>
         </Row>
@@ -676,28 +780,6 @@ const PipeConcrete = () => {
                   </div>
                 </div>
               </div>
-              {/* <div className="asphalt-info ">
-                <h3>Polyethylene Pipes</h3>
-                <div className="pipe-type">
-                  <p>
-                    Polyethylene pipes, commonly used for transporting clean
-                    water, are lightweight, flexible, and durable. They are made
-                    from various types of polyethylene, including high-density
-                    polyethylene (HDPE) and low-density polyethylene (LDPE).
-                    HDPE pipes are resistant to high pressure and chemicals,
-                    making them ideal for clean water systems and wastewater
-                    management. LDPE pipes, known for their flexibility, are
-                    preferred for low-pressure irrigation systems. Polyethylene
-                    pipes are easy to install and require minimal maintenance.
-                    Their flexible nature allows for easy installation even in
-                    challenging terrain. Additionally, their lightweight reduces
-                    transportation and installation costs.
-                  </p>
-                  <div className="pipe-image">
-                    <img src={polietilen_pipe} alt="Asphalt" />
-                  </div>
-                </div>
-              </div> */}
             </div>
           </Col>
         </Row>
