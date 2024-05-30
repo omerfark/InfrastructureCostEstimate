@@ -1,6 +1,6 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import {BrowserRouter, Routes, Route } from 'react-router-dom'
+import {BrowserRouter, Routes, Route  } from 'react-router-dom'
 import Signup from './Components/Signup/Signup'
 import Login from './Components/Login/Login'
 import MainPage from './Components/MainPage/MainPage'
@@ -9,7 +9,6 @@ import Footer from "./Components/Footer/Footer";
 import Navbar from './Components/Navbar/Navbar';
 import Excavation from './Components/Excavation/Excavation'
 import AsphaltCalculator from './Components/AsphaltProject/AsphaltCalculator'
-// import PictureInPictureEvent from './Components/PipeInfrastructure/PipeInfrastructure'
 import UserProfile from './Components/UserProfile/UserProfile'
 import ForgotPassword from './Components/ForgotPassword/ForgotPassword'
 import ResetPassword from './Components/ResetPassword/ResetPassword'
@@ -17,13 +16,15 @@ import ConcreteRoad from './Components/ConcreteRoad/ConcreteRoad'
 import ElectricProject from './Components/ElectricProject/ElectricProject'
 import PipeConcrete from './Components/PipeConcrete/PipeConcrete'
 import Sidebar from './Components/Sidebar/Sidebar'
+import ProjectProfile from './Components/ProjectProfile/ProjectProfile'
+
 
 function App() {
 
   return (
     <BrowserRouter>
       <div className='container1'>
-      <Navbar/>
+      <Navbar />
       <Routes>
         <Route path='/' element={<MainPage/>}></Route>
         <Route path='/signup' element={<Signup/>}></Route>
@@ -35,6 +36,7 @@ function App() {
         <Route path='/concreteRoad' element={<ConcreteRoad/>}></Route>
         <Route path='/electric' element={<ElectricProject/>}></Route>
         <Route path='/userprofile' element={<UserProfile/>}></Route>
+        <Route path='/projectprofile' element={<ProjectProfile/>}></Route>
         <Route path='/forgotPassword' element={<ForgotPassword/>}></Route>
         <Route path='/resetPassword/:token' element={<ResetPassword/>}></Route>
         <Route path='/sidebar' element={<Sidebar/>}></Route>

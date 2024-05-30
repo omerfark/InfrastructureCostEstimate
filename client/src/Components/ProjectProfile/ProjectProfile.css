@@ -1,0 +1,87 @@
+.project-profile {
+  padding: 20px;
+}
+
+.logout-button {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.logout-button:hover {
+  background-color: #c9302c;
+}
+
+.project-category {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  margin-bottom: 20px;
+}
+
+.project-category h2 {
+  margin-bottom: 10px;
+}
+
+.create-button {
+  background-color: #5cb85c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-left: 10px;
+}
+
+.create-button a {
+  color: white;
+  text-decoration: none;
+}
+
+.create-button:hover {
+  background-color: #4cae4c;
+}
+
+.no-projects-button {
+  background-color: #f0ad4e;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.no-projects-button:hover {
+  background-color: #ec971f;
+}
+
+.project-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.project-button:hover {
+  background-color: #0056b3;
+}
+
+.project-details {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #fff;
+  margin-top: 20px;
+}
+
+.project-details h2 {
+  margin-bottom: 10px;
+}

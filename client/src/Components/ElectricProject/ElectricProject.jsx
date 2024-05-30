@@ -593,7 +593,7 @@ const ElectricProject = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Concrete </td>
+                    <td>Concrete Slab</td>
                     <td>
                       {valueOfConcreteSlab
                         ? `${valueOfConcreteSlab.toFixed(2)} m³`

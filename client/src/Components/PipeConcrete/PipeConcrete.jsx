@@ -617,7 +617,7 @@ const PipeConcrete = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Pipe</td>
+                    <td> Concrete Pipe</td>
                     <td>
                       {numberOfPipe
                         ? `${numberOfPipe} piece`
@@ -702,7 +702,7 @@ const PipeConcrete = () => {
                     </td>
                   </tr>
                   <tr>
-                    <td>Roller</td>
+                    <td>JCB</td>
                     <td>{numberOfJCB ? `${numberOfJCB} piece` : "-"}</td>
                     <td>
                       {priceJCB
