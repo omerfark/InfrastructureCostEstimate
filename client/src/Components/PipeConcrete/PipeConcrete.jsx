@@ -101,7 +101,7 @@ const PipeConcrete = () => {
       },
     ];
 
-    const depthValue = 10 * options[0].diameter; // boru tipine göre genişlik
+    const depthValue = 7 * options[0].diameter; // boru tipine göre genişlik
     const widthValue = 4 * options[0].diameter; // boru tipine göre genişlik
 
     setDepth(depthValue);

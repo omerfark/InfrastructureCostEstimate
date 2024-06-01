@@ -248,16 +248,36 @@ const ProjectProfile = () => {
     console.log("Projects:", projects.length); // Veri yapısını ve içeriğini kontrol edin
   }, [projects]);
 
+  const handleUpdate  = () => {
+
+  };
+
   return (
     <Col>
       <Row>
-        <Row>
+        <Col className="mt-5">
+          <div className=" mt-5">
+          <div className="user-info">
+            <p>Name: {userInfo.user_name}</p>
+            <p>Surname: {userInfo.user_surname}</p>
+            <p>Phone No: {userInfo.user_tel}</p>
+            <button onClick={handleUpdate} className="btn update-btn">
+              Update Info
+            </button>
+          </div>
+          </div>
+        </Col>
+        <Col className="mt-5">
           <div className="excavation-col mt-5">
-            <button onClick={handleLogout} type="logout" className="btn">
+            <button
+              onClick={handleLogout}
+              type="logout"
+              className="btn logout-btn"
+            >
               Logout
             </button>
           </div>
-        </Row>
+        </Col>
         <Row>
           <h2>Project List</h2>
           <Col>
@@ -293,7 +313,7 @@ const ProjectProfile = () => {
                           className="project-button"
                           onClick={() => handleButtonClick(asphaltProject)}
                         >
-                          Project {index + 1}: ID {asphaltProject}
+                          Project {index + 1}
                         </button>
                       ))
                     )}
@@ -338,7 +358,7 @@ const ProjectProfile = () => {
                               electricHandleButtonClick(electricProject)
                             }
                           >
-                            Project {index + 1}: ID {electricProject}
+                            Project {index + 1}
                           </button>
                         )
                       )
@@ -385,7 +405,7 @@ const ProjectProfile = () => {
                               concreteRoadHandleButtonClick(concreteRoadProject)
                             }
                           >
-                            Project {index + 1}: ID {concreteRoadProject}
+                            Project {index + 1}
                           </button>
                         )
                       )
@@ -430,7 +450,7 @@ const ProjectProfile = () => {
                               pipeConcreteHandleButtonClick(pipeConcreteProject)
                             }
                           >
-                            Project {index + 1}: ID {pipeConcreteProject}
+                            Project {index + 1}
                           </button>
                         )
                       )
