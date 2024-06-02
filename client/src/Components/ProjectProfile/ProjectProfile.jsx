@@ -10,6 +10,7 @@ const ProjectProfile = () => {
   const [isMaterialsLoading, setIsMaterialsLoading] = useState(true);
   const [isEquipmentsLoading, setIsEquipmentsLoading] = useState(true);
   const [isWorkersLoading, setIsWorkersLoading] = useState(true);
+  const [isProjectTimeLoading, setIsProjectTimeLoading] = useState(true)
 
   const [selectedId, setSelectedId] = useState(null);
   const [userToken, setUserToken] = useState("");
@@ -237,6 +238,7 @@ const ProjectProfile = () => {
       setIsMaterialsLoading(false);
       setIsEquipmentsLoading(false);
       setIsWorkersLoading(false);
+      setIsProjectTimeLoading(false)
     }
   }, [selectedProject]);
 
@@ -248,40 +250,14 @@ const ProjectProfile = () => {
     console.log("Projects:", projects.length); // Veri yapısını ve içeriğini kontrol edin
   }, [projects]);
 
-  const handleUpdate  = () => {
-
-  };
+  const handleUpdate = () => {};
 
   return (
-    <Col>
-      <Row>
-        <Col className="mt-5">
-          <div className=" mt-5">
-          <div className="user-info">
-            <p>Name: {userInfo.user_name}</p>
-            <p>Surname: {userInfo.user_surname}</p>
-            <p>Phone No: {userInfo.user_tel}</p>
-            <button onClick={handleUpdate} className="btn update-btn">
-              Update Info
-            </button>
-          </div>
-          </div>
-        </Col>
-        <Col className="mt-5">
-          <div className="excavation-col mt-5">
-            <button
-              onClick={handleLogout}
-              type="logout"
-              className="btn logout-btn"
-            >
-              Logout
-            </button>
-          </div>
-        </Col>
-        <Row>
-          <h2>Project List</h2>
-          <Col>
-            <div className="excavation-col">
+    <Col className="mt-5">
+      <Row className="mt-5">
+        <Col className="excavation-col" xs={8}>
+          <Row>
+            <div >
               <div
                 style={{
                   display: "flex",
@@ -290,7 +266,7 @@ const ProjectProfile = () => {
                   marginBottom: "20px",
                 }}
               >
-                <h2>Asphalt Road</h2>
+                <h2>Asphalt Road Project</h2>
                 <button className="create-button">
                   <Link to="/asphaltcalculator">Create New</Link>
                 </button>
@@ -321,9 +297,9 @@ const ProjectProfile = () => {
                 ))}
               </ul>
             </div>
-          </Col>
-          <Col>
-            <div className="excavation-col">
+          </Row>
+          <Row>
+            <div >
               <div
                 style={{
                   display: "flex",
@@ -367,11 +343,9 @@ const ProjectProfile = () => {
                 ))}
               </ul>
             </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <div className="excavation-col">
+          </Row>
+          <Row>
+            <div >
               <div
                 style={{
                   display: "flex",
@@ -414,9 +388,9 @@ const ProjectProfile = () => {
                 ))}
               </ul>
             </div>
-          </Col>
-          <Col>
-            <div className="excavation-col">
+          </Row>
+          <Row>
+            <div >
               <div
                 style={{
                   display: "flex",
@@ -459,105 +433,164 @@ const ProjectProfile = () => {
                 ))}
               </ul>
             </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
+          </Row>
+        </Col>
+        <Col className="mt-5" xs={4}>
+          <div>{isProjectTimeLoading ? (<p>Loading...</p>) : (<h2>Project Time : {selectedProject.project_time} Months</h2>)}</div>
             {isVehiclesLoading ? (
               <p>Loading vehicles...</p>
             ) : (
-              <div className="excavation-col">
-                <ul>
-                  {selectedProject && !isVehiclesLoading && (
-                    <ul>
+              <div className="uniform-table">
+                {selectedProject && !isVehiclesLoading && (
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Vehicle Name</th>
+                        <th>Vehicle Quantity</th>
+                        <th>Vehicle Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
                       {selectedProject.vehicles &&
                         selectedProject.vehicles.map((vehicle) => (
-                          <li key={vehicle._id}>
-                            Vehicle Name: {vehicle.type}
-                            <br />
-                            Vehicle Quantity: {vehicle.quantity}
-                            <br />
-                            Vehicle Price: {vehicle.price}
-                          </li>
+                          <tr key={vehicle._id}>
+                            <td>{vehicle.type}</td>
+                            <td>{vehicle.quantity}</td>
+                            <td>
+                              {vehicle.price.toLocaleString("tr-TR") + "TL"}
+                            </td>
+                          </tr>
                         ))}
-                    </ul>
-                  )}
-                </ul>
+                    </tbody>
+                  </table>
+                )}
               </div>
             )}
-          </Col>
-          <Col>
+
             {selectedProject ? (
               isMaterialsLoading ? (
                 <div>Loading materials...</div>
               ) : (
-                <div className="excavation-col">
-                  <ul>
-                    {selectedProject.materials &&
-                      selectedProject.materials.map((material) => (
-                        <li key={material._id}>
-                          Material Type: {material.type}
-                          <br />
-                          Material Quantity: {material.quantity}
-                          <br />
-                          Material Price: {material.price}
-                        </li>
-                      ))}
-                  </ul>
+                <div className="uniform-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Material Type</th>
+                        <th>Material Quantity</th>
+                        <th>Material Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedProject.materials &&
+                        selectedProject.materials.map((material) => (
+                          <tr key={material._id}>
+                            <td>{material.type}</td>
+                            <td>{material.quantity}</td>
+                            <td>
+                              {material.price.toLocaleString("tr-TR") + "TL"}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              )
+            ) : null}
+
+            {selectedProject ? (
+              isEquipmentsLoading ? (
+                <div>Loading equipments...</div>
+              ) : (
+                <div className="uniform-table">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Equipment Type</th>
+                        <th>Equipment Quantity</th>
+                        <th>Equipment Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedProject.equipments &&
+                        selectedProject.equipments.map((equipment) => (
+                          <tr key={equipment._id}>
+                            <td>{equipment.type}</td>
+                            <td>{equipment.quantity}</td>
+                            <td>
+                              {equipment.price.toLocaleString("tr-TR") + "TL"}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              )
+            ) : null}
+
+            {selectedProject ? (
+              isWorkersLoading ? (
+                <div>Loading workers...</div>
+              ) : (
+                <div>
+                  <table className="uniform-table">
+                    <thead>
+                      <tr>
+                        <th>Worker Type</th>
+                        <th>Worker Quantity</th>
+                        <th>Worker Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedProject.worker &&
+                        selectedProject.worker.map((worker) => (
+                          <tr key={worker._id}>
+                            <td>{worker.type}</td>
+                            <td>{worker.quantity}</td>
+                            <td>
+                              {worker.price.toLocaleString("tr-TR") + "TL"}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
                 </div>
               )
             ) : null}
           </Col>
-          <Col>
-            <Row>
-              {selectedProject ? (
-                isEquipmentsLoading ? (
-                  <div>Loading equipments...</div>
-                ) : (
-                  <div className="excavation-col">
-                    <ul>
-                      {selectedProject.equipments &&
-                        selectedProject.equipments.map((equipment) => (
-                          <li key={equipment._id}>
-                            Equipment Type: {equipment.type}
-                            <br />
-                            Equipment Quantity: {equipment.quantity}
-                            <br />
-                            Equipment Price: {equipment.price}
-                          </li>
-                        ))}
-                    </ul>
-                  </div>
-                )
-              ) : null}
-            </Row>
-            <Row>
-              {selectedProject ? (
-                isWorkersLoading ? (
-                  <div>Loading workers...</div>
-                ) : (
-                  <div className="excavation-col">
-                    <ul>
-                      {selectedProject.worker &&
-                        selectedProject.worker.map((worker) => (
-                          <li key={worker._id}>
-                            Worker Type: {worker.type}
-                            <br />
-                            Worker Quantity: {worker.quantity}
-                            <br />
-                            Worker Price: {worker.price}
-                          </li>
-                        ))}
-                    </ul>
-                  </div>
-                )
-              ) : null}
-            </Row>
-          </Col>
-        </Row>
       </Row>
     </Col>
   );
 };
 
 export default ProjectProfile;
+{
+  /* <Col className="mt-5">
+<div className=" mt-5">
+  <div className="user-info">
+    <p>Name: {userInfo.user_name}</p>
+    <p>Surname: {userInfo.user_surname}</p>
+    <p>Phone No: {userInfo.user_tel}</p>
+    <button onClick={handleUpdate} className="btn update-btn">
+      Update Info
+    </button>
+  </div>
+</div>
+</Col>
+<Col className="mt-5">
+<div className="excavation-col mt-5">
+  <button
+    onClick={handleLogout}
+    type="logout"
+    className="btn logout-btn"
+    style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: "20px",
+    }}
+  >
+    Logout
+  </button>
+</div>
+</Col> */
+}

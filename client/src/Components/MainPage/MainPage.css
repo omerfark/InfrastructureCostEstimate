@@ -9,16 +9,18 @@
 
 .programs img {
     width: 100%;
-    height: 350px; /* Sabit yükseklik */
+    height: 200px; /* Sabit yükseklik */
     object-fit: cover; /* Görüntünün oranlarını koruyarak kapsamasını sağlar */
     border-radius: 10px;
     display: block;
 }
 
 .program {
-    flex-basis: calc(33.33% - 20px); /* 3 sütunlu düzen için genişlik ayarları */
+    flex-basis: calc(36% - 20px); /* 3 sütunlu düzen için genişlik ayarları */
     position: relative;
     margin-bottom: 20px; /* Altta boşluk bırakır */
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .caption {
@@ -34,9 +36,7 @@
     justify-content: center;
     flex-direction: column;
     color: #fff;
-    opacity: 0;
-    padding-top: 70%;
-    transition: 0.4s;
+    opacity: 1;
     
 }
 
@@ -47,14 +47,12 @@
     margin-bottom: 10px;
 }
 
+
 .caption p {
     color: #fff;
 }
 
-.program:hover .caption {
-    opacity: 1;
-    padding-top: 0;
-}
+
 
 /*--------- media query -------------*/
 

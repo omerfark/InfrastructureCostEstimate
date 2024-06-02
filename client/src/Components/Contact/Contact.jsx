@@ -13,7 +13,7 @@ import truck_1 from '../../assets/truck-1.png'
 import paver_1 from '../../assets/paver-1.png'
 import freze_1 from '../../assets/freze-1.png'
 import LeafletMap from "../LeafletMap/LeafletMap";
-
+import HeaderTr from "../HeadTr/HeadTr.jsx";
 
 const Contact = () => {
   const [result, setResult] = React.useState("");
@@ -56,6 +56,7 @@ const Contact = () => {
 
   return (
     <>
+    <HeaderTr items="İletişim" />
      <Title subTitle="About Us" title="About us kısa yazı" />
     <div className='about '>
       

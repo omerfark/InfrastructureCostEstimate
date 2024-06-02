@@ -36,7 +36,7 @@ function MainPage() {
   return (
     <div>
       <Hero />
-      <Title subTitle="Our COMPANY" title="What We Offer" />
+      <Title  title="Our Projects" />
       <div className="programs">
         <div className="program">
           <img src={asphalt_1} alt="" />
@@ -83,6 +83,7 @@ function MainPage() {
             </div>
           </Link>
         </div>
+
       </div>
     </div>
   );

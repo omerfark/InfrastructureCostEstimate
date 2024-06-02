@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Navbar.css";
 import logo from "../../assets/logo.png";
+import logo_12 from "../../assets/logo-2.png";
 import { Link, useNavigate } from "react-router-dom";
 import menu_icon from "../../assets/menu-icon.png";
 import axios from "axios";
@@ -43,14 +44,14 @@ const Navbar = () => {
   return (
     <nav className="dark-nav">
       <Link to="/">
-        <img src={logo} alt="Logo" className="logo" />
+        <img src={logo_12} alt="Logo" className="logo" />
       </Link>
       <ul className={mobileMenu ? "" : "hide-mobile-menu"}>
         {userToken ? (
         <>
         <li><Link to="/">Home</Link></li>
         <li><Link to="/contact">Contact us</Link></li>
-        <li><Link to="/userprofile">Profile</Link></li>
+        <li><Link to="/projectprofile">Profile</Link></li>
         <li><button className="btn" onClick={handleLogout}>Logout</button></li>
         </>
         ):(

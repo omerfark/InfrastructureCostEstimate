@@ -9,7 +9,7 @@ import Footer from "./Components/Footer/Footer";
 import Navbar from './Components/Navbar/Navbar';
 import Excavation from './Components/Excavation/Excavation'
 import AsphaltCalculator from './Components/AsphaltProject/AsphaltCalculator'
-import UserProfile from './Components/UserProfile/UserProfile'
+import Comprehensive from './Components/Comprehensive/Comprehensive'
 import ForgotPassword from './Components/ForgotPassword/ForgotPassword'
 import ResetPassword from './Components/ResetPassword/ResetPassword'
 import ConcreteRoad from './Components/ConcreteRoad/ConcreteRoad'
@@ -35,7 +35,7 @@ function App() {
         <Route path='/pipeconcrete' element={<PipeConcrete/>}></Route>
         <Route path='/concreteRoad' element={<ConcreteRoad/>}></Route>
         <Route path='/electric' element={<ElectricProject/>}></Route>
-        <Route path='/userprofile' element={<UserProfile/>}></Route>
+        <Route path='/comprehensive' element={<Comprehensive/>}></Route>
         <Route path='/projectprofile' element={<ProjectProfile/>}></Route>
         <Route path='/forgotPassword' element={<ForgotPassword/>}></Route>
         <Route path='/resetPassword/:token' element={<ResetPassword/>}></Route>

@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import "./UserProfile.css";
+import "./Comprehensive.css";
 import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
 import axios from "axios";
 import {useNavigate } from "react-router-dom";
 import LeafletMap from "../LeafletMap/LeafletMap";
 
-const UserProfile = () => {
+const Comprehensive = () => {
   const [userToken, setUserToken] = useState("");
 
   const [distance, setDistance] = useState(0); //leaflet değeri
@@ -871,4 +871,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default Comprehensive;

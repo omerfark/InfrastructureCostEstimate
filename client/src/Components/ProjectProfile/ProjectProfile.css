@@ -2,6 +2,10 @@
   padding: 20px;
 }
 
+.uniform-table th, .uniform-table td {
+  /* width: 15%; Adjust the percentage as needed */
+}
+
 .logout-button {
   background-color: #d9534f;
   color: white;
@@ -61,7 +65,7 @@
 }
 
 .project-button {
-  padding: 10px 20px;
+  padding: 10px 1px;
   background-color: #007bff;
   color: #fff;
   border: none;
