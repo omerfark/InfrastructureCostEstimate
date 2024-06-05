@@ -21,7 +21,7 @@ router.post("/create", (req, res) => {
     const projectId = req.params.id;
     const updatedProject = req.body;
   
-    // Projenin güncellenme tarihini ekleyelim
+    // Projenin güncellenme 
     updatedProject.updated_at = new Date();
   
     ProjectModel.findOneAndUpdate({ _id: projectId }, updatedProject, {
@@ -60,14 +60,14 @@ router.post("/create", (req, res) => {
     }
 });
 
-// asfalt projesi silme
+
 router.delete('/:id/asphalt/:asphaltId', async (req, res) => {
   try {
-      const projectId = req.params.id; // Proje kimliğini alın
+      const userId = req.params.id; // Proje kimliğini alın
       const asphaltId  = req.params.asphaltId; // Yeni asfalt projesi kimliğini alın
 
       // Proje belgesini bulun
-      const project = await ProjectModel.findById(projectId);
+      const project = await ProjectModel.findOne({user_id : userId});
 
       // Eğer proje bulunamazsa, uygun bir hata mesajı döndürün
       if (!project) {
@@ -118,11 +118,11 @@ router.patch('/:id/concreteRoad', async (req, res) => {
 // Concrete projesi silme
 router.delete('/:id/concreteRoad/:concreteRoadId', async (req, res) => {
 try {
-    const projectId = req.params.id; // Proje kimliğini alın
+    const userId = req.params.id; // Proje kimliğini alın
     const concreteRoadId  = req.params.concreteRoadId; // Yeni asfalt projesi kimliğini alın
 
     // Proje belgesini bulun
-    const project = await ProjectModel.findById(projectId);
+    const project = await ProjectModel.findOne({user_id: userId});
 
     // Eğer proje bulunamazsa, uygun bir hata mesajı döndürün
     if (!project) {
@@ -177,11 +177,11 @@ router.patch('/:id/electric', async (req, res) => {
 // Electric projesi silme
 router.delete('/:id/electric/:electricId', async (req, res) => {
 try {
-    const projectId = req.params.id; // Proje kimliğini alın
+    const userId = req.params.id; // Proje kimliğini alın
     const electricId  = req.params.electricId; // Yeni asfalt projesi kimliğini alın
 
     // Proje belgesini bulun
-    const project = await ProjectModel.findById(projectId);
+    const project = await ProjectModel.findOne({user_id : userId});
 
     // Eğer proje bulunamazsa, uygun bir hata mesajı döndürün
     if (!project) {
@@ -236,11 +236,11 @@ router.patch('/:id/pipeConcrete', async (req, res) => {
 // PipeConcrete projesi silme
 router.delete('/:id/pipeConcrete/:pipeConcreteId', async (req, res) => {
 try {
-    const projectId = req.params.id; // Proje kimliğini alın
+    const userId = req.params.id; // Proje kimliğini alın
     const pipeConcreteId  = req.params.pipeConcreteId; // Yeni asfalt projesi kimliğini alın
 
     // Proje belgesini bulun
-    const project = await ProjectModel.findById(projectId);
+    const project = await ProjectModel.findOne({user_id : userId});
 
     // Eğer proje bulunamazsa, uygun bir hata mesajı döndürün
     if (!project) {
@@ -259,24 +259,6 @@ try {
 });
 //#endregion
 
-
-  // //project id ye göre getirme
-  // router.get("/:id", (req, res) => {
-  //   const projectId = req.params.id;
-  
-  //   ProjectModel.findOne({ _id: projectId })
-  //     .then((project) => {
-  //       if (!project) {
-  //         return res.status(404).json({ message: "Proje bulunamadı" });
-  //       }
-  //       res.json(project);
-  //     })
-  //     .catch((err) =>
-  //       res.status(500).json({ message: "Sunucu hatası", error: err })
-  //     );
-  // });
-  
-  
 
   router.get("/", async(req,res) =>{
     const {user_id} = req.query;

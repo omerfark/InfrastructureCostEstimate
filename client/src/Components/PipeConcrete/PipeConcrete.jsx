@@ -169,7 +169,7 @@ const PipeConcrete = () => {
 
     setCalProjectTime(calTimeofProject);
 
-    setValuOfExcavation(calculatedVolume.toFixed(0));
+    setValuOfExcavation(calculatedVolume);
     setValueOfAggregate(calAggregateVolume);
     setNumberOfPipe(piecePipe); // kaç adet boru hesabı
     setNumberofBaseElement(calBaseElement); // bağlantı noktaları, taban , bilezik ve kapak
@@ -320,57 +320,57 @@ const PipeConcrete = () => {
               type: "excavator",
               quantity: numberOfExcavator,
               unitprice: excavatorUnitPrice,
-              price: priceExcavator,
+              price: priceExcavator.toFixed(0),
             },
             {
               type: "truck",
               quantity: numberOfTruck,
               unitprice: truckUnitPrice,
-              price: priceTruck,
+              price: priceTruck.toFixed(0),
             },
             {
               type: "JCB",
               quantity: numberOfJCB,
               unitprice: jcbUnitPrice,
-              price: priceJCB,
+              price: priceJCB.toFixed(0),
             },
           ],
           materials: [
             {
               type: "aggregate",
-              quantity: valueOfAggregate,
+              quantity: valueOfAggregate.toFixed(0),
               unitprice: aggregateUnitPrice,
-              price: priceAggregate,
+              price: priceAggregate.toFixed(0),
             },
             {
               type: "excavation",
-              quantity: valueOfExcavation,
+              quantity: valueOfExcavation.toFixed(0),
               unitprice: excavationUnitPrice,
-              price: priceExcavation,
+              price: priceExcavation.toFixed(0),
             },
             {
               type: "pipe",
               quantity: numberOfPipe,
               unitprice: pipeUnitPrice,
-              price: pricePipe,
+              price: pricePipe.toFixed(0),
             },
             {
               type: "baseElement",
               quantity: numberOfBaseElement,
               unitprice: baseElementUnitPrice,
-              price: priceBaseElement,
+              price: priceBaseElement.toFixed(0),
             },
             {
               type: "connectors",
               quantity: numberOfConnectors,
               unitprice: connectorsUnitPrice,
-              price: priceConnectors,
+              price: priceConnectors.toFixed(0),
             },
             {
               type: "pvc",
               quantity: numberOfPvcPipe,
               unitprice: pvcUnitPrice,
-              price: pricePvcPipe,
+              price: pricePvcPipe.toFixed(0),
             },
           ],
           worker: [
@@ -447,6 +447,13 @@ const PipeConcrete = () => {
     getExcel();
   };
 
+  const handleRecordIt =( e) =>{
+    e.preventDefault();
+    sendToDB();
+  };
+
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -467,7 +474,6 @@ const PipeConcrete = () => {
     setTotalProjectPrice(totalAllPrice.toFixed(0));
 
     console.log("deneme price: " + totalAllPrice.toLocaleString("tr-TR"));
-    sendToDB();
   };
 
   // Add Pipe project to user project list
@@ -563,9 +569,12 @@ const PipeConcrete = () => {
                 </label>
                 <br />
                 <div className="calculate">
-                  <button type="submit" className="calculate-button">
+                  <button type="submit" className="calculate-button m-2">
                     {" "}
                     Calculate
+                  </button>
+                  <button className="calculate-button" onClick={handleRecordIt}>
+                    Record It
                   </button>
                 </div>
               </form>

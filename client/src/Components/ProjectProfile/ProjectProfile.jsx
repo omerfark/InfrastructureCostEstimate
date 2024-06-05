@@ -10,11 +10,12 @@ const ProjectProfile = () => {
   const [isMaterialsLoading, setIsMaterialsLoading] = useState(true);
   const [isEquipmentsLoading, setIsEquipmentsLoading] = useState(true);
   const [isWorkersLoading, setIsWorkersLoading] = useState(true);
-  const [isProjectTimeLoading, setIsProjectTimeLoading] = useState(true)
+  const [isProjectTimeLoading, setIsProjectTimeLoading] = useState(true);
 
   const [selectedId, setSelectedId] = useState(null);
   const [userToken, setUserToken] = useState("");
   const [userInfo, setUserInfo] = useState("");
+  const [userId, setUserId] = useState("");
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
 
@@ -26,6 +27,7 @@ const ProjectProfile = () => {
     axios.get("http://localhost:3000/auth/verify").then((res) => {
       if (res.data.status) {
         setUserToken(res.data.token);
+        setUserId(res.data.token.userId);
       } else {
         navigate("/login");
       }
@@ -91,22 +93,24 @@ const ProjectProfile = () => {
   //project yoksa burası calışıyor
   useEffect(() => {
     const fetchUserProject = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/project?user_id=${userToken.userId}`
-        );
-        if (response.data && response.data.length > 0) {
-          console.log("resp:", response.data);
-        } else {
-          console.log("No projects found for this user.");
-          createNewProject();
-        }
-      } catch (err) {
-        if (err.response && err.response.status === 404) {
-          console.log("User not found. Creating a new project...");
-          createNewProject();
-        } else {
-          console.log(err);
+      if (userToken.userId) {
+        try {
+          const response = await axios.get(
+            `http://localhost:3000/project?user_id=${userToken.userId}`
+          );
+          if (response.data && response.data.length > 0) {
+            console.log("resp:", response.data);
+          } else {
+            console.log("No projects found for this user.");
+            createNewProject();
+          }
+        } catch (err) {
+          if (err.response && err.response.status === 404) {
+            console.log("User not found. Creating a new project...");
+            createNewProject();
+          } else {
+            console.log(err);
+          }
         }
       }
     };
@@ -154,6 +158,25 @@ const ProjectProfile = () => {
     setSelectedId(id);
     fetchSelectedAsphaltProject();
   };
+
+  const deleteSelectedAsphalt = useCallback(async () => {
+    if (selectedId) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:3000/project/${userId}/asphalt/${selectedId}`
+        );
+        console.log("response asphalt delete: " + response.data);
+        window.location.reload(); // Sayfayı yenile
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, [selectedId, userId]);
+
+  const handleDeleteAsphalt = (id) => {
+    setSelectedId(id);
+    deleteSelectedAsphalt();
+  };
   //#endregion
 
   //#region  Fetch selected project details  Electric
@@ -179,6 +202,26 @@ const ProjectProfile = () => {
     setSelectedId(id);
     fetchSelectedElectricProject();
   };
+
+  const deleteSelectedElectric = useCallback(async () => {
+    if (selectedId) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:3000/project/${userId}/electric/${selectedId}`
+        );
+        console.log("response electric delete: " + response.data);
+        window.location.reload();
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, [userId, selectedId]);
+
+  const handleDeleteElectric = (id) => {
+    setSelectedId(id);
+    deleteSelectedElectric();
+  };
+
   //#endregion
 
   //#region  Fetch selected project details  Concrete Road
@@ -204,9 +247,29 @@ const ProjectProfile = () => {
     setSelectedId(id);
     fetchSelectedConcreteRoadProject();
   };
+
+  const deleteSelectedConcreteRoad = useCallback(async () => {
+    if (selectedId) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:3000/project/${userId}/concreteRoad/${selectedId}`
+        );
+        console.log("response concrete road delete: " + response.data);
+        window.location.reload(); // Sayfayı yenile
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, [userId, selectedId]);
+
+  const handleDeleteConcreteRoad = (id) => {
+    selectedId(id);
+    deleteSelectedConcreteRoad();
+  };
+
   //#endregion
 
-  //#region  Fetch selected project details  Concrete Road
+  //#region  Fetch selected project details  pipe concrete Laying
   const fetchSelectedPipeConcreteProject = useCallback(async () => {
     if (selectedId) {
       try {
@@ -229,6 +292,26 @@ const ProjectProfile = () => {
     setSelectedId(id);
     fetchSelectedPipeConcreteProject();
   };
+
+  const deleteSelectedPipeConcrete = useCallback(async () => {
+    if (selectedId) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:3000/project/${userId}/pipeConcrete/${selectedId}`
+        );
+        console.log("response pipe concrete delete: " + response.data);
+        window.location.reload(); // Sayfayı yenile
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, [selectedId, userId]);
+
+  const handleDeletePipeConcrete = (id) => {
+    setSelectedId(id);
+    deleteSelectedPipeConcrete();
+  };
+
   //#endregion
 
   // Update loading states based on selected project
@@ -238,7 +321,7 @@ const ProjectProfile = () => {
       setIsMaterialsLoading(false);
       setIsEquipmentsLoading(false);
       setIsWorkersLoading(false);
-      setIsProjectTimeLoading(false)
+      setIsProjectTimeLoading(false);
     }
   }, [selectedProject]);
 
@@ -257,7 +340,7 @@ const ProjectProfile = () => {
       <Row className="mt-5">
         <Col className="excavation-col" xs={8}>
           <Row>
-            <div >
+            <div>
               <div
                 style={{
                   display: "flex",
@@ -284,13 +367,25 @@ const ProjectProfile = () => {
                       </button>
                     ) : (
                       project.asphalt_projects.map((asphaltProject, index) => (
-                        <button
+                        <div
+                          className="project-container"
                           key={asphaltProject._id}
-                          className="project-button"
-                          onClick={() => handleButtonClick(asphaltProject)}
                         >
-                          Project {index + 1}
-                        </button>
+                          <button
+                            className="project-button"
+                            onClick={() => handleButtonClick(asphaltProject)}
+                          >
+                            Project {index + 1}
+                          </button>
+                          <button
+                            key={asphaltProject._id}
+                            className="delete-button"
+                            onClick={() => handleDeleteAsphalt(asphaltProject)}
+                          >
+                            {" "}
+                            Delete
+                          </button>
+                        </div>
                       ))
                     )}
                   </li>
@@ -298,8 +393,9 @@ const ProjectProfile = () => {
               </ul>
             </div>
           </Row>
+          <br />
           <Row>
-            <div >
+            <div>
               <div
                 style={{
                   display: "flex",
@@ -327,15 +423,29 @@ const ProjectProfile = () => {
                     ) : (
                       project.electric_projects.map(
                         (electricProject, index) => (
-                          <button
+                          <div
+                            className="project-container"
                             key={electricProject._id}
-                            className="project-button"
-                            onClick={() =>
-                              electricHandleButtonClick(electricProject)
-                            }
                           >
-                            Project {index + 1}
-                          </button>
+                            <button
+                              className="project-button"
+                              onClick={() =>
+                                electricHandleButtonClick(electricProject)
+                              }
+                            >
+                              Project {index + 1}
+                            </button>
+                            <button
+                              key={electricProject._id}
+                              className="delete-button"
+                              onClick={() =>
+                                handleDeleteElectric(electricProject)
+                              }
+                            >
+                              {" "}
+                              Delete
+                            </button>
+                          </div>
                         )
                       )
                     )}
@@ -344,8 +454,9 @@ const ProjectProfile = () => {
               </ul>
             </div>
           </Row>
+          <br />
           <Row>
-            <div >
+            <div>
               <div
                 style={{
                   display: "flex",
@@ -372,15 +483,31 @@ const ProjectProfile = () => {
                     ) : (
                       project.concreteroad_projects.map(
                         (concreteRoadProject, index) => (
-                          <button
+                          <div
+                            className="project-container"
                             key={concreteRoadProject._id}
-                            className="project-button"
-                            onClick={() =>
-                              concreteRoadHandleButtonClick(concreteRoadProject)
-                            }
                           >
-                            Project {index + 1}
-                          </button>
+                            <button
+                              className="project-button"
+                              onClick={() =>
+                                concreteRoadHandleButtonClick(
+                                  concreteRoadProject
+                                )
+                              }
+                            >
+                              Project {index + 1}
+                            </button>
+                            <button
+                              key={concreteRoadProject._id}
+                              className="delete-button"
+                              onClick={() =>
+                                handleDeleteConcreteRoad(concreteRoadProject)
+                              }
+                            >
+                              {" "}
+                              Delete
+                            </button>
+                          </div>
                         )
                       )
                     )}
@@ -389,8 +516,9 @@ const ProjectProfile = () => {
               </ul>
             </div>
           </Row>
+          <br />
           <Row>
-            <div >
+            <div>
               <div
                 style={{
                   display: "flex",
@@ -399,7 +527,7 @@ const ProjectProfile = () => {
                   marginBottom: "20px",
                 }}
               >
-                <h2>Concrete Road Projects</h2>
+                <h2>Pipe Laying Projects</h2>
                 <button className="create-button">
                   <Link to="/pipeconcrete">Create New</Link>
                 </button>
@@ -417,15 +545,31 @@ const ProjectProfile = () => {
                     ) : (
                       project.pipeconcrete_projects.map(
                         (pipeConcreteProject, index) => (
-                          <button
+                          <div
+                            className="project-container"
                             key={pipeConcreteProject._id}
-                            className="project-button"
-                            onClick={() =>
-                              pipeConcreteHandleButtonClick(pipeConcreteProject)
-                            }
                           >
-                            Project {index + 1}
-                          </button>
+                            <button
+                              className="project-button"
+                              onClick={() =>
+                                pipeConcreteHandleButtonClick(
+                                  pipeConcreteProject
+                                )
+                              }
+                            >
+                              Project {index + 1}
+                            </button>
+                            <button
+                              key={pipeConcreteProject._id}
+                              className="delete-button"
+                              onClick={() =>
+                                handleDeletePipeConcrete(pipeConcreteProject)
+                              }
+                            >
+                              {" "}
+                              Delete
+                            </button>
+                          </div>
                         )
                       )
                     )}
@@ -436,161 +580,128 @@ const ProjectProfile = () => {
           </Row>
         </Col>
         <Col className="mt-5" xs={4}>
-          <div>{isProjectTimeLoading ? (<p>Loading...</p>) : (<h2>Project Time : {selectedProject.project_time} Months</h2>)}</div>
-            {isVehiclesLoading ? (
-              <p>Loading vehicles...</p>
+
+          {isVehiclesLoading ? (
+            <p>Loading vehicles...</p>
+          ) : (
+            <div className="uniform-table">
+              {selectedProject && !isVehiclesLoading && (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Vehicle Name</th>
+                      <th>Vehicle Quantity</th>
+                      <th>Vehicle Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedProject.vehicles &&
+                      selectedProject.vehicles.map((vehicle) => (
+                        <tr key={vehicle._id}>
+                          <td>{vehicle.type}</td>
+                          <td>{vehicle.quantity}</td>
+                          <td>
+                            {vehicle.price.toLocaleString("tr-TR") + "TL"}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          )}
+
+          {selectedProject ? (
+            isMaterialsLoading ? (
+              <div>Loading materials...</div>
             ) : (
               <div className="uniform-table">
-                {selectedProject && !isVehiclesLoading && (
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Vehicle Name</th>
-                        <th>Vehicle Quantity</th>
-                        <th>Vehicle Price</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedProject.vehicles &&
-                        selectedProject.vehicles.map((vehicle) => (
-                          <tr key={vehicle._id}>
-                            <td>{vehicle.type}</td>
-                            <td>{vehicle.quantity}</td>
-                            <td>
-                              {vehicle.price.toLocaleString("tr-TR") + "TL"}
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                )}
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Material Type</th>
+                      <th>Material Quantity</th>
+                      <th>Material Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedProject.materials &&
+                      selectedProject.materials.map((material) => (
+                        <tr key={material._id}>
+                          <td>{material.type}</td>
+                          <td>{material.quantity.toFixed(2)}</td>
+                          <td>
+                            {material.price.toLocaleString("tr-TR") + "TL"}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
               </div>
-            )}
+            )
+          ) : null}
 
-            {selectedProject ? (
-              isMaterialsLoading ? (
-                <div>Loading materials...</div>
-              ) : (
-                <div className="uniform-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Material Type</th>
-                        <th>Material Quantity</th>
-                        <th>Material Price</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedProject.materials &&
-                        selectedProject.materials.map((material) => (
-                          <tr key={material._id}>
-                            <td>{material.type}</td>
-                            <td>{material.quantity}</td>
-                            <td>
-                              {material.price.toLocaleString("tr-TR") + "TL"}
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              )
-            ) : null}
+          {selectedProject ? (
+            isEquipmentsLoading ? (
+              <div>Loading equipments...</div>
+            ) : (
+              <div className="uniform-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Equipment Type</th>
+                      <th>Equipment Quantity</th>
+                      <th>Equipment Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedProject.equipments &&
+                      selectedProject.equipments.map((equipment) => (
+                        <tr key={equipment._id}>
+                          <td>{equipment.type}</td>
+                          <td>{equipment.quantity}</td>
+                          <td>
+                            {equipment.price.toLocaleString("tr-TR") + "TL"}
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            )
+          ) : null}
 
-            {selectedProject ? (
-              isEquipmentsLoading ? (
-                <div>Loading equipments...</div>
-              ) : (
-                <div className="uniform-table">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Equipment Type</th>
-                        <th>Equipment Quantity</th>
-                        <th>Equipment Price</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedProject.equipments &&
-                        selectedProject.equipments.map((equipment) => (
-                          <tr key={equipment._id}>
-                            <td>{equipment.type}</td>
-                            <td>{equipment.quantity}</td>
-                            <td>
-                              {equipment.price.toLocaleString("tr-TR") + "TL"}
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              )
-            ) : null}
-
-            {selectedProject ? (
-              isWorkersLoading ? (
-                <div>Loading workers...</div>
-              ) : (
-                <div>
-                  <table className="uniform-table">
-                    <thead>
-                      <tr>
-                        <th>Worker Type</th>
-                        <th>Worker Quantity</th>
-                        <th>Worker Price</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedProject.worker &&
-                        selectedProject.worker.map((worker) => (
-                          <tr key={worker._id}>
-                            <td>{worker.type}</td>
-                            <td>{worker.quantity}</td>
-                            <td>
-                              {worker.price.toLocaleString("tr-TR") + "TL"}
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              )
-            ) : null}
-          </Col>
+          {selectedProject ? (
+            isWorkersLoading ? (
+              <div>Loading workers...</div>
+            ) : (
+              <div>
+                <table className="uniform-table">
+                  <thead>
+                    <tr>
+                      <th>Worker Type</th>
+                      <th>Worker Quantity</th>
+                      <th>Worker Price</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedProject.worker &&
+                      selectedProject.worker.map((worker) => (
+                        <tr key={worker._id}>
+                          <td>{worker.type}</td>
+                          <td>{worker.quantity}</td>
+                          <td>{worker.price.toLocaleString("tr-TR") + "TL"}</td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            )
+          ) : null}
+        </Col>
       </Row>
     </Col>
   );
 };
 
 export default ProjectProfile;
-{
-  /* <Col className="mt-5">
-<div className=" mt-5">
-  <div className="user-info">
-    <p>Name: {userInfo.user_name}</p>
-    <p>Surname: {userInfo.user_surname}</p>
-    <p>Phone No: {userInfo.user_tel}</p>
-    <button onClick={handleUpdate} className="btn update-btn">
-      Update Info
-    </button>
-  </div>
-</div>
-</Col>
-<Col className="mt-5">
-<div className="excavation-col mt-5">
-  <button
-    onClick={handleLogout}
-    type="logout"
-    className="btn logout-btn"
-    style={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      marginBottom: "20px",
-    }}
-  >
-    Logout
-  </button>
-</div>
-</Col> */
-}

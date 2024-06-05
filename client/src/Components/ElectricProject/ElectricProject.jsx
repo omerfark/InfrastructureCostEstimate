@@ -92,8 +92,8 @@ const ElectricProject = () => {
       const widthDuct = widthCable * 2;
       setWidth(widthDuct);
 
-      const calculatedVolume =length * widthDuct * depth;
-      setVolume(calculatedVolume.toFixed(0));
+      const calculatedVolume = length * widthDuct * depth;
+      setVolume(calculatedVolume);
 
       const essentialNumberOfEquipment = Math.ceil(length / 4000);
       const numberOfOne = 1 * essentialNumberOfEquipment;
@@ -323,14 +323,14 @@ const ElectricProject = () => {
             {
               type: "compactor",
               quantity: numberOfCompactor,
-              unitprice: compactorUnitPrice,
+              unitprice: compactorUnitPrice.toFixed(0),
               price: priceCompactor,
             },
             {
               type: "cable",
-              quantity: valueofCable,
+              quantity: valueofCable.toFixed(0),
               unitprice: cableUnitPrice,
-              price: priceCable,
+              price: priceCable.toFixed(0),
             },
           ],
           vehicles: [
@@ -338,45 +338,45 @@ const ElectricProject = () => {
               type: "excavator",
               quantity: numberOfExcavator,
               unitprice: excavatorUnitPrice,
-              price: priceExcavator,
+              price: priceExcavator.toFixed(0),
             },
             {
               type: "truck",
               quantity: numberOfTruck,
               unitprice: truckUnitPrice,
-              price: priceTruck,
+              price: priceTruck.toFixed(0),
             },
             {
               type: "JCB",
               quantity: numberOfJCB,
               unitprice: jcbUnitPrice,
-              price: priceJCB,
+              price: priceJCB.toFixed(1),
             },
           ],
           materials: [
             {
               type: "sand",
-              quantity: valueOfSand,
+              quantity: valueOfSand.toFixed(0),
               unitprice: sandUnitPrice,
-              price: priceSand,
+              price: priceSand.toFixed(0),
             },
             {
               type: "aggregate",
-              quantity: valueOfAggregate,
+              quantity: valueOfAggregate.toFixed(0),
               unitprice: aggregateUnitPrice,
-              price: priceAggregate,
+              price: priceAggregate.toFixed(0),
             },
             {
               type: "concrete slab",
               quantity: valueOfConcreteSlab,
               unitprice: concreteSlabUnitPrice,
-              price: priceConcreteSlab,
+              price: priceConcreteSlab.toFixed(0),
             },
             {
               type: "excavation",
-              quantity: valueOfExcavation,
+              quantity: valueOfExcavation.toFixed(0),
               unitprice: excavationUnitPrice,
-              price: priceExcavation,
+              price: priceExcavation.toFixed(0),
             },
           ],
           worker: [
@@ -402,7 +402,40 @@ const ElectricProject = () => {
         console.error("Failed to send data to DB", err);
       }
     }
-  });
+  }, [
+    numberOfCompactor,
+    priceCompactor,
+    compactorUnitPrice,
+    cableUnitPrice,
+    valueofCable,
+    priceCable,
+    numberOfExcavator,
+    excavatorUnitPrice,
+    priceExcavator,
+    numberOfTruck,
+    truckUnitPrice,
+    priceTruck,
+    jcbUnitPrice,
+    numberOfJCB,
+    priceJCB,
+    sandUnitPrice,
+    valueOfSand,
+    priceSand,
+    aggregateUnitPrice,
+    valueOfAggregate,
+    priceAggregate,
+    concreteSlabUnitPrice,
+    valueOfConcreteSlab,
+    priceConcreteSlab,
+    excavationUnitPrice,
+    valueOfExcavation,
+    priceExcavation,
+    workerUnitPrice,
+    numberOfWorkers,
+    priceWorkers,
+    calProjectTime,
+    totalProjectPrice,
+  ]);
 
   useEffect(() => {
     //okey
@@ -428,6 +461,11 @@ const ElectricProject = () => {
     getExcel();
   };
 
+  const handleRecordIt = (e) => {
+    e.preventDefault();
+    sendToDB();
+  };
+
   //Calculate button
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -435,38 +473,39 @@ const ElectricProject = () => {
     //hatalı her proje için
     const totalVPRice =
       priceExcavator + priceTruck + priceJCB + priceCable + priceCompactor;
-    const totalMPrice = priceSand+
-      priceAggregate + priceConcreteSlab + priceExcavation + priceWorkers;
+    const totalMPrice =
+      priceSand +
+      priceAggregate +
+      priceConcreteSlab +
+      priceExcavation +
+      priceWorkers;
     const totalAllPrice = totalMPrice + totalVPRice;
 
-    console.log("1:" + totalVPRice)
-    console.log("2:" + totalMPrice)
     setTotalProjectPrice(totalAllPrice.toFixed(0));
 
     console.log("deneme price: " + totalAllPrice.toLocaleString("tr-TR"));
-
-    sendToDB();
   };
 
   // record project id to general proejct db
   useEffect(() => {
-    const postProjectId = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 3000)); // 3 saniye bekle
-      try {
-        const response = await axios.patch(
-          `http://localhost:3000/project/${holdUserId}/electric`,
-          {
-            electric_projects: idElectricProject,
-          }
-        );
-        console.log(response.data);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    postProjectId();
+    if (idElectricProject) {
+      const postProjectId = async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 3 saniye bekle
+        try {
+          const response = await axios.patch(
+            `http://localhost:3000/project/${holdUserId}/electric`,
+            {
+              electric_projects: idElectricProject,
+            }
+          );
+          console.log(response.data);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      postProjectId();
+    }
   }, [idElectricProject, holdUserId]);
-
 
   const [distance, setDistance] = useState(0);
 
@@ -479,12 +518,11 @@ const ElectricProject = () => {
     setLength(distance);
   }, [distance]);
 
-
   return (
     <div className="concrete">
       <Col>
         <Row>
-        <Col>
+          <Col>
             <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
           </Col>
           <Col xs={6}>
@@ -527,9 +565,12 @@ const ElectricProject = () => {
                 </label>
                 <br />
                 <div className="calculate">
-                  <button type="submit" className="calculate-button">
+                  <button type="submit" className="calculate-button m-2">
                     {" "}
                     Calculate
+                  </button>
+                  <button className="calculate-button" onClick={handleRecordIt}>
+                    Record It
                   </button>
                 </div>
               </form>
@@ -562,7 +603,9 @@ const ElectricProject = () => {
                   <tr>
                     <td> Excavation </td>
                     <td>
-                      {valueOfExcavation ? `${valueOfExcavation.toFixed(0)} m³` : "-"}
+                      {valueOfExcavation
+                        ? `${valueOfExcavation.toFixed(0)} m³`
+                        : "-"}
                     </td>
                     <td>
                       {priceExcavation
@@ -572,7 +615,9 @@ const ElectricProject = () => {
                   </tr>
                   <tr>
                     <td>Sand </td>
-                    <td>{valueOfSand ? `${valueOfSand.toFixed(0)} m³` : "-"}</td>
+                    <td>
+                      {valueOfSand ? `${valueOfSand.toFixed(0)} m³` : "-"}
+                    </td>
                     <td>
                       {priceSand
                         ? `${priceSand.toLocaleString("tr-TR") + " TL"}`
@@ -662,7 +707,11 @@ const ElectricProject = () => {
                 <tbody>
                   <tr>
                     <td>Compactor</td>
-                    <td>{numberOfCompactor ? `${numberOfCompactor.toFixed(0)} piece` : "-"}</td>
+                    <td>
+                      {numberOfCompactor
+                        ? `${numberOfCompactor.toFixed(0)} piece`
+                        : "-"}
+                    </td>
                     <td>
                       {priceCompactor
                         ? `${priceCompactor.toLocaleString("tr-TR") + " TL"}`
@@ -671,7 +720,9 @@ const ElectricProject = () => {
                   </tr>
                   <tr>
                     <td>Cable</td>
-                    <td>{valueofCable ? `${valueofCable.toFixed(0)} meter` : "-"}</td>
+                    <td>
+                      {valueofCable ? `${valueofCable.toFixed(0)} meter` : "-"}
+                    </td>
                     <td>
                       {priceCable
                         ? `${priceCable.toLocaleString("tr-TR") + " TL"}`
@@ -704,7 +755,7 @@ const ElectricProject = () => {
                   </tr>
                 </tbody>
               </table>
-              <br/>
+              <br />
               <table>
                 <thead>
                   <tr>

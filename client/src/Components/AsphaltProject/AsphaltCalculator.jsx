@@ -147,7 +147,7 @@ const AsphaltCalculator = () => {
       setNumberOfFinisher(numberOfOne);
       setNumberOfWorkers(numberOfWorkers);
 
-      setValuOfExcavation(calculatedVolume.toFixed(0));
+      setValuOfExcavation(calculatedVolume);
       setValuOfAsphlt_1(totalValueAsphalt_1);
       setValuOfAsphlt_2(totalValueAsphalt_2);
       setValuOfPmt(totalValuePmt);
@@ -292,57 +292,57 @@ const AsphaltCalculator = () => {
               type: "excavator",
               quantity: numberOfExcavator,
               unitprice: excavatorUnitPrice,
-              price: priceExcavator,
+              price: priceExcavator.toFixed(0),
             },
             {
               type: "truck",
               quantity: numberOfTruck,
               unitprice: truckUnitPrice,
-              price: priceTruck,
+              price: priceTruck.toFixed(0),
             },
             {
               type: "roller",
               quantity: numberOfRoller,
               unitprice: rollerunitPrice,
-              price: priceRoller,
+              price: priceRoller.toFixed(0),
             },
             {
               type: "greyder",
               quantity: numberOfGreyder,
               unitprice: greyderUnitPrice,
-              price: priceGreyder,
+              price: priceGreyder.toFixed(0),
             },
             {
               type: "finisher",
               quantity: numberOfFinisher,
               unitprice: finisherUnitPrice,
-              price: priceFinisher,
+              price: priceFinisher.toFixed(0),
             },
           ],
           materials: [
             {
               type: "pmt",
-              quantity: valueOfPmt,
+              quantity: valueOfPmt.toFixed(0),
               unitprice: pmtUnitPrice,
-              price: pricePmt,
+              price: pricePmt.toFixed(0),
             },
             {
               type: "asphalt_1",
-              quantity: valueOfAsphalt_1,
+              quantity: valueOfAsphalt_1.toFixed(0),
               unitprice: asphalt_1UnitPrice,
-              price: priceAsphalt_1,
+              price: priceAsphalt_1.toFixed(0),
             },
             {
               type: "asphalt_2",
-              quantity: valueOfAsphalt_2,
+              quantity: valueOfAsphalt_2.toFixed(0),
               unitprice: asphalt_2UnitPrice,
-              price: priceAsphalt_2,
+              price: priceAsphalt_2.toFixed(0),
             },
             {
               type: "excavation",
-              quantity: valueOfExcavation,
+              quantity: valueOfExcavation.toFixed(0),
               unitprice: excavationUnitPrice,
-              price: priceExcavation,
+              price: priceExcavation.toFixed(0),
             },
           ],
           worker: [
@@ -415,8 +415,12 @@ const AsphaltCalculator = () => {
 
   const handleExport = (e) => {
     e.preventDefault();
-
     getExcel();
+  };
+
+  const handleRecordIt =( e) =>{
+    e.preventDefault();
+    sendToDB();
   };
 
   const handleSubmit = (e) => {
@@ -441,7 +445,7 @@ const AsphaltCalculator = () => {
 
   console.log("deneme price: " + totalAllPrice.toLocaleString("tr-TR"));
 
-    sendToDB();
+    
   };
 
   // Add asphalt project to user project list
@@ -502,7 +506,7 @@ const AsphaltCalculator = () => {
                   Width (m):
                   <input
                     className="m-2"
-                    type="number"
+                    type="float"
                     value={width}
                     onChange={(e) => setWidth(e.target.value)}
                     onFocus={(e) => e.target.select()} // Girdiye odaklandığında içeriği seç
@@ -521,9 +525,12 @@ const AsphaltCalculator = () => {
                 </label>
                 <br />
                 <div className="calculate">
-                  <button type="submit" className="calculate-button">
+                  <button type="submit" className="calculate-button m-2">
                     {" "}
-                    Record it
+                    Calculate
+                  </button>
+                  <button className="calculate-button" onClick={handleRecordIt}>
+                    Record It
                   </button>
                 </div>
               </form>

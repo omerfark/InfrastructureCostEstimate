@@ -76,7 +76,7 @@ function MainPage() {
         </div>
         <div className="program">
           <img src={comprehensive_1} alt="" />
-          <Link to="/userProfile">
+          <Link to="/comprehensive">
             <div className="caption">
             <MergeTypeIcon style={{ fontSize: 48 }}/>
               <p style={{ fontSize: 24 }}>Comprehensive Project Calculating</p>

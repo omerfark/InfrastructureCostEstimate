@@ -97,21 +97,7 @@ const ConcreteRoad = () => {
       const totalValuePmt = 0.1 * length * width; // 10 cm pmt serilir
       const totalValueConcrete = 2.5 * (width * length * 0.15); // 1 m3 beton 2.5 ton ediyor
 
-      const totalMPrice =
-        priceExcavator + priceTruck + priceRoller + priceGreyder;
 
-      const totalVPRice =
-        pricePmt +
-        priceCesan +
-        priceConcrete +
-        priceExcavation +
-        worPrices * numberOfWorkers;
-
-      const totalAllPrice = totalMPrice + totalVPRice;
-
-      setTotalProjectPrice(totalAllPrice.toFixed(0));
-
-      console.log("deneme price: " + totalAllPrice.toLocaleString("tr-TR"));
 
       vehPrices.forEach((item) => {
         switch (item.type) {
@@ -157,7 +143,7 @@ const ConcreteRoad = () => {
       setNumberOfGreyder(numberOfOne);
       setNumberOfWorkers(numberOfWorkers);
 
-      setValueOfExcavation(calculatedVolume.toFixed(0));
+      setValueOfExcavation(calculatedVolume);
       setValueOfCesan(cesanValue);
       setValueOfPmt(totalValuePmt);
       setValueOfConcrete(totalValueConcrete); // yes understand
@@ -316,51 +302,51 @@ const ConcreteRoad = () => {
               type: "excavator",
               quantity: numberOfExcavator,
               unitprice: excavatorUnitPrice,
-              price: priceExcavator,
+              price: priceExcavator.toFixed(0),
             },
             {
               type: "truck",
               quantity: numberOfTruck,
               unitprice: truckUnitPrice,
-              price: priceTruck,
+              price: priceTruck.toFixed(0),
             },
             {
               type: "roller",
               quantity: numberOfRoller,
               unitprice: rollerunitPrice,
-              price: priceRoller,
+              price: priceRoller.toFixed(0),
             },
             {
               type: "greyder",
               quantity: numberOfGreyder,
               unitprice: greyderUnitPrice,
-              price: priceGreyder,
+              price: priceGreyder.toFixed(0),
             },
           ],
           materials: [
             {
               type: "pmt",
-              quantity: valueOfPmt,
+              quantity: valueOfPmt.toFixed(0),
               unitprice: pmtUnitPrice,
-              price: pricePmt,
+              price: pricePmt.toFixed(0),
             },
             {
               type: "cesan",
-              quantity: valueOfCesan,
+              quantity: valueOfCesan.toFixed(0),
               unitprice: cesanUnitPrice,
-              price: priceCesan,
+              price: priceCesan.toFixed(0),
             },
             {
               type: "concrete",
-              quantity: valueOfConcrete,
+              quantity: valueOfConcrete.toFixed(0),
               unitprice: concreteUnitPrice,
-              price: priceConcrete,
+              price: priceConcrete.toFixed(0),
             },
             {
               type: "excavation",
-              quantity: valueOfExcavation,
+              quantity: valueOfExcavation.toFixed(0),
               unitprice: excavationUnitPrice,
-              price: priceExcavation,
+              price: priceExcavation.toFixed(0),
             },
           ],
           worker: [
@@ -435,11 +421,31 @@ const ConcreteRoad = () => {
     getExcel();
   };
 
+  const handleRecordIt =( e) =>{
+    e.preventDefault();
+    sendToDB();
+  };
+
   //Calculate button
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    sendToDB();
+    const totalMPrice =
+    priceExcavator + priceTruck + priceRoller + priceGreyder;
+
+  const totalVPRice =
+    pricePmt +
+    priceCesan +
+    priceConcrete +
+    priceExcavation +
+    worPrices * numberOfWorkers;
+
+  const totalAllPrice = totalMPrice + totalVPRice;
+
+  setTotalProjectPrice(totalAllPrice.toFixed(0));
+
+  console.log("deneme price: " + totalAllPrice.toLocaleString("tr-TR"));
+
   };
 
   // okey ?yup
@@ -519,9 +525,12 @@ const ConcreteRoad = () => {
                 </label>
                 <br />
                 <div className="calculate">
-                  <button type="submit" className="calculate-button">
+                  <button type="submit" className="calculate-button m-2">
                     {" "}
-                    Record it
+                    Calculate
+                  </button>
+                  <button className="calculate-button" onClick={handleRecordIt}>
+                    Record It
                   </button>
                 </div>
               </form>
