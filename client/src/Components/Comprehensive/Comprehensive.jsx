@@ -3,11 +3,11 @@ import "./Comprehensive.css";
 import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
 import axios from "axios";
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import LeafletMap from "../LeafletMap/LeafletMap";
 
 const Comprehensive = () => {
-  const [userToken, setUserToken] = useState("");
+  const [holdUserId, setHoldUserId] = useState("");
 
   const [distance, setDistance] = useState(0); //leaflet değeri
   const [length, setLength] = useState(null); // Kazı boyu
@@ -17,15 +17,16 @@ const Comprehensive = () => {
   axios.defaults.withCredentials = true;
 
   // Fetch user token and verify authentication
-  useEffect(() => {
-    axios.get("http://localhost:3000/auth/verify").then((res) => {
-      if (res.data.status) {
-        setUserToken(res.data.token);
-      } else {
-        navigate("/login");
-      }
-    });
-  }, []);
+ // Doğrulama
+ useEffect(() => {
+  axios.get("http://localhost:3000/auth/verify").then((res) => {
+    if (res.data.status) {
+      setHoldUserId(res.data.token.userId);
+    } else {
+      navigate("/login");
+    }
+  });
+}, [navigate]);
 
   //vehicles
   const [numberOfExcavator, setNumberOfExcavator] = useState(null);
@@ -123,179 +124,188 @@ const Comprehensive = () => {
   const [worPrices, setWorPrices] = useState(0);
   const [eqPrices, setEqPrices] = useState([]);
 
-  const calculateEssential = useCallback((matPrices, vehPrices, eqPrices) => {
-    console.log("first caluclation");
-    console.log("matPrices", matPrices);
-    console.log("vehPrices", vehPrices);
-    console.log("eqPrices", eqPrices);
-    
-    const asphaltExcavationVolume = 0.2 * 2 * length; // derinlik * genişlik * uzunluk
-    const electricProjectVolum = 0.8 * 0.4 * length; // derinlik * genişlik * uzunluk
-    const pipeConcreteProjectVolume = 3 * 0.7 * length; // derinlik * genişlik * uzunluk
+  const calculateEssential = useCallback(
+    (matPrices, vehPrices, eqPrices) => {
+      console.log("first caluclation");
+      console.log("matPrices", matPrices);
+      console.log("vehPrices", vehPrices);
+      console.log("eqPrices", eqPrices);
 
+      const asphaltExcavationVolume = 0.2 * 2 * length; // derinlik * genişlik * uzunluk
+      const electricProjectVolum = 0.8 * 0.4 * length; // derinlik * genişlik * uzunluk
+      const pipeConcreteProjectVolume = 3 * 0.7 * length; // derinlik * genişlik * uzunluk
 
-    const asphaltRoadProejctTime = Math.ceil(length / 2000);
-    const electricProejctTime = Math.ceil(electricProjectVolum / 2000);
-    const pipeConcreteProjectTime = Math.ceil(pipeConcreteProjectVolume / 1500);
-    const totalProjectTime =
-      asphaltRoadProejctTime + electricProejctTime + pipeConcreteProjectTime;
+      const asphaltRoadProejctTime = Math.ceil(length / 2000);
+      const electricProejctTime = Math.ceil(electricProjectVolum / 2000);
+      const pipeConcreteProjectTime = Math.ceil(
+        pipeConcreteProjectVolume / 1500
+      );
+      const totalProjectTime =
+        asphaltRoadProejctTime + electricProejctTime + pipeConcreteProjectTime;
 
-    const totalExcavationVolume =
-      asphaltExcavationVolume +
-      electricProjectVolum +
-      pipeConcreteProjectVolume;
+      const totalExcavationVolume =
+        asphaltExcavationVolume +
+        electricProjectVolum +
+        pipeConcreteProjectVolume;
 
-    const totalExcavator =
-      asphaltRoadProejctTime * 1 +
-      electricProejctTime * 1 +
-      pipeConcreteProjectTime * 1;
-    const totalTruck =
-      asphaltRoadProejctTime * 1 +
-      electricProejctTime * 1 +
-      pipeConcreteProjectTime * 1;
-    const totalJcb = electricProejctTime * 1 + pipeConcreteProjectTime * 1;
-    const totalRoller = asphaltRoadProejctTime;
-    const totalGreyder = asphaltRoadProejctTime;
-    const totalFinisher = asphaltRoadProejctTime;
-    const totalWorker =
-      asphaltRoadProejctTime * 4 +
-      electricProejctTime * 4 +
-      pipeConcreteProjectTime * 6;
+      const totalExcavator =
+        asphaltRoadProejctTime * 1 +
+        electricProejctTime * 1 +
+        pipeConcreteProjectTime * 1;
+      const totalTruck =
+        asphaltRoadProejctTime * 1 +
+        electricProejctTime * 1 +
+        pipeConcreteProjectTime * 1;
+      const totalJcb = electricProejctTime * 1 + pipeConcreteProjectTime * 1;
+      const totalRoller = asphaltRoadProejctTime;
+      const totalGreyder = asphaltRoadProejctTime;
+      const totalFinisher = asphaltRoadProejctTime;
+      const totalWorker =
+        asphaltRoadProejctTime * 4 +
+        electricProejctTime * 4 +
+        pipeConcreteProjectTime * 6;
 
-    const compactorValue = electricProejctTime;
-    const cableValue = length;
+      const compactorValue = electricProejctTime;
+      const cableValue = length;
 
-    const pmtValue = 0.1 * 2 * length; //10 cm pmt, genişlik sabit
-    const asphalt_1Value = 2.4 * (0.15 * length * 2); // alt tabaka 15 cm
-    const asphalt_2Value = 2.4 * (0.05 * length * 2); // üst tabaka 5 cm
+      const pmtValue = 0.1 * 2 * length; //10 cm pmt, genişlik sabit
+      const asphalt_1Value = 2.4 * (0.15 * length * 2); // alt tabaka 15 cm
+      const asphalt_2Value = 2.4 * (0.05 * length * 2); // üst tabaka 5 cm
 
-    const sandValue = 0.2 * 0.4 * length;
-    const electricAggregateValue = 0.3 * 0.4 * length;
-    const concreteSlabValue = Math.ceil(length * 0.2); // 20 cm uzunluğu
-    const concreteSlabWidth = Math.ceil(0.4 * 0.1); // 10 cm genişliği olduğu icin
-    const concreteSlab = concreteSlabValue * concreteSlabWidth;
+      const sandValue = 0.2 * 0.4 * length;
+      const electricAggregateValue = 0.3 * 0.4 * length;
+      const concreteSlabValue = Math.ceil(length * 0.2); // 20 cm uzunluğu
+      const concreteSlabWidth = Math.ceil(0.4 * 0.1); // 10 cm genişliği olduğu icin
+      const concreteSlab = concreteSlabValue * concreteSlabWidth;
 
-    const meterConnectors = 1; // 1 adet ev
-    const meterBaseElements = 1 * (length / 60); // 1mt genişlik uzunluk, 60 mtde 1 adet
-    const calPiecePipe = (length - (meterBaseElements + meterConnectors)) / 1.5;
-    const piecePipe = Math.ceil(calPiecePipe);
+      const meterConnectors = 1; // 1 adet ev
+      const meterBaseElements = 1 * (length / 60); // 1mt genişlik uzunluk, 60 mtde 1 adet
+      const calPiecePipe =
+        (length - (meterBaseElements + meterConnectors)) / 1.5;
+      const piecePipe = Math.ceil(calPiecePipe);
 
-    const pipeAggregateValue = pipeConcreteProjectVolume - 0.11 * piecePipe;
-    const calBaseElement = Math.ceil(length / 60);
-    const calConnectors = 1;
+      const pipeAggregateValue = pipeConcreteProjectVolume - 0.11 * piecePipe;
+      const calBaseElement = Math.ceil(length / 60);
+      const calConnectors = 1;
 
-    vehPrices.forEach((item) => {
-      switch (item.type) {
-        case "excavator":
-          setPriceExcavator(
-            item.price * totalExcavator * (totalProjectTime / 3)
-          );
-          break;
-        case "truck":
-          setPriceTruck(item.price * totalTruck * (totalProjectTime / 3));
-          break;
-        case "roller":
-          setPriceRoller(item.price * totalRoller * asphaltRoadProejctTime);
-          break;
-        case "greyder":
-          setPriceGreyder(item.price * totalGreyder * asphaltRoadProejctTime);
-          break;
-        case "finisher":
-          setPriceFinisher(item.price * totalFinisher * asphaltRoadProejctTime);
-          break;
-        case "JCB":
-          setPriceJCB(item.price * totalJcb * (totalProjectTime / 3));
-          break;
-        default:
-          break;
-      }
-    });
+      vehPrices.forEach((item) => {
+        switch (item.type) {
+          case "excavator":
+            setPriceExcavator(
+              item.price * totalExcavator * (totalProjectTime / 3)
+            );
+            break;
+          case "truck":
+            setPriceTruck(item.price * totalTruck * (totalProjectTime / 3));
+            break;
+          case "roller":
+            setPriceRoller(item.price * totalRoller * asphaltRoadProejctTime);
+            break;
+          case "greyder":
+            setPriceGreyder(item.price * totalGreyder * asphaltRoadProejctTime);
+            break;
+          case "finisher":
+            setPriceFinisher(
+              item.price * totalFinisher * asphaltRoadProejctTime
+            );
+            break;
+          case "JCB":
+            setPriceJCB(item.price * totalJcb * (totalProjectTime / 3));
+            break;
+          default:
+            break;
+        }
+      });
 
-    matPrices.forEach((item) => {
-      switch (item.type) {
-        case "pmt":
-          setPricePmt(item.price * pmtValue);
-          break;
-        case "asphalt_1":
-          setPriceAsphalt_1(item.price * asphalt_1Value);
-          break;
-        case "asphalt_2":
-          setPriceAsphalt_2(item.price * asphalt_2Value); // yes like that  calculatedVolume
-          break;
-        case "sand":
-          setPriceSand(item.price * sandValue);
-          break;
-        case "aggregate":
-          SetPriceAggregate(
-            item.price * (pipeAggregateValue + electricAggregateValue)
-          );
-          break;
-        case "concretepipe":
-          setPricePipe(item.price * piecePipe);
-          break;
-        case "concrete slab":
-          setPriceConcreteSlab(item.price * concreteSlab); // yes like that  calculatedVolume
-          break;
-        case "baseElement":
-          setPriceBaseElement(item.price * calBaseElement);
-          break;
-        case "excavation":
-          setPriceExcavation(item.price * totalExcavationVolume);
-          break;
-        case "connector":
-          setPriceConnectors(item.price * calConnectors);
-          break;
-        case "pvc":
-          setPricePvcPrice(item.price * calConnectors);
-          break;
-        default:
-          break;
-      }
-    });
+      matPrices.forEach((item) => {
+        switch (item.type) {
+          case "pmt":
+            setPricePmt(item.price * pmtValue);
+            break;
+          case "asphalt_1":
+            setPriceAsphalt_1(item.price * asphalt_1Value);
+            break;
+          case "asphalt_2":
+            setPriceAsphalt_2(item.price * asphalt_2Value); // yes like that  calculatedVolume
+            break;
+          case "sand":
+            setPriceSand(item.price * sandValue);
+            break;
+          case "aggregate":
+            SetPriceAggregate(
+              item.price * (pipeAggregateValue + electricAggregateValue)
+            );
+            break;
+          case "concretepipe":
+            setPricePipe(item.price * piecePipe);
+            break;
+          case "concrete slab":
+            setPriceConcreteSlab(item.price * concreteSlab); // yes like that  calculatedVolume
+            break;
+          case "baseElement":
+            setPriceBaseElement(item.price * calBaseElement);
+            break;
+          case "excavation":
+            setPriceExcavation(item.price * totalExcavationVolume);
+            break;
+          case "connector":
+            setPriceConnectors(item.price * calConnectors);
+            break;
+          case "pvc":
+            setPricePvcPrice(item.price * calConnectors);
+            break;
+          default:
+            break;
+        }
+      });
 
-    eqPrices.forEach((item) => {
-      switch (item.type) {
-        case "cable":
-          setPriceCable(item.price * length * 0.1);
-          break;
-        case "compactor":
-          setPriceCompactor(item.price * compactorValue * electricProejctTime);
-          break;
-        default:
-          break;
-      }
-    });
+      eqPrices.forEach((item) => {
+        switch (item.type) {
+          case "cable":
+            setPriceCable(item.price * length * 0.1);
+            break;
+          case "compactor":
+            setPriceCompactor(
+              item.price * compactorValue * electricProejctTime
+            );
+            break;
+          default:
+            break;
+        }
+      });
 
-    setTotalAggregateVolume(electricAggregateValue + pipeAggregateValue);
-    setTotalExcavationVolume(totalExcavationVolume);
-    setPipeValueOfAggregate(pipeAggregateValue);
-    setNumberofBaseElement(calBaseElement); // bağlantı noktaları, taban , bilezik ve kapak
-    setNumberOfConnector(calConnectors); // parsel bağlantısı icin, c elemanı, parsel taba, parsel kapak olarak 1mt
-    setNumberOfPvcPipe(calConnectors);
-    setNumberOfPipe(piecePipe);
-    setValueOfSand(sandValue);
-    setElectricValueOfAggregate(electricAggregateValue);
-    setValueOfConcreteSlab(concreteSlab);
-    setValuOfPmt(pmtValue);
-    setValuOfAsphlt_1(asphalt_1Value);
-    setValuOfAsphlt_2(asphalt_2Value);
-    setNumberOfCompactor(compactorValue);
-    setValueOfCable(cableValue);
-    setNumberOfExcavator(totalExcavator);
-    setNumberOfTruck(totalTruck);
-    setNumberOfJCB(totalJcb);
-    setNumberOfRoller(totalRoller);
-    setNumberOfGreyder(totalGreyder);
-    setNumberOfFinisher(totalFinisher);
-    setNumberOfWorkers(totalWorker);
-    setValueOfAsphaltExcavation(asphaltExcavationVolume);
-    setValueOfElectricExcavation(electricProjectVolum);
-    setValuOfPipeExcavation(pipeConcreteProjectVolume);
+      setTotalAggregateVolume(electricAggregateValue + pipeAggregateValue);
+      setTotalExcavationVolume(totalExcavationVolume);
+      setPipeValueOfAggregate(pipeAggregateValue);
+      setNumberofBaseElement(calBaseElement); // bağlantı noktaları, taban , bilezik ve kapak
+      setNumberOfConnector(calConnectors); // parsel bağlantısı icin, c elemanı, parsel taba, parsel kapak olarak 1mt
+      setNumberOfPvcPipe(calConnectors);
+      setNumberOfPipe(piecePipe);
+      setValueOfSand(sandValue);
+      setElectricValueOfAggregate(electricAggregateValue);
+      setValueOfConcreteSlab(concreteSlab);
+      setValuOfPmt(pmtValue);
+      setValuOfAsphlt_1(asphalt_1Value);
+      setValuOfAsphlt_2(asphalt_2Value);
+      setNumberOfCompactor(compactorValue);
+      setValueOfCable(cableValue);
+      setNumberOfExcavator(totalExcavator);
+      setNumberOfTruck(totalTruck);
+      setNumberOfJCB(totalJcb);
+      setNumberOfRoller(totalRoller);
+      setNumberOfGreyder(totalGreyder);
+      setNumberOfFinisher(totalFinisher);
+      setNumberOfWorkers(totalWorker);
+      setValueOfAsphaltExcavation(asphaltExcavationVolume);
+      setValueOfElectricExcavation(electricProjectVolum);
+      setValuOfPipeExcavation(pipeConcreteProjectVolume);
 
-    setCalProjectTime(totalProjectTime);
+      setCalProjectTime(totalProjectTime);
 
-    return { numberOfWorkers: numberOfWorkers };
-  }, [length]);
+      return { numberOfWorkers: numberOfWorkers };
+    },
+    [length]
+  );
 
   //material Price
   useEffect(() => {
@@ -461,6 +471,258 @@ const Comprehensive = () => {
     };
   }, []);
 
+  const getExcel = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/comprehensive/${idAllProject}/export/excel`,
+        { responseType: "blob" } // Yanıtın blob formatında gelmesi için
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "comprehensive_project.xlsx"); // Dosya adını belirleyin
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.log("error: " + error);
+    }
+  }, [idAllProject]);
+
+  const sendToDB = useCallback(async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/comprehensive/create",
+        {
+          equipments: [
+            {
+              type: "compactor",
+              quantity: numberOfCompactor,
+              unitprice: compactorUnitPrice,
+              price: priceCompactor,
+            },
+            {
+              type: "cable",
+              quantity: valueofCable,
+              unitprice: cableUnitPrice,
+              price: priceCable,
+            },
+          ],
+          vehicles: [
+            {
+              type: "excavator",
+              quantity: numberOfExcavator,
+              unitprice: excavatorUnitPrice,
+              price: priceExcavator.toFixed(0),
+            },
+            {
+              type: "truck",
+              quantity: numberOfTruck,
+              unitprice: truckUnitPrice,
+              price: priceTruck.toFixed(0),
+            },
+            {
+              type: "roller",
+              quantity: numberOfRoller,
+              unitprice: rollerunitPrice,
+              price: priceRoller.toFixed(0),
+            },
+            {
+              type: "JCB",
+              quantity: numberOfJCB,
+              unitprice: jcbUnitPrice,
+              price: priceJCB.toFixed(0),
+            },
+            {
+              type: "greyder",
+              quantity: numberOfGreyder,
+              unitprice: greyderUnitPrice,
+              price: priceGreyder.toFixed(0),
+            },
+            {
+              type: "finisher",
+              quantity: numberOfFinisher,
+              unitprice: finisherUnitPrice,
+              price: priceFinisher.toFixed(0),
+            },
+          ],
+          materials: [
+            {
+              type: "aggregate",
+              quantity: totalAggregateVolume.toFixed(0),
+              unitprice: aggregateUnitPrice,
+              price: priceAggregate.toFixed(0),
+            },
+            {
+              type: "asphalt_1",
+              quantity: valueOfAsphalt_1.toFixed(0),
+              unitprice: asphalt_1UnitPrice,
+              price: priceAsphalt_1.toFixed(0),
+            },
+            {
+              type: "asphalt_2",
+              quantity: valueOfAsphalt_2.toFixed(0),
+              unitprice: asphalt_2UnitPrice,
+              price: priceAsphalt_2.toFixed(0),
+            },
+            {
+              type: "pmt",
+              quantity: valueOfPmt.toFixed(0),
+              unitprice: pmtUnitPrice,
+              price: pricePmt.toFixed(0),
+            },
+            {
+              type: "excavation",
+              quantity: totalExcavationVolume.toFixed(0),
+              unitprice: excavationUnitPrice,
+              price: priceExcavation.toFixed(0),
+            },
+            {
+              type: "sand",
+              quantity: valueOfSand.toFixed(0),
+              unitprice: sandUnitPrice,
+              price: priceSand.toFixed(0),
+            },
+            {
+              type: "concreteSlab",
+              quantity: valueOfConcreteSlab.toFixed(0),
+              unitprice: concreteSlabUnitPrice,
+              price: priceConcreteSlab.toFixed(0),
+            },
+            {
+              type: "pipe",
+              quantity: numberOfPipe.toFixed(0),
+              unitprice: pipeUnitPrice,
+              price: pricePipe.toFixed(0),
+            },
+            {
+              type: "baseElement",
+              quantity: numberOfBaseElement.toFixed(0),
+              unitprice: baseElementUnitPrice,
+              price: priceBaseElement.toFixed(0),
+            },
+            {
+              type: "connectors",
+              quantity: numberOfConnectors.toFixed(0),
+              unitprice: connectorsUnitPrice,
+              price: priceConnectors.toFixed(0),
+            },
+            {
+              type: "pvc",
+              quantity: numberOfPvcPipe.toFixed(0),
+              unitprice: pvcUnitPrice,
+              price: pricePvcPipe.toFixed(0),
+            },
+          ],
+          worker: [
+            {
+              type: "worker",
+              quantity: numberOfWorkers,
+              unitprice: workerUnitPrice,
+              price: priceWorkers,
+            },
+          ],
+          project_time: calProjectTime,
+          total_price: totalProjectPrice,
+        }
+      );
+
+      const data_id = response.data._id;
+      setIdAllProject(data_id);
+
+      console.log("Backend'den gelen yanıt:", response.data);
+    } catch (err) {
+      console.log(err);
+      if (isMounted.current) {
+        console.error("Failed to send data to DB", err);
+      }
+    }
+  }, [
+    numberOfCompactor,
+    priceCompactor,
+    compactorUnitPrice,
+
+    cableUnitPrice,
+    valueofCable,
+    priceCable,
+
+    numberOfExcavator,
+    excavatorUnitPrice,
+    priceExcavator,
+
+    numberOfTruck,
+    truckUnitPrice,
+    priceTruck,
+
+    numberOfJCB,
+    jcbUnitPrice,
+    priceJCB,
+
+    numberOfRoller,
+    priceRoller,
+    rollerunitPrice,
+
+    numberOfGreyder,
+    priceGreyder,
+    greyderUnitPrice,
+
+    numberOfFinisher,
+    priceFinisher,
+    finisherUnitPrice,
+
+    totalAggregateVolume,
+    aggregateUnitPrice,
+    priceAggregate,
+
+    totalExcavationVolume,
+    excavationUnitPrice,
+    priceExcavation,
+
+    valueOfAsphalt_1,
+    priceAsphalt_1,
+    asphalt_1UnitPrice,
+
+    valueOfAsphalt_2,
+    priceAsphalt_2,
+    asphalt_2UnitPrice,
+
+    valueOfPmt,
+    pricePmt,
+    pmtUnitPrice,
+
+    sandUnitPrice,
+    valueOfSand,
+    priceSand,
+
+    concreteSlabUnitPrice,
+    valueOfConcreteSlab,
+    priceConcreteSlab,
+
+    numberOfPipe,
+    pipeUnitPrice,
+    pricePipe,
+
+    numberOfBaseElement,
+    baseElementUnitPrice,
+    priceBaseElement,
+
+    numberOfConnectors,
+    connectorsUnitPrice,
+    priceConnectors,
+
+    numberOfPvcPipe,
+    pvcUnitPrice,
+    pricePvcPipe,
+
+    numberOfWorkers,
+    workerUnitPrice,
+    priceWorkers,
+
+    calProjectTime,
+    totalProjectPrice,
+  ]);
+
   useEffect(() => {
     //okey
     if (!matPrices && !vehPrices && !eqPrices)
@@ -491,8 +753,13 @@ const Comprehensive = () => {
 
   const handleExport = (e) => {
     e.preventDefault();
+    getExcel();
   };
 
+  const handleRecordIt = (e) => {
+    e.preventDefault();
+    sendToDB();
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -518,8 +785,31 @@ const Comprehensive = () => {
       pricePvcPipe +
       priceWorkers;
     const totalEPrice = priceCompactor + priceCable;
-    setTotalProjectPrice(totalVPrice + totalMPrice + totalEPrice);
+    setTotalProjectPrice((totalVPrice + totalMPrice + totalEPrice).toFixed(0));
   };
+
+  // record project id to general proejct db
+  useEffect(() => {
+    if (idAllProject) {
+      const postProjectId = async () => {
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 3 saniye bekle
+        try {
+          const response = await axios.patch(
+            `http://localhost:3000/project/${holdUserId}/comprehensive`,
+            {
+              comprehensive_projects: idAllProject,
+            }
+          );
+          console.log(response.data);
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      postProjectId();
+    }
+  }, [idAllProject, holdUserId]);
+
+
 
   return (
     <div className="asphalt">
@@ -544,9 +834,12 @@ const Comprehensive = () => {
                 </label>
                 <br />
                 <div className="calculate">
-                  <button type="submit" className="calculate-button">
+                  <button type="submit" className="calculate-button m-2">
                     {" "}
-                    Record it
+                    Calculate
+                  </button>
+                  <button className="calculate-button" onClick={handleRecordIt}>
+                    Record It
                   </button>
                 </div>
               </form>
@@ -734,7 +1027,10 @@ const Comprehensive = () => {
                     <td>{numberOfTruck ? `${numberOfTruck} piece` : "-"}</td>
                     <td>
                       {priceTruck
-                        ? `${(priceTruck.toFixed(2)).toLocaleString("tr-TR") + " TL"}`
+                        ? `${
+                            priceTruck.toFixed(2).toLocaleString("tr-TR") +
+                            " TL"
+                          }`
                         : "-"}
                     </td>
                   </tr>
@@ -806,9 +1102,7 @@ const Comprehensive = () => {
                   </tr>
                   <tr>
                     <td>Cable</td>
-                    <td>
-                      {valueofCable ? `${valueofCable} meter` : "-"}
-                    </td>
+                    <td>{valueofCable ? `${valueofCable} meter` : "-"}</td>
                     <td>
                       {priceCable
                         ? `${priceCable.toLocaleString("tr-TR") + " TL"}`

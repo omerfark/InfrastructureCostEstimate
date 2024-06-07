@@ -51,7 +51,7 @@ const Navbar = () => {
         <>
         <li><Link to="/">Home</Link></li>
         <li><Link to="/contact">Contact us</Link></li>
-        <li><Link to="/projectprofile">Profile</Link></li>
+        <li><Link to="/projectprofile">Project</Link></li>
         <li><button className="btn" onClick={handleLogout}>Logout</button></li>
         </>
         ):(

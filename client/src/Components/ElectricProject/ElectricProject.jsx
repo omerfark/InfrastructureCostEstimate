@@ -5,6 +5,8 @@ import "./ElectricProject.css";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import LeafletMap from "../LeafletMap/LeafletMap";
+import HeaderTr from "../HeadTr/HeadTr.jsx";
+
 
 const ElectricProject = () => {
   const [holdUserId, setHoldUserId] = useState("");
@@ -303,7 +305,7 @@ const ElectricProject = () => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
-      link.setAttribute("download", "asphalt_project.xlsx"); // Dosya adını belirleyin
+      link.setAttribute("download", "electric_project.xlsx"); // Dosya adını belirleyin
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -521,6 +523,9 @@ const ElectricProject = () => {
   return (
     <div className="concrete">
       <Col>
+      <Row>
+      <HeaderTr items="electric" />
+      </Row>
         <Row>
           <Col>
             <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />

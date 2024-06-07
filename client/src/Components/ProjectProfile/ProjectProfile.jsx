@@ -4,6 +4,7 @@ import Col from "react-bootstrap/esm/Col";
 import Row from "react-bootstrap/esm/Row";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import HeaderTr from "../HeadTr/HeadTr.jsx";
 
 const ProjectProfile = () => {
   const [isVehiclesLoading, setIsVehiclesLoading] = useState(true);
@@ -314,6 +315,51 @@ const ProjectProfile = () => {
 
   //#endregion
 
+  //#region  Fetch selected project details  pipe concrete Laying
+  const fetchSelectedComprehensiveProject = useCallback(async () => {
+    if (selectedId) {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/comprehensive/${selectedId}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch comprehensive project details");
+        }
+        const dataOfComprehensive = await response.json();
+        setSelectedProject(dataOfComprehensive);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }, [selectedId]);
+
+  // Handle Asphalt project selection
+  const comprehensiveHandleButtonClick = (id) => {
+    setSelectedId(id);
+    fetchSelectedComprehensiveProject();
+  };
+
+  const deleteSelectedComprehensive = useCallback(async () => {
+    if (selectedId) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:3000/project/${userId}/comprehensive/${selectedId}`
+        );
+        console.log("response comprehensive project delete: " + response.data);
+        window.location.reload(); // Sayfayı yenile
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, [selectedId, userId]);
+
+  const handleDeleteComprehensive = (id) => {
+    setSelectedId(id);
+    deleteSelectedComprehensive();
+  };
+
+  //#endregion
+
   // Update loading states based on selected project
   useEffect(() => {
     if (selectedProject) {
@@ -338,6 +384,9 @@ const ProjectProfile = () => {
   return (
     <Col className="mt-5">
       <Row className="mt-5">
+        <HeaderTr items="projectprofile" />
+      </Row>
+      <Row className="">
         <Col className="excavation-col" xs={8}>
           <Row>
             <div>
@@ -578,35 +627,116 @@ const ProjectProfile = () => {
               </ul>
             </div>
           </Row>
+          <Row>
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  marginBottom: "20px",
+                  marginTop: "20px",
+                }}
+              >
+                <h2>Comprehensive Projects</h2>
+                <button className="create-button">
+                  <Link to="/comprehensive">Create New</Link>
+                </button>
+              </div>
+              <ul>
+                {projects.map((project) => (
+                  <li key={project._id}>
+                    {project.comprehensive_projects.length === 0 ? (
+                      <button className="no-projects-button">
+                        <Link to="/pipeconcrete">
+                          No Comprehensive projects found. Click here to create
+                          a new project.
+                        </Link>
+                      </button>
+                    ) : (
+                      project.comprehensive_projects.map(
+                        (comprehensiveProject, index) => (
+                          <div
+                            className="project-container"
+                            key={comprehensiveProject._id}
+                          >
+                            <button
+                              className="project-button"
+                              onClick={() =>
+                                comprehensiveHandleButtonClick(
+                                  comprehensiveProject
+                                )
+                              }
+                            >
+                              Project {index + 1}
+                            </button>
+                            <button
+                              key={comprehensiveProject._id}
+                              className="delete-button"
+                              onClick={() =>
+                                handleDeleteComprehensive(comprehensiveProject)
+                              }
+                            >
+                              {" "}
+                              Delete
+                            </button>
+                          </div>
+                        )
+                      )
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Row>
         </Col>
         <Col className="mt-5" xs={4}>
-
           {isVehiclesLoading ? (
             <p>Loading vehicles...</p>
           ) : (
             <div className="uniform-table">
               {selectedProject && !isVehiclesLoading && (
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Vehicle Name</th>
-                      <th>Vehicle Quantity</th>
-                      <th>Vehicle Price</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedProject.vehicles &&
-                      selectedProject.vehicles.map((vehicle) => (
-                        <tr key={vehicle._id}>
-                          <td>{vehicle.type}</td>
-                          <td>{vehicle.quantity}</td>
-                          <td>
-                            {vehicle.price.toLocaleString("tr-TR") + "TL"}
-                          </td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
+                <>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Project Time</td>
+                        <td>
+                          {selectedProject.project_time
+                            ? `${selectedProject.project_time.toLocaleString("tr-TR")} Months`: "-"}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Vehicle Name</th>
+                        <th>Vehicle Quantity</th>
+                        <th>Vehicle Price</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedProject.vehicles &&
+                        selectedProject.vehicles.map((vehicle) => (
+                          <tr key={vehicle._id}>
+                            <td>{vehicle.type}</td>
+                            <td>{vehicle.quantity}</td>
+                            <td>
+                              {vehicle.price.toLocaleString("tr-TR") + " TL"}
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </>
               )}
             </div>
           )}
@@ -690,9 +820,32 @@ const ProjectProfile = () => {
                         <tr key={worker._id}>
                           <td>{worker.type}</td>
                           <td>{worker.quantity}</td>
-                          <td>{worker.price.toLocaleString("tr-TR") + "TL"}</td>
+                          <td>
+                            {worker.price.toLocaleString("tr-TR") + " TL"}
+                          </td>
                         </tr>
                       ))}
+                  </tbody>
+                </table>
+
+                <table className="uniform-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>All Total Price</td>
+                      <td>
+                        {selectedProject.total_price
+                          ? `${selectedProject.total_price.toLocaleString(
+                              "tr-TR"
+                            )} TL`
+                          : "-"}
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
               </div>

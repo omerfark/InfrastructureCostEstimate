@@ -1,32 +1,44 @@
-import React from 'react'
+import React from "react";
+import './HeadTr.css'
 
 const HeadTr = (props) => {
   return (
     <div>
-        <header>
-      <div
-        className='p-5 text-center bg-image'
-        style={{ backgroundImage: "url('https://aecom.com/sa/wp-content/uploads/2016/08/CIP_image_3-e1471970780624.jpg')", height: 250 }}
-      >
-        <div className='mask' style={{ backgroundColor: 'rgba(0, 0, 0, 0.6)' }}>
-          <div className='d-flex justify-content-center align-items-center h-10'>
-            <div className='text-white' >
-              <h3 className='text-white '>{props.items}</h3>
-              <div className="mt-5 mb-2" style={{ backgroundColor: 'rgba(255, 0, 0, 0.6)' }}>
-              <a className='btn btn-lg' href='/mainpage' role='button'>
-                Anasayfa
-              </a>
-              <i>/</i>
-              <a className='btn btn-lg' href='/Education/get' role='button'> {props.items} </a>
+      <header>
+        <div
+          className="p-5  mb-5 text-center bg-image"
+          style={{
+            backgroundImage:
+              "url('https://dmt55mxnkgbz2.cloudfront.net/900x0_s3-57820-MNSW-171_22-LP-1_jpeg.jpg')",
+            height: 250,
+          }}
+        >
+          <div
+            className="mask"
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.6)" }}
+          >
+            <div className="d-flex justify-content-center align-items-center h-10">
+              <div className="text-white">
+                <div className="button-container">
+                  <a className="custom-btn" href="/" role="button">
+                    Main
+                  </a>
+                  <i className="separator">/</i>
+                  <a
+                    className="custom-btn"
+                    href={props.items}
+                    role="button"
+                  >
+                    {props.items}
+                  </a>
+                </div>
               </div>
-
             </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
     </div>
-  )
-}
+  );
+};
 
-export default HeadTr
+export default HeadTr;

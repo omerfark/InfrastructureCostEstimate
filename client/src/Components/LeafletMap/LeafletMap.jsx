@@ -118,13 +118,13 @@ const LeafletMap = ({ onTotalDistanceChange }) => {
     setSelectedCity(city);
   };
 
-  const MapUpdater = ({ center }) => {
-    const map = useMap();
-    useEffect(() => {
-      map.setView(center);
-    }, [center, map]);
-    return null;
-  };
+  // const MapUpdater = ({ center }) => {
+  //   const map = useMap();
+  //   useEffect(() => {
+  //     map.setView(center);
+  //   }, [center, map]);
+  //   return null;
+  // };
 
   if (!selectedCity) return null;
 
@@ -183,8 +183,7 @@ const LeafletMap = ({ onTotalDistanceChange }) => {
   return (
     <div>
        <MapContainer
-        center={selectedCity ? [selectedCity.lat, selectedCity.lng] : [41.01, 29.0]}
-        zoom={15}
+        center={[41.01, 29.00]} zoom={13}
         style={{ height: "600px", width: "100%", zIndex: 1 }}
       >
         <TileLayer
@@ -205,7 +204,7 @@ const LeafletMap = ({ onTotalDistanceChange }) => {
           />
         )}
         <MapClickHandler />
-        <MapUpdater center={[selectedCity.lat, selectedCity.lng]} />
+        {/* <MapUpdater center={[selectedCity.lat, selectedCity.lng]} /> */}
       </MapContainer>
       <div style={{ marginTop: "2px" }}>
         <h2>Total Distance: {totalDistance} m</h2>
@@ -216,16 +215,18 @@ const LeafletMap = ({ onTotalDistanceChange }) => {
           Son Noktayı Sil
         </button>
         <button onClick={handleRemoveAllMarkers}>Tümünü Sil</button>
-        <select onChange={handleCityChange}>
+        {/* <select onChange={handleCityChange}>
           {cities.map((city) => (
             <option key={city.name} value={city.name}>
               {city.name}
             </option>
           ))}
-        </select>
+        </select> */}
       </div>
     </div>
   );
 };
 
 export default LeafletMap;
+
+

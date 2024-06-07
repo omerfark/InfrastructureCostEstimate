@@ -32,7 +32,7 @@ function Login() {
           setTimeout(function () {
             window.alert = function () {};
           }, 3000);
-          navigate("/projectprofile");
+          navigate("/");
         } else {
           setErrorMessage(result.data.message);
         }

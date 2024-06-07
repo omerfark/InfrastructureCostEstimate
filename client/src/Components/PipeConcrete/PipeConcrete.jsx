@@ -7,6 +7,7 @@ import Row from "react-bootstrap/Row";
 import büzz_pipe from "../../assets/büzz-pipe.png";
 import koruge_pipe from "../../assets/koruge-pipe.png";
 import LeafletMap from "../LeafletMap/LeafletMap";
+import HeaderTr from "../HeadTr/HeadTr.jsx";
 
 const PipeConcrete = () => {
   const [holdUserId, setHoldUserId] = useState("");
@@ -514,6 +515,9 @@ const PipeConcrete = () => {
   return (
     <div className="pipe-calculator">
       <Col>
+      <Row>
+      <HeaderTr items="pipeConcrete" />
+      </Row>
         <Row>
         <Col>
             <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />

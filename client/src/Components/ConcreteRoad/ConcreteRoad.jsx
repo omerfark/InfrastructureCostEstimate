@@ -6,6 +6,7 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import LeafletMap from "../LeafletMap/LeafletMap";
 import asphalt_1 from "../../assets/asphalt-1.png";
+import HeaderTr from "../HeadTr/HeadTr.jsx";
 
 const ConcreteRoad = () => {
   const [holdUserId, setHoldUserId] = useState("");
@@ -483,6 +484,9 @@ const ConcreteRoad = () => {
   return (
     <div className="concrete">
       <Col>
+      <Row>
+      <HeaderTr items="concreteRoad" />
+      </Row>
         <Row className="mt-5">
           <Col>
             <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />

@@ -5,7 +5,9 @@ import "./AsphaltCalculator.css";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import asphalt_1 from "../../assets/asphalt-1.png";
+import asphalt_2 from "../../assets/asphalt-2.png";
 import LeafletMap from "../LeafletMap/LeafletMap";
+import HeaderTr from "../HeadTr/HeadTr.jsx";
 
 const AsphaltCalculator = () => {
   const [holdUserId, setHoldUserId] = useState("");
@@ -79,7 +81,8 @@ const AsphaltCalculator = () => {
   const [vehPrices, setVehPrices] = useState([]);
   const [worPrices, setWorPrices] = useState(0);
 
-  const CalculateEssential_1 = useCallback((matPrices, vehPrices) => {
+  const CalculateEssential_1 = useCallback(
+    (matPrices, vehPrices) => {
       console.log("first caluclation");
       console.log("matPrices", matPrices);
       console.log("vehPrices", vehPrices);
@@ -97,7 +100,6 @@ const AsphaltCalculator = () => {
       const totalValueAsphalt_1 = 2.4 * (0.15 * length * width); // alt tabaka 15 cm
       const totalValueAsphalt_2 = 2.4 * (0.05 * length * width); // üst tabaka 5 cm
       const totalValuePmt = 0.1 * length * width; // pmt tabakası 10 cm
-
 
       vehPrices.forEach((item) => {
         switch (item.type) {
@@ -243,7 +245,6 @@ const AsphaltCalculator = () => {
         const workerPrice = workerGet[0].worker_price;
         setWorkerUnitPrice(workerGet[0].worker_price);
         setWorPrices(workerPrice);
-
       } catch (err) {
         console.error(err);
       }
@@ -418,7 +419,7 @@ const AsphaltCalculator = () => {
     getExcel();
   };
 
-  const handleRecordIt =( e) =>{
+  const handleRecordIt = (e) => {
     e.preventDefault();
     sendToDB();
   };
@@ -427,25 +428,19 @@ const AsphaltCalculator = () => {
     e.preventDefault();
 
     const totalMPrice =
-    priceExcavator +
-    priceTruck +
-    priceRoller +
-    priceGreyder +
-    priceFinisher;
+      priceExcavator + priceTruck + priceRoller + priceGreyder + priceFinisher;
 
-  const totalVPRice =
-    pricePmt +
-    priceAsphalt_1 +
-    priceAsphalt_2 +
-    priceExcavation +
-    priceWorkers;
+    const totalVPRice =
+      pricePmt +
+      priceAsphalt_1 +
+      priceAsphalt_2 +
+      priceExcavation +
+      priceWorkers;
 
-  const totalAllPrice = totalMPrice + totalVPRice;
-  setTotalProjectPrice(totalAllPrice.toFixed(0));
+    const totalAllPrice = totalMPrice + totalVPRice;
+    setTotalProjectPrice(totalAllPrice.toFixed(0));
 
-  console.log("deneme price: " + totalAllPrice.toLocaleString("tr-TR"));
-
-    
+    console.log("deneme price: " + totalAllPrice.toLocaleString("tr-TR"));
   };
 
   // Add asphalt project to user project list
@@ -483,6 +478,9 @@ const AsphaltCalculator = () => {
   return (
     <div className="asphalt">
       <Col>
+        <Row>
+          <HeaderTr items="asphaltcalculator" />
+        </Row>
         <Row className="mt-5">
           <Col>
             <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
@@ -743,58 +741,68 @@ const AsphaltCalculator = () => {
             </div>
           </Col>
         </Row>
-        <Row className="mt-5">
-          <div className="col-md-8 ">
-            <div className="asphalt-info">
+        <Row>
+          <Col>
+            <div className=" excavation-col">
               <h2>What is Asphalt and Asphalt Calculation?</h2>
-              <h3>Asphalt</h3>
-              <p>
-                Asphalt, also known as bitumen, is a sticky, black, and highly
-                viscous liquid or semi-solid form of petroleum. It is commonly
-                used in road construction as a binding agent for aggregate
-                materials like gravel, sand, and crushed stone to create asphalt
-                concrete. Asphalt provides durability, weather resistance, and
-                smoothness to road surfaces, making it a popular choice for
-                paving roads, highways, and airport runways.
-              </p>
 
-              <h3>Asphalt Calculation</h3>
-              <p>
-                When calculating the quantity of asphalt needed for a project,
-                it's essential to consider the volume of the area to be paved
-                and the density of the asphalt. The formula for calculating the
-                asphalt quantity is:
-              </p>
-
-              <ul>
-                <li>
-                  <strong>Volume:</strong> The volume represents the space to be
-                  filled with asphalt. It is typically calculated by multiplying
-                  the length, width, and depth of the area to be paved. For
-                  example, if you have a rectangular area, the volume (V) can be
-                  calculated as V = Length × Width × Depth.
-                </li>
-                <li>
-                  <strong>Density of Asphalt:</strong> The density of asphalt,
-                  usually measured in kilograms per cubic meter (kg/m³) or
-                  pounds per cubic yard (lb/yd³), represents the mass per unit
-                  volume of asphalt. It can vary depending on the type of
-                  asphalt mix and its composition.
-                </li>
-              </ul>
-
-              <p>
-                By multiplying the volume of the area to be paved by the density
-                of the asphalt, you can determine the total quantity of asphalt
-                needed for your project. This calculation ensures that you have
-                sufficient asphalt to cover the specified area at the desired
-                thickness.
-              </p>
+              <div className="asphalt-info">
+                <h3>Asphalt</h3>
+                <div className="pipe-type">
+                  <p>
+                    Asphalt, also known as bitumen, is a sticky, black, and
+                    highly viscous liquid or semi-solid form of petroleum. It is
+                    commonly used in road construction as a binding agent for
+                    aggregate materials like gravel, sand, and crushed stone to
+                    create asphalt concrete. Asphalt provides durability,
+                    weather resistance, and smoothness to road surfaces, making
+                    it a popular choice for paving roads, highways, and airport
+                    runways.
+                  </p>
+                  <div className="pipe-image">
+                    <img src={asphalt_1} alt="Asphalt" />
+                  </div>
+                </div>
+              </div>
+              <div className="asphalt-info">
+                <h3>Asphalt Calculation</h3>
+                <div className="pipe-type">
+                  <p>
+                    When calculating the quantity of asphalt needed for a
+                    project, it's essential to consider the volume of the area
+                    to be paved and the density of the asphalt. The formula for
+                    calculating the asphalt quantity is:
+                    <ul>
+                      <li>
+                        <strong>Volume:</strong> The volume represents the space
+                        to be filled with asphalt. It is typically calculated by
+                        multiplying the length, width, and depth of the area to
+                        be paved. For example, if you have a rectangular area,
+                        the volume (V) can be calculated as V = Length × Width ×
+                        Depth.
+                      </li>
+                      <li>
+                        <strong>Density of Asphalt:</strong> The density of
+                        asphalt, usually measured in kilograms per cubic meter
+                        (kg/m³) or pounds per cubic yard (lb/yd³), represents
+                        the mass per unit volume of asphalt. It can vary
+                        depending on the type of asphalt mix and its
+                        composition.
+                      </li>
+                    </ul>
+                    By multiplying the volume of the area to be paved by the
+                    density of the asphalt, you can determine the total quantity
+                    of asphalt needed for your project. This calculation ensures
+                    that you have sufficient asphalt to cover the specified area
+                    at the desired thickness.
+                  </p>
+                  <div className="pipe-image">
+                    <img src={asphalt_2} alt="Asphalt" />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="col-md-4">
-            <img src={asphalt_1} alt="Asphalt" className="img-fluid" />
-          </div>
+          </Col>
         </Row>
       </Col>
     </div>
