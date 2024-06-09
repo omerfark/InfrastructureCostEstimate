@@ -8,9 +8,8 @@ import asphalt_1 from "../../assets/asphalt-1.png";
 import asphalt_2 from "../../assets/asphalt-2.png";
 import LeafletMap from "../LeafletMap/LeafletMap";
 import HeaderTr from "../HeadTr/HeadTr.jsx";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSync } from '@fortawesome/free-solid-svg-icons';
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSync } from "@fortawesome/free-solid-svg-icons";
 
 const AsphaltCalculator = () => {
   const [holdUserId, setHoldUserId] = useState("");
@@ -29,6 +28,7 @@ const AsphaltCalculator = () => {
     });
   }, [navigate]);
 
+  const [notification, setNotification] = useState("");
   const emptyValue = null;
   const [length, setLength] = useState(null); // Kazı boyu
   const [width, setWidth] = useState(null); // Genişlik
@@ -364,10 +364,11 @@ const AsphaltCalculator = () => {
 
       const data_id = response.data._id;
       setIdAsphaltProject(data_id);
-
+      setNotification("Data successfully sent to the database!"); // Başarılı mesajı
       console.log("Backend'den gelen yanıt:", response.data);
     } catch (error) {
       console.error("Hata:", error);
+      setNotification("Failed to send data to the database."); // Hata mesajı
       if (isMounted.current) {
         console.error("Failed to send data to DB", error);
       }
@@ -494,8 +495,14 @@ const AsphaltCalculator = () => {
           </Col>
           <Col xs={6}>
             <div className="excavation-col flex-grow-1 ">
-              <h2>Asphalt Road Calculating <button onClick={handleRefresh}><FontAwesomeIcon icon={faSync} /> </button></h2>
+              <h2>
+                Asphalt Road Calculating{" "}
+                <button onClick={handleRefresh}>
+                  <FontAwesomeIcon icon={faSync} />{" "}
+                </button>
+              </h2>
               <form onSubmit={handleSubmit}>
+                {notification && <p>{notification}</p>}
                 <label>
                   Length (m):
                   <input
@@ -529,7 +536,9 @@ const AsphaltCalculator = () => {
                   />
                 </label>
                 <br />
-                <div><p>The 1 lane road is 3 m wide.</p></div>
+                <div>
+                  <p>The 1 lane road is 3 m wide.</p>
+                </div>
                 <div className="calculate">
                   <button type="submit" className="calculate-button m-2">
                     {" "}
@@ -569,7 +578,9 @@ const AsphaltCalculator = () => {
                   <tr>
                     <td>Excavation </td>
                     <td>
-                      {valueOfExcavation ? `${valueOfExcavation.toFixed(2)} m³` : "-"}
+                      {valueOfExcavation
+                        ? `${valueOfExcavation.toFixed(2)} m³`
+                        : "-"}
                     </td>
                     <td>
                       {priceExcavation

@@ -8,9 +8,8 @@ import LeafletMap from "../LeafletMap/LeafletMap";
 import HeaderTr from "../HeadTr/HeadTr.jsx";
 import büzz_pipe from "../../assets/büzz-pipe.png";
 import koruge_pipe from "../../assets/koruge-pipe.png";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSync } from '@fortawesome/free-solid-svg-icons';
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSync } from "@fortawesome/free-solid-svg-icons";
 
 const Comprehensive = () => {
   const [holdUserId, setHoldUserId] = useState("");
@@ -18,6 +17,7 @@ const Comprehensive = () => {
   const [distance, setDistance] = useState(0); //leaflet değeri
   const [length, setLength] = useState(null); // Kazı boyu
   const [volume, setVolume] = useState(null); // Hacim
+  const [notification, setNotification] = useState("");
 
   const navigate = useNavigate();
   axios.defaults.withCredentials = true;
@@ -636,10 +636,11 @@ const Comprehensive = () => {
 
       const data_id = response.data._id;
       setIdAllProject(data_id);
-
+      setNotification("Data successfully sent to the database!"); // Başarılı mesajı
       console.log("Backend'den gelen yanıt:", response.data);
     } catch (err) {
       console.log(err);
+      setNotification("Failed to send data to the database."); // Hata mesajı
       if (isMounted.current) {
         console.error("Failed to send data to DB", err);
       }
@@ -819,7 +820,6 @@ const Comprehensive = () => {
     window.location.reload();
   };
 
-
   return (
     <div className="asphalt">
       <Col>
@@ -832,8 +832,14 @@ const Comprehensive = () => {
           </Col>
           <Col xs={6}>
             <div className="excavation-col flex-grow-1 ">
-              <h2>Asphalt Road Calculating <button onClick={handleRefresh}><FontAwesomeIcon icon={faSync} /> </button></h2>
+              <h2>
+                Asphalt Road Calculating{" "}
+                <button onClick={handleRefresh}>
+                  <FontAwesomeIcon icon={faSync} />{" "}
+                </button>
+              </h2>
               <form onSubmit={handleSubmit}>
+                {notification && <p>{notification}</p>}
                 <label>
                   Length (m):
                   <input
@@ -1203,8 +1209,7 @@ const Comprehensive = () => {
                 </div>
               </div>
               <div className="asphalt-info">
-                <h3>Asphalt Road Construction and Costs
-                </h3>
+                <h3>Asphalt Road Construction and Costs</h3>
                 <div className="pipe-type">
                   <p>
                     Asphalt road construction is a common method for creating

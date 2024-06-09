@@ -31,6 +31,7 @@ const PipeConcrete = () => {
 
   //test.omer1212@gmail.com
 
+  const [notification, setNotification] = useState("");
   const emptyValue = null;
   const [length, setLength] = useState(null); // Kazı boyu
   const [excavation_width, setWidth] = useState(null); // Genişlik
@@ -394,10 +395,11 @@ const PipeConcrete = () => {
 
       const data_id = response.data._id;
       setIdPipeConcreteProject(data_id);
-
+      setNotification("Data successfully sent to the database!"); // Başarılı mesajı
       console.log("Backend'den gelen yanıt:", response.data);
     } catch (error) {
       console.error("Hata:", error);
+      setNotification("Failed to send data to the database."); // Hata mesajı
       if (isMounted.current) {
         console.error("Failed to send data to DB", error);
       }
@@ -532,6 +534,7 @@ const PipeConcrete = () => {
                 </button>
               </h2>
               <form onSubmit={handleSubmit}>
+                {notification && <p>{notification}</p>}
                 {/* Seçilen derinlik değerini gösterme */}
                 <label>
                   Length (m):

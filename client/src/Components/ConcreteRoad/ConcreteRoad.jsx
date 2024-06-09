@@ -30,6 +30,7 @@ const ConcreteRoad = () => {
     });
   }, [navigate]);
 
+  const [notification, setNotification] = useState("");
   const emptyValue = null;
   const [length, setLength] = useState(null); // Kazı boyu
   const [width, setWidth] = useState(null); // Genişlik
@@ -364,10 +365,11 @@ const ConcreteRoad = () => {
 
       const data_id = response.data._id;
       setIdConcreteRoadProject(data_id);
-
+      setNotification("Data successfully sent to the database!"); // Başarılı mesajı
       console.log("Backend'den gelen yanıt:", response.data);
     } catch (err) {
       console.log(err);
+      setNotification("Failed to send data to the database."); // Hata mesajı
       if (isMounted.current) {
         console.error("Failed to send data to DB", err);
       }
@@ -501,7 +503,9 @@ const ConcreteRoad = () => {
                   <FontAwesomeIcon icon={faSync} />{" "}
                 </button>
               </h2>
+
               <form onSubmit={handleSubmit}>
+                {notification && <p>{notification}</p>}
                 <label>
                   Length (m):
                   <input

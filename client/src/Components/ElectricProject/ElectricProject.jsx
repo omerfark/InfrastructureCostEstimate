@@ -8,9 +8,8 @@ import LeafletMap from "../LeafletMap/LeafletMap";
 import HeaderTr from "../HeadTr/HeadTr.jsx";
 import electric_3 from "../../assets/electric-3.png";
 import electric_5 from "../../assets/electric-5.png";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSync } from '@fortawesome/free-solid-svg-icons';
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSync } from "@fortawesome/free-solid-svg-icons";
 
 const ElectricProject = () => {
   const [holdUserId, setHoldUserId] = useState("");
@@ -30,6 +29,7 @@ const ElectricProject = () => {
     });
   }, [navigate]);
 
+  const [notification, setNotification] = useState("");
   const emptyValue = null;
   const [length, setLength] = useState(null); // Kazı boyu
   const [width, setWidth] = useState(null); // Genişlik
@@ -400,10 +400,11 @@ const ElectricProject = () => {
 
       const data_id = response.data._id;
       setIdElectricProject(data_id);
-
+      setNotification("Data successfully sent to the database!"); // Başarılı mesajı
       console.log("Backend'den gelen yanıt:", response.data);
     } catch (err) {
       console.error("Hata:", err);
+      setNotification("Failed to send data to the database."); // Hata mesajı
       if (isMounted.current) {
         console.error("Failed to send data to DB", err);
       }
@@ -528,7 +529,6 @@ const ElectricProject = () => {
     window.location.reload();
   };
 
-
   return (
     <div className="concrete">
       <Col>
@@ -541,8 +541,14 @@ const ElectricProject = () => {
           </Col>
           <Col xs={6}>
             <div className="excavation-col">
-              <h2>Electric laying Calculate <button onClick={handleRefresh}><FontAwesomeIcon icon={faSync} /> </button></h2>
+              <h2>
+                Electric laying Calculate{" "}
+                <button onClick={handleRefresh}>
+                  <FontAwesomeIcon icon={faSync} />{" "}
+                </button>
+              </h2>
               <form onSubmit={handleSubmit}>
+                {notification && <p>{notification}</p>}
                 <label>
                   Length (m):
                   <input

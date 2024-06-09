@@ -199,7 +199,7 @@ const ProjectProfile = () => {
     }
   }, [selectedId]);
 
-  // Handle Asphalt project selection
+  // Handle electric project selection
   const electricHandleButtonClick = (id) => {
     setSelectedId(id);
     fetchSelectedElectricProject();
@@ -265,7 +265,7 @@ const ProjectProfile = () => {
   }, [userId, selectedId]);
 
   const handleDeleteConcreteRoad = (id) => {
-    selectedId(id);
+    setSelectedId(id);
     deleteSelectedConcreteRoad();
   };
 
@@ -334,7 +334,7 @@ const ProjectProfile = () => {
     }
   }, [selectedId]);
 
-  // Handle Asphalt project selection
+  // Handle comprehensive project selection
   const comprehensiveHandleButtonClick = (id) => {
     setSelectedId(id);
     fetchSelectedComprehensiveProject();

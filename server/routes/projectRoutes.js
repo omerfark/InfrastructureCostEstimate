@@ -119,7 +119,7 @@ router.patch('/:id/concreteRoad', async (req, res) => {
 router.delete('/:id/concreteRoad/:concreteRoadId', async (req, res) => {
 try {
     const userId = req.params.id; // Proje kimliğini alın
-    const concreteRoadId  = req.params.concreteRoadId; // Yeni asfalt projesi kimliğini alın
+    const concreteRoadId  = req.params.concreteRoadId; 
 
     // Proje belgesini bulun
     const project = await ProjectModel.findOne({user_id: userId});
