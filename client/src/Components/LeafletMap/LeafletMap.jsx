@@ -212,9 +212,9 @@ const LeafletMap = ({ onTotalDistanceChange }) => {
           onClick={handleRemoveLastMarker}
           style={{ marginRight: "10px" }}
         >
-          Son Noktayı Sil
+         Delete Last Point
         </button>
-        <button onClick={handleRemoveAllMarkers}>Tümünü Sil</button>
+        <button onClick={handleRemoveAllMarkers}>Delete All</button>
         {/* <select onChange={handleCityChange}>
           {cities.map((city) => (
             <option key={city.name} value={city.name}>

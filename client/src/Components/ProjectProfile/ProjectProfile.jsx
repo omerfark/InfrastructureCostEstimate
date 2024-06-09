@@ -178,6 +178,7 @@ const ProjectProfile = () => {
     setSelectedId(id);
     deleteSelectedAsphalt();
   };
+
   //#endregion
 
   //#region  Fetch selected project details  Electric
@@ -428,7 +429,7 @@ const ProjectProfile = () => {
                           </button>
                           <button
                             key={asphaltProject._id}
-                            className="delete-button"
+                            className="delete-button m-2"
                             onClick={() => handleDeleteAsphalt(asphaltProject)}
                           >
                             {" "}

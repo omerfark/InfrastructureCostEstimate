@@ -5,8 +5,10 @@ import "./ConcreteRoad.css";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import LeafletMap from "../LeafletMap/LeafletMap";
-import asphalt_1 from "../../assets/asphalt-1.png";
+import concreteRoad_2 from "../../assets/concreteRoad-1.png";
 import HeaderTr from "../HeadTr/HeadTr.jsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSync } from "@fortawesome/free-solid-svg-icons";
 
 const ConcreteRoad = () => {
   const [holdUserId, setHoldUserId] = useState("");
@@ -30,8 +32,9 @@ const ConcreteRoad = () => {
 
   const emptyValue = null;
   const [length, setLength] = useState(null); // Kazı boyu
-  const width = 4.5; // Genişlik
-  const depth = 0.2; // Derinlik // ı run the code ?? yes is there any errors?  no error
+  const [width, setWidth] = useState(null); // Genişlik
+  // const width = 8; // Genişlik
+  const depth = 0.2; // Derinlik
   const [excavation_volume, setVolume] = useState(null); // Hacim okey ı am looking
 
   //Vehicles
@@ -97,8 +100,6 @@ const ConcreteRoad = () => {
       const cesanValue = (length / 5) * 2; // 1 tanesi 5m x 2.15 m, 7cm şeklinde --> adet 100 adet 10 bin tl
       const totalValuePmt = 0.1 * length * width; // 10 cm pmt serilir
       const totalValueConcrete = 2.5 * (width * length * 0.15); // 1 m3 beton 2.5 ton ediyor
-
-
 
       vehPrices.forEach((item) => {
         switch (item.type) {
@@ -197,8 +198,6 @@ const ConcreteRoad = () => {
 
         // Yeni diziyi state'e atayın
         setMatPrices(newPrices);
-
-        // Bu kısmı useEffect dışında kullanmak istediğiniz yere taşıyın
       } catch (err) {
         console.error(err);
       }
@@ -422,7 +421,7 @@ const ConcreteRoad = () => {
     getExcel();
   };
 
-  const handleRecordIt =( e) =>{
+  const handleRecordIt = (e) => {
     e.preventDefault();
     sendToDB();
   };
@@ -432,21 +431,20 @@ const ConcreteRoad = () => {
     e.preventDefault();
 
     const totalMPrice =
-    priceExcavator + priceTruck + priceRoller + priceGreyder;
+      priceExcavator + priceTruck + priceRoller + priceGreyder;
 
-  const totalVPRice =
-    pricePmt +
-    priceCesan +
-    priceConcrete +
-    priceExcavation +
-    worPrices * numberOfWorkers;
+    const totalVPRice =
+      pricePmt +
+      priceCesan +
+      priceConcrete +
+      priceExcavation +
+      worPrices * numberOfWorkers;
 
-  const totalAllPrice = totalMPrice + totalVPRice;
+    const totalAllPrice = totalMPrice + totalVPRice;
 
-  setTotalProjectPrice(totalAllPrice.toFixed(0));
+    setTotalProjectPrice(totalAllPrice.toFixed(0));
 
-  console.log("deneme price: " + totalAllPrice.toLocaleString("tr-TR"));
-
+    console.log("deneme price: " + totalAllPrice.toLocaleString("tr-TR"));
   };
 
   // okey ?yup
@@ -481,19 +479,28 @@ const ConcreteRoad = () => {
     setLength(distance);
   }, [distance]);
 
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   return (
     <div className="concrete">
       <Col>
-      <Row>
-      <HeaderTr items="concreteRoad" />
-      </Row>
+        <Row>
+          <HeaderTr items="concreteRoad" />
+        </Row>
         <Row className="mt-5">
           <Col>
             <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
           </Col>
           <Col xs={6}>
             <div className="excavation-col">
-              <h2>Concrete Volume Calculating</h2>
+              <h2>
+                Concrete Volume Calculating
+                <button onClick={handleRefresh}>
+                  <FontAwesomeIcon icon={faSync} />{" "}
+                </button>
+              </h2>
               <form onSubmit={handleSubmit}>
                 <label>
                   Length (m):
@@ -511,9 +518,9 @@ const ConcreteRoad = () => {
                   <input
                     className="m-2"
                     type="number"
-                    placeholder="Not needed"
-                    value={width} //width yani genişlik 4,50 sabit
-                    readOnly // Sadece okunabilir olarak ayarla
+                    value={width}
+                    onChange={(e) => setWidth(e.target.value)}
+                    onFocus={(e) => e.target.select()}
                   />
                 </label>
                 <br />
@@ -523,7 +530,7 @@ const ConcreteRoad = () => {
                     className="m-2"
                     type="number"
                     placeholder="Not needed" // okey yes
-                    value={depth} // you have it set to 0.2 as defualt so we are okay, just need to check one thing then u can try to run the code
+                    value={depth}
                     readOnly // Sadece okunabilir olarak ayarla
                   />
                 </label>
@@ -813,8 +820,11 @@ const ConcreteRoad = () => {
             </div>
           </div>
           <div className="col-md-4">
-            <img src={asphalt_1} alt="Asphalt" className="img-fluid" />
-            <img src={asphalt_1} alt="Asphalt" className="img-fluid" />
+            <img
+              src={concreteRoad_2}
+              alt="Concrete Road"
+              className="img-fluid"
+            />
           </div>
         </Row>
       </Col>

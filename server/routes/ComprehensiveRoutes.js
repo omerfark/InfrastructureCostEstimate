@@ -84,7 +84,7 @@ router.get("/:id/export/excel", async (req, res) => {
     );
     res.setHeader(
       "Content-Disposition",
-      "attachment; filename=" + "asphalt_projects.xlsx"
+      "attachment; filename=" + "comprehensive_projects.xlsx"
     );
     await workbook.xlsx.write(res);
     res.end();

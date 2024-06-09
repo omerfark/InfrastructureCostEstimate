@@ -5,6 +5,12 @@ import Row from "react-bootstrap/esm/Row";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import LeafletMap from "../LeafletMap/LeafletMap";
+import HeaderTr from "../HeadTr/HeadTr.jsx";
+import büzz_pipe from "../../assets/büzz-pipe.png";
+import koruge_pipe from "../../assets/koruge-pipe.png";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSync } from '@fortawesome/free-solid-svg-icons';
+
 
 const Comprehensive = () => {
   const [holdUserId, setHoldUserId] = useState("");
@@ -17,16 +23,16 @@ const Comprehensive = () => {
   axios.defaults.withCredentials = true;
 
   // Fetch user token and verify authentication
- // Doğrulama
- useEffect(() => {
-  axios.get("http://localhost:3000/auth/verify").then((res) => {
-    if (res.data.status) {
-      setHoldUserId(res.data.token.userId);
-    } else {
-      navigate("/login");
-    }
-  });
-}, [navigate]);
+  // Doğrulama
+  useEffect(() => {
+    axios.get("http://localhost:3000/auth/verify").then((res) => {
+      if (res.data.status) {
+        setHoldUserId(res.data.token.userId);
+      } else {
+        navigate("/login");
+      }
+    });
+  }, [navigate]);
 
   //vehicles
   const [numberOfExcavator, setNumberOfExcavator] = useState(null);
@@ -131,7 +137,7 @@ const Comprehensive = () => {
       console.log("vehPrices", vehPrices);
       console.log("eqPrices", eqPrices);
 
-      const asphaltExcavationVolume = 0.2 * 2 * length; // derinlik * genişlik * uzunluk
+      const asphaltExcavationVolume = 0.2 * 3 * length; // derinlik * genişlik * uzunluk
       const electricProjectVolum = 0.8 * 0.4 * length; // derinlik * genişlik * uzunluk
       const pipeConcreteProjectVolume = 3 * 0.7 * length; // derinlik * genişlik * uzunluk
 
@@ -809,18 +815,24 @@ const Comprehensive = () => {
     }
   }, [idAllProject, holdUserId]);
 
+  const handleRefresh = () => {
+    window.location.reload();
+  };
 
 
   return (
     <div className="asphalt">
       <Col>
         <Row>
+          <HeaderTr items="comprehensive" />
+        </Row>
+        <Row>
           <Col className="mt-3">
             <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
           </Col>
           <Col xs={6}>
             <div className="excavation-col flex-grow-1 ">
-              <h2>Asphalt Road Calculating</h2>
+              <h2>Asphalt Road Calculating <button onClick={handleRefresh}><FontAwesomeIcon icon={faSync} /> </button></h2>
               <form onSubmit={handleSubmit}>
                 <label>
                   Length (m):
@@ -1157,6 +1169,90 @@ const Comprehensive = () => {
                 {" "}
                 Export Excel
               </button>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <div className=" excavation-col">
+              <h2>Types of Pipes for Infrastructure</h2>
+
+              <div className="asphalt-info">
+                <h3>Underground Electrical Installation and Costs</h3>
+                <div className="pipe-type">
+                  <p>
+                    Underground electrical installation involves burying
+                    electrical cables and conduits beneath the surface to
+                    provide power to various infrastructures such as street
+                    lighting, traffic signals, and residential or commercial
+                    areas. This method offers numerous advantages, including
+                    enhanced safety, aesthetic appeal, and protection from
+                    weather-related damage. The cost of underground electrical
+                    installation can vary significantly depending on factors
+                    such as the length of the trench, soil conditions, the type
+                    of conduits used, and the complexity of the installation.
+                    Typically, it involves expenses for excavation, materials,
+                    labor, and restoration of the surface. While the initial
+                    costs are higher compared to overhead lines, the long-term
+                    benefits such as reduced maintenance and fewer outages often
+                    justify the investment.
+                  </p>
+                  <div className="pipe-image">
+                    <img src={büzz_pipe} alt="Asphalt" />
+                  </div>
+                </div>
+              </div>
+              <div className="asphalt-info">
+                <h3>Asphalt Road Construction and Costs
+                </h3>
+                <div className="pipe-type">
+                  <p>
+                    Asphalt road construction is a common method for creating
+                    durable and smooth road surfaces. The process involves
+                    preparing the subgrade, laying a base layer, and then
+                    applying hot mix asphalt, which is a combination of asphalt
+                    binder and aggregate materials like sand, gravel, and
+                    crushed stone. The costs associated with asphalt road
+                    construction depend on factors such as the size of the
+                    project, the thickness of the asphalt layers, the quality of
+                    materials, and labor costs. Additionally, costs can be
+                    influenced by site-specific conditions like drainage and
+                    existing terrain. On average, the expense can range from $2
+                    to $5 per square foot. Despite the initial investment,
+                    asphalt roads offer longevity, ease of maintenance, and a
+                    quick construction process, making them a preferred choice
+                    for many road projects.
+                  </p>
+                  <div className="pipe-image">
+                    <img src={koruge_pipe} alt="Asphalt" />
+                  </div>
+                </div>
+              </div>
+              <div className="asphalt-info">
+                <h3>Concrete Sewer Pipe Installation</h3>
+                <div className="pipe-type">
+                  <p>
+                    Installing concrete sewer pipes is a critical task in modern
+                    infrastructure, ensuring effective wastewater management and
+                    sanitation. The process involves trench excavation, pipe
+                    laying, jointing, and backfilling. Concrete pipes are
+                    favored for their durability, strength, and resistance to
+                    various environmental factors. The cost of installing
+                    concrete sewer pipes varies based on the diameter and length
+                    of the pipes, the depth of installation, soil conditions,
+                    and labor. Other contributing factors include the costs of
+                    excavation, bedding materials, and surface restoration after
+                    the installation. Typically, the costs can range from $50 to
+                    $250 per linear foot. Although concrete pipes can be more
+                    expensive than other materials, their longevity and
+                    reliability make them a cost-effective solution in the long
+                    run for sewer systems.
+                  </p>
+                  <div className="pipe-image">
+                    <img src={büzz_pipe} alt="Asphalt" />
+                  </div>
+                </div>
+              </div>
             </div>
           </Col>
         </Row>

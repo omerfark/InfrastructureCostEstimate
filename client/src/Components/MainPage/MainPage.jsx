@@ -34,7 +34,7 @@ function MainPage() {
   return (
     <div>
       <Hero />
-      <Title  title="Our Projects" />
+      <Title  title="Our Projects Type" />
       <div className="programs">
         <div className="program">
           <img src={asphalt_1} alt="" />

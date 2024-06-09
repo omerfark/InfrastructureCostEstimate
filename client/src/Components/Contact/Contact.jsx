@@ -6,14 +6,13 @@ import phone_icon from "../../assets/phone-icon.png";
 import location_icon from "../../assets/location-icon.png";
 import white_arrow from "../../assets/white-arrow.png";
 import Title from "../Title/Title";
-import excavator_2 from'../../assets/excavator-2.png'
-import { Link } from 'react-router-dom'
-import excavator_1 from '../../assets/excavator-1.png'
-import truck_1 from '../../assets/truck-1.png'
-import paver_1 from '../../assets/paver-1.png'
-import freze_1 from '../../assets/freze-1.png'
+import excavator_2 from "../../assets/excavator-2.png";
+import { Link } from "react-router-dom";
+import excavator_1 from "../../assets/excavator-1.png";
+import truck_1 from "../../assets/truck-1.png";
+import paver_1 from "../../assets/paver-1.png";
+import freze_1 from "../../assets/freze-1.png";
 import LeafletMap from "../LeafletMap/LeafletMap";
-
 
 const Contact = () => {
   const [result, setResult] = React.useState("");
@@ -41,13 +40,11 @@ const Contact = () => {
     }
   };
 
-
   const [distance, setDistance] = useState(0);
 
   const handleTotalDistanceChange = (newDistance) => {
     setDistance(newDistance);
   };
-
 
   const [showMap, setShowMap] = useState(false);
   const toggleMap = () => {
@@ -56,44 +53,44 @@ const Contact = () => {
 
   return (
     <>
-     <Title subTitle="About Us" title="About us kısa yazı" />
-    <div className='about '>
-      
-        <div className='about-left'>
-            <img src={excavator_2} alt='' className='about-img'/>
+      <Title subTitle="" title="About Us" />
+      <div className="about ">
+        <div className="about-left">
+          <img src={excavator_2} alt="" className="about-img" />
         </div>
-        
-        <div className="about-right">
-            <h3></h3>
-            <h2></h2>
-            <p>Lorem, ipsum dolor 
-                sit amet consectetur adipisicing elit.
-                Neque, nulla illum! Quasi quia iusto 
-                amet ipsum hic eligendi et placeat
-                explicabo, nulla reprehenderit.
-                Similique sed, quas vel veritatis illum
-                ducimus.</p>
-            <p>Lorem ipsum dolor sit amet consectetur,
-                adipisicing elit. Ipsum non culpa
-                officia, aperiam voluptatum, veniam 
-                quas quasi porro molestias quis
-                officiis hic dolore a voluptatibus 
-                nam dignissimos facere. Magni,
-                voluptatem.</p>
-        </div>
-    </div>
 
-    <div className='campus'>
-      <Title subTitle='Vehicles' title='About Vehicles '/>
-        <div className="gallery">
-            <img src={excavator_1} alt=''/>
-            <img src={truck_1} alt=''/>
-            <img src={paver_1} alt=''/>
-            <img src={freze_1} alt=''/>
+        <div className="about-right">
+          <h3></h3>
+          <h2>About This Project</h2>
+          <p>
+            This project focuses on providing essential information and
+            guidelines for the installation of critical infrastructure
+            components, including underground electrical systems, asphalt road
+            construction, and concrete sewer pipe installation. Our goal is to
+            ensure that all aspects of these installations are clearly
+            understood, from cost considerations to technical specifications, to
+            support efficient and effective project planning and execution. By
+            leveraging industry best practices and high-quality materials, we
+            aim to enhance the durability, safety, and performance of
+            infrastructure projects.
+          </p>
         </div>
-        <Link to="/"><button className='btn dark-btn'>See more here <img src={white_arrow} alt=''/></button>
-</Link>
-    </div>
+      </div>
+
+      <div className="campus">
+        <Title subTitle="Vehicles" title="About Vehicles " />
+        <div className="gallery">
+          <img src={excavator_1} alt="" />
+          <img src={truck_1} alt="" />
+          <img src={paver_1} alt="" />
+          <img src={freze_1} alt="" />
+        </div>
+        <Link to="/">
+          <button className="btn dark-btn">
+            See more here <img src={white_arrow} alt="" />
+          </button>
+        </Link>
+      </div>
 
       <Title subTitle="Contact" title="Contact us" />
       <div className="contact">
@@ -102,10 +99,11 @@ const Contact = () => {
             Send us a message <img src={msg_icon} alt="" />
           </h3>
           <p>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur
-            ullam dolorum quae facilis quo tempore? Ullam perspiciatis, commodi
-            sed iusto dolorem quod nobis labore odio repellendus quasi unde
-            incidunt porro.
+            For any inquiries or further information about our project and
+            services, please feel free to contact us. We are here to assist you
+            and provide the support you need. Reach out to us via email or
+            phone, and our team will respond promptly to your queries. We look
+            forward to hearing from you!
           </p>
           <ul>
             <li>
@@ -161,20 +159,17 @@ const Contact = () => {
       </div> */}
 
       <div>
-      <Title subTitle="Map" title="Map container"/>
-      <h1>My Map Application</h1>
+        <Title subTitle="Map" title="Map container" />
+        <h1>My Map Application</h1>
 
-      <button onClick={toggleMap}>
-        {showMap ? 'Hide Map' : 'Show Map'}
-      </button>
-      {showMap && (
-        <div>
-          
-          <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
-          <h2>Total Distance: {distance} m</h2>
-        </div>
-      )}
-    </div>
+        <button onClick={toggleMap}>{showMap ? "Hide Map" : "Show Map"}</button>
+        {showMap && (
+          <div>
+            <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
+            <h2>Total Distance: {distance} m</h2>
+          </div>
+        )}
+      </div>
     </>
   );
 };

@@ -8,6 +8,8 @@ import büzz_pipe from "../../assets/büzz-pipe.png";
 import koruge_pipe from "../../assets/koruge-pipe.png";
 import LeafletMap from "../LeafletMap/LeafletMap";
 import HeaderTr from "../HeadTr/HeadTr.jsx";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSync } from "@fortawesome/free-solid-svg-icons";
 
 const PipeConcrete = () => {
   const [holdUserId, setHoldUserId] = useState("");
@@ -85,105 +87,108 @@ const PipeConcrete = () => {
   const [vehPrices, setVehPrices] = useState([]);
   const [worPrices, setWorPrices] = useState(0);
 
-  const calcualteEssential = useCallback((matPrices, vehPrices) => {
-    console.log("first caluclation");
-    console.log("matPrices", matPrices);
-    console.log("vehPrices", vehPrices);
+  const calcualteEssential = useCallback(
+    (matPrices, vehPrices) => {
+      console.log("first caluclation");
+      console.log("matPrices", matPrices);
+      console.log("vehPrices", vehPrices);
 
-    const calTimeofProject = Math.ceil(length / 2500);
+      const calTimeofProject = Math.ceil(length / 2500);
 
-    const options = [
-      {
-        name: "concretepipe",
-        diameter: "0.3",
-        volume: "0.11",
-        length: "1.5",
-        nickname: "sewer type 1 - (Concrete)",
-      },
-    ];
+      const options = [
+        {
+          name: "concretepipe",
+          diameter: "0.3",
+          volume: "0.11",
+          length: "1.5",
+          nickname: "sewer type 1 - (Concrete)",
+        },
+      ];
 
-    const depthValue = 7 * options[0].diameter; // boru tipine göre genişlik
-    const widthValue = 4 * options[0].diameter; // boru tipine göre genişlik
+      const depthValue = 7 * options[0].diameter; // boru tipine göre genişlik
+      const widthValue = 4 * options[0].diameter; // boru tipine göre genişlik
 
-    setDepth(depthValue);
-    setWidth(widthValue);
+      setDepth(depthValue);
+      setWidth(widthValue);
 
-    const calculatedVolume = length * widthValue * depthValue;
-    setVolume(calculatedVolume.toFixed(0));
+      const calculatedVolume = length * widthValue * depthValue;
+      setVolume(calculatedVolume.toFixed(0));
 
-    const meterConnectors = homePiece * 1; // 1 mt c eleman
-    const meterBaseElements = 1 * (length / 60); // 1mt genişlik uzunluk
-    const calPiecePipe =(length - (meterBaseElements + meterConnectors)) /options[0].length;
-    const piecePipe = Math.ceil(calPiecePipe);
-    
+      const meterConnectors = homePiece * 1; // 1 mt c eleman
+      const meterBaseElements = 1 * (length / 60); // 1mt genişlik uzunluk
+      const calPiecePipe =
+        (length - (meterBaseElements + meterConnectors)) / options[0].length;
+      const piecePipe = Math.ceil(calPiecePipe);
 
-    const calAggregateVolume = calculatedVolume - (options[0].volume * piecePipe); //beton boru aggrega hesabı alt üst eşit
+      const calAggregateVolume =
+        calculatedVolume - options[0].volume * piecePipe; //beton boru aggrega hesabı alt üst eşit
 
-    const calBaseElement = Math.ceil(length / 60);
-    const calConnectors = Math.ceil(meterConnectors);
+      const calBaseElement = Math.ceil(length / 60);
+      const calConnectors = Math.ceil(meterConnectors);
 
-    const calNumberOfVehicles = Math.ceil(calculatedVolume / 6000); // üst tama yuvarlama
-    const numberOfTwo = 2 * calNumberOfVehicles;
-    const numberOfWorkers = 6 * calNumberOfVehicles;
+      const calNumberOfVehicles = Math.ceil(calculatedVolume / 6000); // üst tama yuvarlama
+      const numberOfTwo = 2 * calNumberOfVehicles;
+      const numberOfWorkers = 6 * calNumberOfVehicles;
 
-    vehPrices.forEach((item) => {
-      switch (item.type) {
-        case "excavator":
-          setPriceExcavator(item.price * numberOfTwo * calTimeofProject);
-          break;
-        case "truck":
-          setPriceTruck(item.price * numberOfTwo * calTimeofProject);
-          break;
-        case "JCB":
-          setPriceJCB(item.price * numberOfTwo * calTimeofProject);
-          break;
-        default:
-          break;
-      }
-    });
+      vehPrices.forEach((item) => {
+        switch (item.type) {
+          case "excavator":
+            setPriceExcavator(item.price * numberOfTwo * calTimeofProject);
+            break;
+          case "truck":
+            setPriceTruck(item.price * numberOfTwo * calTimeofProject);
+            break;
+          case "JCB":
+            setPriceJCB(item.price * numberOfTwo * calTimeofProject);
+            break;
+          default:
+            break;
+        }
+      });
 
+      matPrices.forEach((item) => {
+        switch (item.type) {
+          case "aggregate":
+            setPriceAggregate(item.price * calAggregateVolume);
+            break;
+          case "concretepipe":
+            setPricePipe(item.price * piecePipe);
+            break;
+          case "baseElement":
+            setPriceBaseElement(item.price * calBaseElement);
+            break;
+          case "excavation":
+            setPriceExcavation(item.price * calculatedVolume);
+            break;
+          case "connector":
+            setPriceConnectors(item.price * calConnectors);
+            break;
+          case "pvc":
+            setPricePvcPrice(item.price * calConnectors);
+            break;
+          default:
+            break;
+        }
+      });
 
-    matPrices.forEach((item) => {
-      switch (item.type) {
-        case "aggregate":
-          setPriceAggregate(item.price * calAggregateVolume);
-          break;
-        case "concretepipe":
-          setPricePipe(item.price * piecePipe);
-          break;
-        case "baseElement":
-          setPriceBaseElement(item.price * calBaseElement); 
-          break;
-        case "excavation":
-          setPriceExcavation(item.price * calculatedVolume);
-          break;
-        case "connector":
-          setPriceConnectors(item.price * calConnectors); 
-          break;
-        case "pvc":
-          setPricePvcPrice(item.price * calConnectors);
-          break;
-        default:
-          break;
-      }
-    });
+      setCalProjectTime(calTimeofProject);
 
-    setCalProjectTime(calTimeofProject);
+      setValuOfExcavation(calculatedVolume);
+      setValueOfAggregate(calAggregateVolume);
+      setNumberOfPipe(piecePipe); // kaç adet boru hesabı
+      setNumberofBaseElement(calBaseElement); // bağlantı noktaları, taban , bilezik ve kapak
+      setNumberOfConnector(calConnectors); // parsel bağlantısı icin, c elemanı, parsel taba, parsel kapak olarak 1mt
+      setNumberOfPvcPipe(calConnectors); // ev adedi sayısıyla parsel borusu sayısı aynı olacak 2mt lik alınacak pvc
 
-    setValuOfExcavation(calculatedVolume);
-    setValueOfAggregate(calAggregateVolume);
-    setNumberOfPipe(piecePipe); // kaç adet boru hesabı
-    setNumberofBaseElement(calBaseElement); // bağlantı noktaları, taban , bilezik ve kapak
-    setNumberOfConnector(calConnectors); // parsel bağlantısı icin, c elemanı, parsel taba, parsel kapak olarak 1mt
-    setNumberOfPvcPipe(calConnectors); // ev adedi sayısıyla parsel borusu sayısı aynı olacak 2mt lik alınacak pvc
+      setNumberOfExcavator(numberOfTwo);
+      setNumberOfJCB(numberOfTwo);
+      setNumberOfTruck(numberOfTwo);
+      setNumberOfWorkers(numberOfWorkers);
 
-    setNumberOfExcavator(numberOfTwo);
-    setNumberOfJCB(numberOfTwo);
-    setNumberOfTruck(numberOfTwo);
-    setNumberOfWorkers(numberOfWorkers);
-
-    return { numberOfWorkers: numberOfWorkers };
-  }, [length,homePiece]);
+      return { numberOfWorkers: numberOfWorkers };
+    },
+    [length, homePiece]
+  );
 
   //material Price
   useEffect(() => {
@@ -203,7 +208,7 @@ const PipeConcrete = () => {
             setAggregateUnitPrice(material.material_price);
             const aggregatePrice = material.material_price;
             newPrices.push({ type: "aggregate", price: aggregatePrice });
-          }else if (material.material_name === "excavation") {
+          } else if (material.material_name === "excavation") {
             setExcavationUnitPrice(material.material_price);
             const excavationPrice = material.material_price;
             newPrices.push({ type: "excavation", price: excavationPrice });
@@ -429,7 +434,7 @@ const PipeConcrete = () => {
     workerUnitPrice,
     priceWorkers,
     calProjectTime,
-    totalProjectPrice
+    totalProjectPrice,
   ]);
 
   useEffect(() => {
@@ -448,12 +453,10 @@ const PipeConcrete = () => {
     getExcel();
   };
 
-  const handleRecordIt =( e) =>{
+  const handleRecordIt = (e) => {
     e.preventDefault();
     sendToDB();
   };
-
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -466,10 +469,7 @@ const PipeConcrete = () => {
       priceConnectors +
       pricePvcPipe;
     const totalVPRice =
-      priceAggregate +
-      priceExcavation +
-      priceWorkers +
-      pricePipe;
+      priceAggregate + priceExcavation + priceWorkers + pricePipe;
 
     const totalAllPrice = totalMPrice + totalVPRice;
     setTotalProjectPrice(totalAllPrice.toFixed(0));
@@ -498,7 +498,6 @@ const PipeConcrete = () => {
     }
   }, [idPipeConcreteProject, holdUserId]);
 
-
   const [distance, setDistance] = useState(0);
 
   //leaflet map
@@ -510,21 +509,28 @@ const PipeConcrete = () => {
     setLength(distance);
   }, [distance]);
 
-
+  const handleRefresh = () => {
+    window.location.reload();
+  };
 
   return (
     <div className="pipe-calculator">
       <Col>
-      <Row>
-      <HeaderTr items="pipeConcrete" />
-      </Row>
         <Row>
-        <Col>
+          <HeaderTr items="pipeConcrete" />
+        </Row>
+        <Row>
+          <Col>
             <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
           </Col>
           <Col xs={6}>
             <div className="excavation-col">
-              <h2>Excavation and Pipe Calculator</h2>
+              <h2>
+                Excavation and Pipe Calculator{" "}
+                <button onClick={handleRefresh}>
+                  <FontAwesomeIcon icon={faSync} />{" "}
+                </button>
+              </h2>
               <form onSubmit={handleSubmit}>
                 {/* Seçilen derinlik değerini gösterme */}
                 <label>
@@ -583,14 +589,13 @@ const PipeConcrete = () => {
                 </div>
               </form>
               <div className="result">
-                Volume (m³) :{" "}
-                {volume && <span> {volume} m³</span>}
+                Volume (m³) : {volume && <span> {volume} m³</span>}
               </div>
             </div>
           </Col>
         </Row>
         <Row>
-        <Col xs={12} className="mt-4">
+          <Col xs={12} className="mt-4">
             <div className="excavation-col">
               <h2>Asphalt Road Calculator </h2>
               <h3>
@@ -622,7 +627,11 @@ const PipeConcrete = () => {
                   </tr>
                   <tr>
                     <td>Aggreaga</td>
-                    <td>{valueOfAggregate ? `${valueOfAggregate.toFixed(2)} m³` : "-"}</td>
+                    <td>
+                      {valueOfAggregate
+                        ? `${valueOfAggregate.toFixed(2)} m³`
+                        : "-"}
+                    </td>
                     <td>
                       {priceAggregate
                         ? `${priceAggregate.toLocaleString("tr-TR") + " TL"}`
@@ -631,11 +640,7 @@ const PipeConcrete = () => {
                   </tr>
                   <tr>
                     <td> Concrete Pipe</td>
-                    <td>
-                      {numberOfPipe
-                        ? `${numberOfPipe} piece`
-                        : "-"}
-                    </td>
+                    <td>{numberOfPipe ? `${numberOfPipe} piece` : "-"}</td>
                     <td>
                       {pricePipe
                         ? `${pricePipe.toLocaleString("tr-TR") + " TL"}`
@@ -658,9 +663,7 @@ const PipeConcrete = () => {
                   <tr>
                     <td>Connectors</td>
                     <td>
-                      {numberOfConnectors
-                        ? `${numberOfConnectors} piece`
-                        : "-"}
+                      {numberOfConnectors ? `${numberOfConnectors} piece` : "-"}
                     </td>
                     <td>
                       {priceConnectors
@@ -671,9 +674,7 @@ const PipeConcrete = () => {
                   <tr>
                     <td>PVC</td>
                     <td>
-                      {numberOfPvcPipe
-                        ? `${numberOfPvcPipe} piece`
-                        : "-"}
+                      {numberOfPvcPipe ? `${numberOfPvcPipe} piece` : "-"}
                     </td>
                     <td>
                       {pricePvcPipe

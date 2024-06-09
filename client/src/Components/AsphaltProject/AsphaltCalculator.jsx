@@ -8,6 +8,9 @@ import asphalt_1 from "../../assets/asphalt-1.png";
 import asphalt_2 from "../../assets/asphalt-2.png";
 import LeafletMap from "../LeafletMap/LeafletMap";
 import HeaderTr from "../HeadTr/HeadTr.jsx";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSync } from '@fortawesome/free-solid-svg-icons';
+
 
 const AsphaltCalculator = () => {
   const [holdUserId, setHoldUserId] = useState("");
@@ -475,6 +478,10 @@ const AsphaltCalculator = () => {
     setLength(distance);
   }, [distance]);
 
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   return (
     <div className="asphalt">
       <Col>
@@ -487,7 +494,7 @@ const AsphaltCalculator = () => {
           </Col>
           <Col xs={6}>
             <div className="excavation-col flex-grow-1 ">
-              <h2>Asphalt Road Calculating</h2>
+              <h2>Asphalt Road Calculating <button onClick={handleRefresh}><FontAwesomeIcon icon={faSync} /> </button></h2>
               <form onSubmit={handleSubmit}>
                 <label>
                   Length (m):
@@ -522,6 +529,7 @@ const AsphaltCalculator = () => {
                   />
                 </label>
                 <br />
+                <div><p>The 1 lane road is 3 m wide.</p></div>
                 <div className="calculate">
                   <button type="submit" className="calculate-button m-2">
                     {" "}
@@ -561,7 +569,7 @@ const AsphaltCalculator = () => {
                   <tr>
                     <td>Excavation </td>
                     <td>
-                      {valueOfExcavation ? `${valueOfExcavation} m³` : "-"}
+                      {valueOfExcavation ? `${valueOfExcavation.toFixed(2)} m³` : "-"}
                     </td>
                     <td>
                       {priceExcavation

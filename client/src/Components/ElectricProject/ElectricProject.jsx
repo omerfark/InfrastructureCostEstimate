@@ -6,6 +6,10 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import LeafletMap from "../LeafletMap/LeafletMap";
 import HeaderTr from "../HeadTr/HeadTr.jsx";
+import electric_3 from "../../assets/electric-3.png";
+import electric_5 from "../../assets/electric-5.png";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSync } from '@fortawesome/free-solid-svg-icons';
 
 
 const ElectricProject = () => {
@@ -520,19 +524,24 @@ const ElectricProject = () => {
     setLength(distance);
   }, [distance]);
 
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
+
   return (
     <div className="concrete">
       <Col>
-      <Row>
-      <HeaderTr items="electric" />
-      </Row>
+        <Row>
+          <HeaderTr items="electric" />
+        </Row>
         <Row>
           <Col>
             <LeafletMap onTotalDistanceChange={handleTotalDistanceChange} />
           </Col>
           <Col xs={6}>
             <div className="excavation-col">
-              <h2>Electric laying Calculate</h2>
+              <h2>Electric laying Calculate <button onClick={handleRefresh}><FontAwesomeIcon icon={faSync} /> </button></h2>
               <form onSubmit={handleSubmit}>
                 <label>
                   Length (m):
@@ -783,6 +792,62 @@ const ElectricProject = () => {
                 {" "}
                 Export Excel
               </button>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <div className=" excavation-col">
+              <h2>Types of Electric Cable for Infrastructure</h2>
+
+              <div className="asphalt-info">
+                <h3>Installing Electrical Lines for Roads</h3>
+                <div className="pipe-type">
+                  <p>
+                    When installing electrical lines for roads, it is crucial to
+                    consider various factors to ensure a safe and efficient
+                    system. The process involves planning the route, digging
+                    trenches, laying conduits, and pulling cables. The
+                    electrical lines must be buried at a safe depth to protect
+                    them from physical damage and to ensure safety for road
+                    users. Proper insulation and grounding are essential to
+                    prevent electrical hazards. Additionally, adherence to local
+                    regulations and standards is mandatory to ensure the
+                    system's reliability and safety. The use of high-quality
+                    materials and professional installation techniques can
+                    significantly enhance the longevity and performance of the
+                    electrical system.
+                  </p>
+                  <div className="pipe-image">
+                    <img src={electric_3} alt="Asphalt" />
+                  </div>
+                </div>
+              </div>
+              <div className="asphalt-info">
+                <h3>Types of Electrical Conduits</h3>
+                <div className="pipe-type">
+                  <p>
+                    There are several types of electrical conduits used in road
+                    installations, each with specific advantages. PVC (Polyvinyl
+                    Chloride) conduits are widely used due to their
+                    affordability, corrosion resistance, and ease of
+                    installation. HDPE (High-Density Polyethylene) conduits are
+                    known for their flexibility and high impact resistance,
+                    making them suitable for environments with potential ground
+                    movement. Rigid metal conduits (RMC) and intermediate metal
+                    conduits (IMC) offer superior mechanical protection and are
+                    used in areas prone to physical damage. Additionally,
+                    flexible metal conduits (FMC) are utilized in situations
+                    requiring flexibility around obstacles. Selecting the
+                    appropriate conduit type is essential for ensuring the
+                    durability and safety of the electrical installation in road
+                    environments.
+                  </p>
+                  <div className="pipe-image">
+                    <img src={electric_5} alt="Asphalt" />
+                  </div>
+                </div>
+              </div>
             </div>
           </Col>
         </Row>
